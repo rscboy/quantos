@@ -40,7 +40,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
         <div className="max-w-[1200px] mx-auto flex items-center justify-between flex-wrap gap-4">
           <div className="inline-flex items-center gap-1.5 text-[11px] font-medium text-white/50 tracking-[0.04em]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] shrink-0"></span>
-            OPM Tables current · 2024 · Phased Retirement supported
+            OPM Tables current · 2025 · Phased Retirement supported
           </div>
           <div className="flex items-center gap-5 text-[11px] text-white/40">
             <span>Audited monthly against OPM Chapter 50</span>
