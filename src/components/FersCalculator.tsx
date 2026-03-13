@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AdPlaceholder } from './AdPlaceholder';
+import { SponsorBanner } from './SponsorBanner';
 
 export function FersCalculator({ onBack }: { onBack: () => void }) {
   const [salary, setSalary] = useState<number>(115000);
@@ -57,7 +57,7 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
                 Includes MRA+10, early retirement, FERS transfer, deposits, redeposits, part-time service, and special rules for law enforcement, firefighters, and air traffic controllers.
               </p>
             </div>
-            <AdPlaceholder className="w-full md:w-[300px] h-[60px] shrink-0" />
+            <SponsorBanner className="w-full md:w-[300px] h-[60px] shrink-0" />
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
                 </div>
 
                 <div className="mt-8">
-                  <AdPlaceholder className="w-full h-[60px]" />
+                  <SponsorBanner className="w-full h-[60px]" />
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
             </div>
             
             <div className="mt-6">
-              <AdPlaceholder className="w-full h-[90px]" />
+              <SponsorBanner className="w-full h-[90px]" />
             </div>
           </div>
 
@@ -169,10 +169,10 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
             </div>
             
             <div className="mt-8">
-              <AdPlaceholder className="w-full h-[60px]" />
+              <SponsorBanner className="w-full h-[60px]" />
             </div>
             <div className="mt-4">
-              <AdPlaceholder className="w-full h-[250px]" />
+              <SponsorBanner className="w-full h-[250px]" />
             </div>
           </div>
         </div>
