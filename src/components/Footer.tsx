@@ -10,7 +10,7 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
               <img 
                 src="https://raw.githubusercontent.com/rscboy/quantos/refs/heads/main/logo2.png" 
                 alt="FedCalc by Quantos" 
-                className="h-10 w-auto object-contain" 
+                className="h-10 w-auto object-contain brightness-0 invert" 
                 referrerPolicy="no-referrer" 
               />
               <div className="flex flex-col justify-center items-start">

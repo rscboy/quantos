@@ -10,7 +10,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
             onClick={() => setView('home')}
           >
             <img 
-              src="https://raw.githubusercontent.com/rscboy/quantos/refs/heads/main/logo2.png" 
+              src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
               alt="FedCalc by Quantos" 
               className="h-10 w-auto object-contain" 
               referrerPolicy="no-referrer" 
