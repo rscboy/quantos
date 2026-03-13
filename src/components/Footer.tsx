@@ -6,7 +6,18 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-14 pb-10 border-b border-white/10 mb-7">
           <div>
-            <span className="font-serif text-[22px] text-white mb-3.5 block">FedCalc</span>
+            <div className="flex items-center gap-3 mb-3.5">
+              <img 
+                src="https://raw.githubusercontent.com/rscboy/quantos/refs/heads/main/logo2.png" 
+                alt="FedCalc by Quantos" 
+                className="h-8 w-auto object-contain" 
+                referrerPolicy="no-referrer" 
+              />
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-[22px] text-white tracking-[-0.3px]">FedCalc</span>
+                <span className="text-[11px] font-sans font-medium text-white/45 tracking-[0.08em] uppercase">by Quantos</span>
+              </div>
+            </div>
             <p className="text-[13px] text-white/40 leading-[1.7]">
               The leading independent resource for Federal Retirement planning since 2004. Proprietary analysis engines optimized for OPM data integrity. A product of Quantos Software LLC.
             </p>

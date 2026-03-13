@@ -6,11 +6,19 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
       <nav className="bg-navy text-white sticky top-0 z-50 border-b-[3px] border-blue">
         <div className="max-w-[1200px] mx-auto px-6 h-[60px] flex items-center justify-between">
           <a
-            className="flex items-baseline gap-2.5 cursor-pointer no-underline"
+            className="flex items-center gap-3 cursor-pointer no-underline"
             onClick={() => setView('home')}
           >
-            <span className="font-serif text-[22px] text-white tracking-[-0.3px]">FedCalc</span>
-            <span className="text-[11px] font-medium text-white/45 tracking-[0.08em] uppercase">by Quantos</span>
+            <img 
+              src="https://raw.githubusercontent.com/rscboy/quantos/refs/heads/main/logo2.png" 
+              alt="FedCalc by Quantos" 
+              className="h-8 w-auto object-contain" 
+              referrerPolicy="no-referrer" 
+            />
+            <div className="flex items-baseline gap-2">
+              <span className="font-serif text-[22px] text-white tracking-[-0.3px]">FedCalc</span>
+              <span className="text-[11px] font-sans font-medium text-white/45 tracking-[0.08em] uppercase">by Quantos</span>
+            </div>
           </a>
           <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0">
             <li>
