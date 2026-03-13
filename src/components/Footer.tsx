@@ -10,12 +10,15 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
               <img 
                 src="https://raw.githubusercontent.com/rscboy/quantos/refs/heads/main/logo2.png" 
                 alt="FedCalc by Quantos" 
-                className="h-8 w-auto object-contain" 
+                className="h-10 w-auto object-contain" 
                 referrerPolicy="no-referrer" 
               />
-              <div className="flex items-baseline gap-2">
-                <span className="font-serif text-[22px] text-white tracking-[-0.3px]">FedCalc</span>
-                <span className="text-[11px] font-sans font-medium text-white/45 tracking-[0.08em] uppercase">by Quantos</span>
+              <div className="flex flex-col justify-center items-start">
+                <div className="font-serif leading-none tracking-[-0.3px]">
+                  <span className="text-white text-[26px]">F</span><span className="text-white text-[22px]">ed</span>
+                  <span className="text-[#93B4F4] text-[26px]">C</span><span className="text-[#93B4F4] text-[22px]">alc</span>
+                </div>
+                <span className="text-[10px] font-sans font-medium text-white/50 tracking-[0.2em] uppercase mt-1">by Quantos</span>
               </div>
             </div>
             <p className="text-[13px] text-white/40 leading-[1.7]">
