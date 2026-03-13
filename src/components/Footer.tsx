@@ -36,7 +36,7 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Sick Leave Chart</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">FEGLI Rates</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Methodology</a></li>
-              <li><a href="/openapi.yaml" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">API Spec</a></li>
+              <li><a href={`${import.meta.env.BASE_URL}openapi.yaml`} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">API Spec</a></li>
             </ul>
           </div>
           <div>
@@ -51,8 +51,8 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
           <span>© 2026 Quantos Software LLC. All rights reserved.</span>
           <div className="flex gap-6">
-            <a href="/termsandconditions.htm" className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</a>
-            <a href="/privacystatement.htm" className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</a>
+            <a href={`${import.meta.env.BASE_URL}termsandconditions.htm`} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</a>
+            <a href={`${import.meta.env.BASE_URL}privacystatement.htm`} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</a>
           </div>
         </div>
       </div>

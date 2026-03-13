@@ -67,7 +67,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             </p>
             <a href="mailto:api@fedcalc.com" className="text-[#93B4F4] text-[13px] font-medium no-underline hover:underline">api@fedcalc.com →</a>
             <div className="mt-5 pt-4 border-t border-white/10 text-xs text-white/35">
-              Technical spec: <a href="/openapi.yaml" className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
+              Technical spec: <a href={`${import.meta.env.BASE_URL}openapi.yaml`} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
             </div>
           </div>
         </div>
