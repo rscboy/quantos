@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 
 type AnalysisStep =
@@ -141,9 +142,9 @@ function formatYears(value: number) {
   return `${years} years, ${months} months`;
 }
 
-export function FullRetirementAnalysis({ onBack }: { onBack: () => void }) {
+export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
   const [stepIndex, setStepIndex] = useState(0);
-  const [formData, setFormData] = useState<Partial<FedEmployee>>(defaultData);
+  const [formData, setFormData] = useState<Partial<FedEmployee>>(() => ({ ...defaultData, ...applyLinkedDataToFullAnalysis(linkedData) }));
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -297,6 +298,13 @@ export function FullRetirementAnalysis({ onBack }: { onBack: () => void }) {
           <h1 className="font-serif text-4xl font-normal text-text">Full Retirement Analysis</h1>
           <p className="text-text-2 text-sm max-w-4xl">A comprehensive guided scenario builder that collects foundational retirement, income, benefits, TSP, military deposit, and reporting preferences across Pages 1–10, then generates a detailed retirement analysis with email delivery and a printer-friendly report.</p>
         </div>
+
+        {(linkedData.tsp || linkedData.socialSecurity) && (
+          <div className="mb-8 rounded-lg border border-blue/20 bg-blue-50 px-5 py-4 text-sm text-text-2">
+            <div className="font-semibold text-text mb-1">Unified calculator data detected</div>
+            <div>Your saved TSP scenario has preloaded salary, retirement-date, and fund details here, and your Social Security estimate is already included in the full analysis inputs.</div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)] gap-6">
           <aside className="bg-white border border-border rounded-lg p-5 h-fit">

@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking';
 
 type RetirementSystem = 'FERS' | 'CSRS';
 type FundKey = 'G Fund' | 'F Fund' | 'C Fund' | 'S Fund' | 'I Fund';
@@ -176,15 +177,55 @@ function projectAnalysisRows(contributionForm: ContributionForm, primaryFund: Pr
   return { rows, totalContributions };
 }
 
-export function TspCalculator({ onBack }: { onBack: () => void }) {
+export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBack: () => void; linkedData: LinkedCalculatorData; onLinkedDataChange: (update: Partial<LinkedCalculatorData>) => void }) {
   const [step, setStep] = useState(1);
-  const [contributionForm, setContributionForm] = useState<ContributionForm>(DEFAULT_CONTRIBUTION_FORM);
+  const [contributionForm, setContributionForm] = useState<ContributionForm>(() => ({
+    ...DEFAULT_CONTRIBUTION_FORM,
+    retirementSystem: linkedData.tsp?.retirementSystem || DEFAULT_CONTRIBUTION_FORM.retirementSystem,
+    plannedRetirementDate: linkedData.tsp?.plannedRetirementDate || DEFAULT_CONTRIBUTION_FORM.plannedRetirementDate,
+    dateOfBirth: linkedData.tsp?.dateOfBirth || linkedData.socialSecurity?.birthDate || DEFAULT_CONTRIBUTION_FORM.dateOfBirth,
+    currentAnnualSalary: linkedData.tsp?.currentAnnualSalary || DEFAULT_CONTRIBUTION_FORM.currentAnnualSalary,
+    annualPercentContribution: linkedData.tsp?.annualPercentContribution || DEFAULT_CONTRIBUTION_FORM.annualPercentContribution,
+    annualCatchUpContribution: linkedData.tsp?.annualCatchUpContribution || DEFAULT_CONTRIBUTION_FORM.annualCatchUpContribution,
+    annualCOLA: linkedData.tsp?.annualCOLA || DEFAULT_CONTRIBUTION_FORM.annualCOLA,
+  }));
   const [primaryFund, setPrimaryFund] = useState<PrimaryFundOption>('L Fund 2040');
-  const [funds, setFunds] = useState<Record<FundKey, FundInput>>(DEFAULT_FUNDS);
+  const [funds, setFunds] = useState<Record<FundKey, FundInput>>(() => {
+    if (!linkedData.tsp) return DEFAULT_FUNDS;
+    return FUND_ORDER.reduce((acc, fund, index) => {
+      acc[fund] = {
+        ...DEFAULT_FUNDS[fund],
+        allocation: linkedData.tsp?.fundAllocations[index] ?? DEFAULT_FUNDS[fund].allocation,
+        balance: linkedData.tsp?.fundBalances[index] ?? DEFAULT_FUNDS[fund].balance,
+        rate: linkedData.tsp?.fundRates[index] ?? DEFAULT_FUNDS[fund].rate,
+      };
+      return acc;
+    }, {} as Record<FundKey, FundInput>);
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
   const totalAllocation = useMemo(() => normalizeAllocations(funds), [funds]);
   const { rows, totalContributions } = useMemo(() => projectAnalysisRows(contributionForm, primaryFund, funds), [contributionForm, primaryFund, funds]);
+
+  const linkedProjection = useMemo<LinkedTspData>(() => ({
+    retirementSystem: contributionForm.retirementSystem,
+    plannedRetirementDate: contributionForm.plannedRetirementDate,
+    dateOfBirth: contributionForm.dateOfBirth,
+    currentAnnualSalary: Number(contributionForm.currentAnnualSalary || 0),
+    annualPercentContribution: Number(contributionForm.annualPercentContribution || 0),
+    annualCatchUpContribution: Number(contributionForm.annualCatchUpContribution || 0),
+    annualCOLA: Number(contributionForm.annualCOLA || 0),
+    fundAllocations: FUND_ORDER.map((fund) => Number(funds[fund].allocation || 0)).concat(0),
+    fundBalances: FUND_ORDER.map((fund) => Number(funds[fund].balance || 0)).concat(0),
+    fundRates: FUND_ORDER.map((fund) => Number(funds[fund].rate || 0)).concat(5),
+    projectedBalance: rows[rows.length - 1]?.total || 0,
+    currentBalance: FUND_ORDER.reduce((sum, fund) => sum + Number(funds[fund].balance || 0), 0),
+    updatedAt: new Date().toISOString(),
+  }), [contributionForm, funds, rows]);
+
+  useEffect(() => {
+    onLinkedDataChange({ tsp: linkedProjection });
+  }, [linkedProjection, onLinkedDataChange]);
 
   const setContributionField = (field: keyof ContributionForm, value: string | number) => {
     setContributionForm((prev) => ({ ...prev, [field]: value }));

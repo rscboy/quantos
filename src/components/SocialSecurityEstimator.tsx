@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { LinkedCalculatorData, LinkedSocialSecurityData } from '../utils/calculatorLinking';
 
 type Step = 1 | 2 | 3;
 type DateParts = { month: string; day: string; year: string };
@@ -228,6 +229,21 @@ function computeResults(form: FormState): EstimateResults {
   };
 }
 
+
+function toDateParts(value: string): DateParts {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return { month: '', day: '', year: '' };
+  return { month: String(date.getMonth() + 1), day: String(date.getDate()), year: String(date.getFullYear()) };
+}
+
+function toIsoDate(parts: DateParts) {
+  const date = parseDate(parts);
+  if (!date) return '';
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 function DateSelectors({ label, value, onChange, error, years }: { label: string; value: DateParts; onChange: (field: keyof DateParts, next: string) => void; error?: string; years: string[] }) {
   const selectClass = `w-full rounded-md border px-3 py-2.5 text-sm ${error ? 'border-red-500' : 'border-border'}`;
   return (
@@ -252,12 +268,34 @@ function DateSelectors({ label, value, onChange, error, years }: { label: string
   );
 }
 
-export function SocialSecurityEstimator({ onBack }: { onBack: () => void }) {
+export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange }: { onBack: () => void; linkedData: LinkedCalculatorData; onLinkedDataChange: (update: Partial<LinkedCalculatorData>) => void }) {
   const [step, setStep] = useState<Step>(1);
-  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+  const [form, setForm] = useState<FormState>(() => ({
+    ...INITIAL_FORM,
+    birthDate: linkedData.socialSecurity?.birthDate ? toDateParts(linkedData.socialSecurity.birthDate) : linkedData.tsp?.dateOfBirth ? toDateParts(linkedData.tsp.dateOfBirth) : INITIAL_FORM.birthDate,
+    retirementDate: linkedData.socialSecurity?.retirementDate ? toDateParts(linkedData.socialSecurity.retirementDate) : linkedData.tsp?.plannedRetirementDate ? toDateParts(linkedData.tsp.plannedRetirementDate) : INITIAL_FORM.retirementDate,
+    currentYearEarnings: linkedData.socialSecurity?.currentYearEarnings ? String(linkedData.socialSecurity.currentYearEarnings) : linkedData.tsp?.currentAnnualSalary ? String(linkedData.tsp.currentAnnualSalary) : '',
+    futureYearEarnings: linkedData.socialSecurity?.futureYearEarnings ? String(linkedData.socialSecurity.futureYearEarnings) : linkedData.tsp?.currentAnnualSalary ? String(linkedData.tsp.currentAnnualSalary) : '',
+  }));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [email, setEmail] = useState({ primary: '', confirm: '' });
   const results = useMemo(() => computeResults(form), [form]);
+
+  const linkedEstimate = useMemo<LinkedSocialSecurityData>(() => ({
+    birthDate: toIsoDate(form.birthDate),
+    retirementDate: toIsoDate(form.retirementDate),
+    currentYearEarnings: Number(form.currentYearEarnings || 0),
+    futureYearEarnings: Number(form.futureYearEarnings || 0),
+    annualRetirementBenefit: results.retirementBenefit * 12,
+    monthlyRetirementBenefit: results.retirementBenefit,
+    quartersEarned: results.quartersEarned,
+    retirementInsured: results.retirementInsured,
+    updatedAt: new Date().toISOString(),
+  }), [form, results]);
+
+  useEffect(() => {
+    onLinkedDataChange({ socialSecurity: linkedEstimate });
+  }, [linkedEstimate, onLinkedDataChange]);
 
   const birthDate = parseDate(form.birthDate);
   const retirementDate = parseDate(form.retirementDate);

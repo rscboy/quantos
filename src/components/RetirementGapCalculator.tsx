@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { LinkedCalculatorData, applyLinkedDataToGapForm } from '../utils/calculatorLinking';
 
 type GapForm = {
   plannedRetirementDate: string;
@@ -159,9 +160,9 @@ function ResultCell({ label, now, retirement, emphasize = false }: { label: stri
   );
 }
 
-export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
+export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<GapForm>(DEFAULT_FORM);
+  const [form, setForm] = useState<GapForm>(() => ({ ...DEFAULT_FORM, ...applyLinkedDataToGapForm(linkedData) }));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
   const metrics = useMemo(() => calculateProjection(form), [form]);
@@ -229,6 +230,13 @@ export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
 
         <h1 className="font-serif text-4xl font-normal text-text mb-3">Retirement Savings GAP Calculator</h1>
         <p className="text-text-2 max-w-3xl mb-8">Estimate whether your retirement income sources will cover your target retirement lifestyle, then quantify the additional savings needed to close any projected shortfall.</p>
+
+        {(linkedData.tsp || linkedData.socialSecurity) && (
+          <div className="mb-8 rounded-lg border border-blue/20 bg-blue-50 px-5 py-4 text-sm text-text-2">
+            <div className="font-semibold text-text mb-1">Auto-filled from your other calculators</div>
+            <div>TSP inputs now seed your retirement date, salary, and savings baseline, while your Social Security estimate is included automatically in this gap analysis.</div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between mb-8 overflow-x-auto gap-4">
           {STEP_TITLES.map((title, index) => {
