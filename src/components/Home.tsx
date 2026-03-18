@@ -48,7 +48,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               Federal Retirement<br /><em className="italic text-[#93B4F4]">Simplified.</em>
             </h1>
             <p className="text-base text-white/60 max-w-[520px] leading-[1.7] mb-8">
-              Calculate your FERS, CSRS, and TSP estimates. Run exact High-3 calculations, Military Deposit, Social Security, and more — all in one place.
+              Calculate your FERS, CSRS, and TSP estimates. Run exact High-3 calculations, Military Deposit, Social Security, and more — all in one place, with free calculators you can use anytime.
             </p>
             <div className="flex gap-10 pt-8 border-t border-white/10">
               <div>
