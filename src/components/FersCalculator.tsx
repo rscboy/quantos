@@ -5,6 +5,21 @@ import { AdPlaceholder } from './AdPlaceholder';
 
 type CalculatorType = 'fers' | 'csrs';
 
+type ScenarioSnapshot = {
+  id: number;
+  label: string;
+  retirementDate: string;
+  ageAtRetirement: number | null;
+  serviceYears: number | null;
+  high3Salary: number;
+  monthlyAnnuity: number;
+  annualAnnuity: number;
+  fullAnnuity: number;
+  netMonthlyAnnuity: number;
+  replacementRate: number;
+  lifetimeValue: number;
+};
+
 type EligibilityQuestion = {
   name: 'bAirTraffic' | 'bCustomsBorderPatrol' | 'bLawEnforce' | 'bEarlyOut' | 'bPhasedRetire';
   label: string;
@@ -154,6 +169,17 @@ function calculateResultSection(reportData: any, calculatorType: CalculatorType)
   };
 }
 
+function formatCurrency(value?: number) {
+  return `$${currency(Number(value || 0))}`;
+}
+
+function formatDelta(value: number, kind: 'currency' | 'percent' | 'years' = 'currency') {
+  const prefix = value > 0 ? '+' : '';
+  if (kind === 'percent') return `${prefix}${value.toFixed(1)} pts`;
+  if (kind === 'years') return `${prefix}${value.toFixed(1)} yrs`;
+  return `${prefix}$${currency(value)}`;
+}
+
 function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: CalculatorType; onBack: () => void }) {
   const [step, setStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -165,6 +191,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
   const [adRefreshCount, setAdRefreshCount] = useState(1);
   const [emailErrors, setEmailErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<Partial<FedEmployee>>(defaultFormData(calculatorType));
+  const [savedScenarios, setSavedScenarios] = useState<ScenarioSnapshot[]>([]);
 
   const title = calculatorType === 'csrs' ? 'CSRS Annuity Calculator' : 'FERS Annuity Calculator';
   const ageAtRetirement = useMemo(() => calculateYears(formData.dateOfBirth, formData.dateRetire), [formData.dateOfBirth, formData.dateRetire]);
@@ -172,6 +199,42 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
   const serviceYears = useMemo(() => calculateYears(formData.dateServiceComp, formData.dateRetire), [formData.dateServiceComp, formData.dateRetire]);
   const salaryCoverageYears = useMemo(() => getSalaryHistoryCoverageYears(formData.salaryHistory), [formData.salaryHistory]);
   const results = useMemo(() => calculateResultSection(reportData, calculatorType), [reportData, calculatorType]);
+  const currentScenario = useMemo<ScenarioSnapshot | null>(() => {
+    if (!reportData) return null;
+
+    const monthly = results.netMonthlyAnnuity || Math.max(results.monthlyAnnuity - Number(formData.fHealthInsDeduct || 0), 0);
+    const ageYears = ageAtRetirement === null ? null : Number(ageAtRetirement.toFixed(1));
+    const service = serviceYears === null ? null : Number(serviceYears.toFixed(1));
+    const high3 = Number(formData.fManualHigh3 || formData.fLastSalary || 0);
+
+    return {
+      id: Date.now(),
+      label: `Retire ${formData.dateRetire || savedScenarios.length + 1}`,
+      retirementDate: formData.dateRetire || 'N/A',
+      ageAtRetirement: ageYears,
+      serviceYears: service,
+      high3Salary: high3,
+      monthlyAnnuity: results.monthlyAnnuity,
+      annualAnnuity: results.annualAnnuity,
+      fullAnnuity: results.fullAnnuity || results.monthlyAnnuity,
+      netMonthlyAnnuity: monthly,
+      replacementRate: results.replacementRate,
+      lifetimeValue: monthly * 12 * 25,
+    };
+  }, [ageAtRetirement, formData.fHealthInsDeduct, formData.fLastSalary, formData.fManualHigh3, formData.dateRetire, reportData, results, savedScenarios.length, serviceYears]);
+
+  const comparisonScenarios = useMemo(() => {
+    if (!currentScenario) return savedScenarios;
+    const hasCurrentAlreadySaved = savedScenarios.some((scenario) => scenario.retirementDate === currentScenario.retirementDate && scenario.netMonthlyAnnuity === currentScenario.netMonthlyAnnuity);
+    return hasCurrentAlreadySaved ? savedScenarios : [...savedScenarios, currentScenario].slice(-3);
+  }, [currentScenario, savedScenarios]);
+
+  const comparisonLeaders = useMemo(() => {
+    const monthly = Math.max(...comparisonScenarios.map((scenario) => scenario.netMonthlyAnnuity), 0);
+    const lifetime = Math.max(...comparisonScenarios.map((scenario) => scenario.lifetimeValue), 0);
+    const replacement = Math.max(...comparisonScenarios.map((scenario) => scenario.replacementRate), 0);
+    return { monthly, lifetime, replacement };
+  }, [comparisonScenarios]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -283,6 +346,18 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
       },
     ],
   });
+
+  const saveCurrentScenario = () => {
+    if (!currentScenario) return;
+    setSavedScenarios((prev) => {
+      const next = [...prev.filter((scenario) => scenario.retirementDate !== currentScenario.retirementDate), currentScenario];
+      return next.slice(-3);
+    });
+  };
+
+  const removeScenario = (id: number) => {
+    setSavedScenarios((prev) => prev.filter((scenario) => scenario.id !== id));
+  };
 
   const handleEmailSubmit = () => {
     const errors: Record<string, string> = {};
@@ -575,6 +650,71 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   <ResultCard label="Full annuity" value={`$${currency(results.fullAnnuity || results.monthlyAnnuity)}`} />
                   <ResultCard label="Net monthly annuity" value={`$${currency(results.netMonthlyAnnuity || Math.max(results.monthlyAnnuity - Number(formData.fHealthInsDeduct || 0), 0))}`} />
                 </div>
+                <div className="mt-6 rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 to-white p-5">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue">Scenario Comparison Mode</p>
+                      <h3 className="mt-2 text-xl font-semibold text-text">Compare up to 3 retirement dates side-by-side.</h3>
+                      <p className="mt-2 text-sm text-text-2">Run the report, save this version, change your retirement date or assumptions, and run it again. We automatically spotlight the strongest monthly income and lifetime value outcome.</p>
+                    </div>
+                    <button onClick={saveCurrentScenario} className="inline-flex items-center justify-center rounded-md bg-blue px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-hover">
+                      Save current scenario
+                    </button>
+                  </div>
+
+                  {comparisonScenarios.length > 0 && (
+                    <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
+                      {comparisonScenarios.map((scenario, index) => {
+                        const baseline = comparisonScenarios[0];
+                        const monthlyDelta = scenario.netMonthlyAnnuity - baseline.netMonthlyAnnuity;
+                        const lifetimeDelta = scenario.lifetimeValue - baseline.lifetimeValue;
+                        return (
+                          <div key={scenario.id} className="rounded-lg border border-border bg-white p-5 shadow-sm">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <div className="text-xs font-semibold uppercase tracking-wide text-text-3">Scenario {index + 1}</div>
+                                <div className="mt-1 text-lg font-semibold text-text">{scenario.label}</div>
+                                <div className="mt-1 text-sm text-text-2">Age {scenario.ageAtRetirement?.toFixed(1) || '—'} • Service {scenario.serviceYears?.toFixed(1) || '—'} yrs</div>
+                              </div>
+                              {savedScenarios.some((saved) => saved.id === scenario.id) && (
+                                <button onClick={() => removeScenario(scenario.id)} className="text-xs font-medium text-text-3 transition-colors hover:text-red-600">
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="mt-4 space-y-3">
+                              <ComparisonMetric
+                                label="Net monthly income"
+                                value={formatCurrency(scenario.netMonthlyAnnuity)}
+                                delta={index === 0 ? 'Baseline' : formatDelta(monthlyDelta)}
+                                highlight={scenario.netMonthlyAnnuity === comparisonLeaders.monthly}
+                              />
+                              <ComparisonMetric
+                                label="Lifetime value (25 yrs)"
+                                value={formatCurrency(scenario.lifetimeValue)}
+                                delta={index === 0 ? 'Baseline' : formatDelta(lifetimeDelta)}
+                                highlight={scenario.lifetimeValue === comparisonLeaders.lifetime}
+                              />
+                              <ComparisonMetric
+                                label="Replacement rate"
+                                value={`${scenario.replacementRate.toFixed(1)}%`}
+                                delta={index === 0 ? 'Baseline' : formatDelta(scenario.replacementRate - baseline.replacementRate, 'percent')}
+                                highlight={scenario.replacementRate === comparisonLeaders.replacement}
+                              />
+                            </div>
+
+                            <div className="mt-4 rounded-md bg-gray-50 p-3 text-sm text-text-2">
+                              <div><span className="font-semibold text-text">Retirement date:</span> {scenario.retirementDate}</div>
+                              <div><span className="font-semibold text-text">High-3 salary:</span> {formatCurrency(scenario.high3Salary)}</div>
+                              <div><span className="font-semibold text-text">Annual annuity:</span> {formatCurrency(scenario.annualAnnuity)}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
                 <AdPlaceholder
                   slot="Results banner after summary"
                   detail="Primary high-value placement directly below the annuity result cards."
@@ -709,6 +849,24 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function ResultCard({ label, value }: { label: string; value: string }) {
   return <div className="bg-blue-50 rounded-md p-4"><div className="text-xs uppercase tracking-wide text-text-3 mb-2">{label}</div><div className="text-2xl font-mono text-blue">{value}</div></div>;
+}
+
+function ComparisonMetric({ label, value, delta, highlight = false }: { label: string; value: string; delta: string; highlight?: boolean }) {
+  return (
+    <div className={`rounded-md border p-3 ${highlight ? 'border-green-200 bg-green-50' : 'border-border bg-white'}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-xs uppercase tracking-wide text-text-3">{label}</div>
+          <div className="mt-1 text-xl font-mono text-blue">{value}</div>
+        </div>
+        <div className={`rounded-full px-2 py-1 text-xs font-semibold ${highlight ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-text-2'}`}>
+          {highlight ? 'Best' : delta}
+        </div>
+      </div>
+      {highlight && <div className="mt-2 text-xs font-medium text-green-700">Top outcome in the current comparison set.</div>}
+      {!highlight && <div className="mt-2 text-xs text-text-3">Difference vs. Scenario 1.</div>}
+    </div>
+  );
 }
 
 export function FersCalculator({ onBack }: { onBack: () => void }) {
