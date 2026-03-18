@@ -16,6 +16,7 @@ import { MilitaryDepositCalculator } from './components/MilitaryDepositCalculato
 import { NewMemberModal } from './components/NewMemberModal';
 import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { SocialSecurityEstimator } from './components/SocialSecurityEstimator';
+import { AdPlacement } from './components/AdPlacement';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -97,6 +98,16 @@ export default function App() {
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
         {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
+      </div>
+
+      <div className="fixed inset-x-4 bottom-4 z-30 md:hidden">
+        <AdPlacement
+          label={view === 'home' ? 'Mobile • Landing' : 'Mobile • Sticky Bottom'}
+          title={view === 'home' ? 'Mobile inline inventory for discovery traffic' : 'Sticky mobile ad holder during calculator sessions'}
+          description={view === 'home' ? 'Compact mobile placement that preserves the hero and calculator list while still exposing a monetizable slot.' : 'Designed for small screens with a compact height so it stays visible without overtaking input fields or the results area.'}
+          compact
+          className="shadow-lg"
+        />
       </div>
 
       <Footer setView={handleNavigate} />

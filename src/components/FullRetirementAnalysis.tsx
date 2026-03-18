@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
+import { AdPlacement } from './AdPlacement';
 
 type AnalysisStep =
   | 'background'
@@ -152,8 +153,15 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
   const [isCalculating, setIsCalculating] = useState(false);
   const [reportData, setReportData] = useState<any>(null);
   const [timelineMode, setTimelineMode] = useState<'nominal' | 'real'>('real');
+  const [adRefreshCount, setAdRefreshCount] = useState(1);
 
   const currentStep = STEPS[stepIndex];
+
+  useEffect(() => {
+    if (stepIndex > 0) {
+      setAdRefreshCount((count) => count + 1);
+    }
+  }, [stepIndex]);
   const ageAtRetirement = useMemo(() => yearsBetween(formData.dateOfBirth, formData.dateRetire), [formData.dateOfBirth, formData.dateRetire]);
   const serviceYears = useMemo(() => yearsBetween(formData.dateServiceComp, formData.dateRetire), [formData.dateServiceComp, formData.dateRetire]);
   const high3FromHistory = useMemo(() => {
@@ -405,7 +413,7 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)] gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-[280px_minmax(0,1fr)_240px] gap-6">
           <aside className="bg-white border border-border rounded-lg p-5 h-fit">
             <div className="text-xs uppercase tracking-[0.08em] text-text-3 mb-4">Scenario Builder</div>
             <div className="space-y-3">
@@ -447,6 +455,13 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     <Metric label="Total service" value={formatYears(serviceYears)} />
                     <Metric label="Retirement system logic" value={systemLabel} />
                   </div>
+                  <AdPlacement
+                    label="Input Phase • Inline"
+                    title="Inline holder after the first core inputs"
+                    description="Inserted after the opening date and eligibility fields so engaged users encounter an ad during a natural pause, not before the form becomes useful."
+                    compact
+                    refreshToken={adRefreshCount}
+                  />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Field label="Retirement System *" error={errors.bCSRS}>
                       <select name="bCSRS" value={formData.bCSRS || 'N'} onChange={handleChange} className={inputClass(errors.bCSRS)}>
@@ -510,6 +525,14 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     <Field label="Projected future yearly earnings"><input type="number" name="fFutureYearsSalary" value={formData.fFutureYearsSalary || ''} onChange={handleChange} className={inputClass()} /></Field>
                     <Field label="Social Security estimate at retirement (annual)"><input type="number" name="fSocSec" value={formData.fSocSec || ''} onChange={handleChange} className={inputClass()} /></Field>
                   </div>
+                  <AdPlacement
+                    label="Input Phase • Inline"
+                    title="Mid-form pause point"
+                    description="Salary history tends to create review pauses, which makes this a better visibility point than interrupting the first field group."
+                    accent="green"
+                    compact
+                    refreshToken={adRefreshCount}
+                  />
                   <div className="pt-6 border-t border-border space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold text-text">Part-time service adjustments</h3>
@@ -658,6 +681,13 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
 
               {currentStep.id === 'reports' && (
                 <div className="space-y-4">
+                  <AdPlacement
+                    label="Input Phase • Pre-Calculate"
+                    title="Small banner above Generate Report"
+                    description="A compact unit directly above the calculation action captures attention during the final review step without blocking the CTA."
+                    compact
+                    refreshToken={adRefreshCount}
+                  />
                   {REPORT_OPTIONS.map((option) => (
                     <label key={option.key} className="flex items-start gap-3 p-4 border border-border rounded-md hover:bg-gray-50">
                       <input type="checkbox" checked={formData[option.key] === 'Y'} onChange={(e) => setFormData((prev) => ({ ...prev, [option.key]: e.target.checked ? 'Y' : 'N' }))} className="mt-1" />
@@ -688,6 +718,13 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     <Metric label="Net monthly annuity" value={`$${currency(summary.netMonthly)}`} />
                   </div>
 
+                  <AdPlacement
+                    label="Results • Post-Summary"
+                    title="High-value placement right after the results summary"
+                    description="Users typically linger here to absorb their annuity headline numbers, making this the strongest placeholder for premium post-result inventory."
+                    refreshToken={adRefreshCount}
+                  />
+
                   <div>
                     <h3 className="font-semibold text-text mb-3">Salary history breakdown</h3>
                     <div className="overflow-x-auto border border-border rounded-md">
@@ -709,6 +746,15 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                       </table>
                     </div>
                   </div>
+
+                  <AdPlacement
+                    label="Results • Between Sections"
+                    title="Inline holder before charts and breakdowns"
+                    description="This break separates the numeric summary from the deeper projection visuals, creating a natural between-sections impression slot."
+                    accent="green"
+                    compact
+                    refreshToken={adRefreshCount}
+                  />
 
                   <div className="rounded-xl border border-border bg-gradient-to-br from-slate-50 to-white p-5 space-y-5">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -771,6 +817,15 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     </div>
                   </div>
 
+                  <AdPlacement
+                    label="Results • Next Steps"
+                    title="Placement before recommendations and follow-up actions"
+                    description="Keeps one more monetization point in view just before users decide whether to print, email, or refine their retirement scenario."
+                    accent="amber"
+                    compact
+                    refreshToken={adRefreshCount}
+                  />
+
                   <div className="space-y-2 text-sm text-text-2">
                     <p><strong>Selected report modules:</strong> {reportSections.length ? reportSections.map((section) => section.label).join(', ') : 'None selected.'}</p>
                     <p><strong>Additional explanatory notes:</strong> Age/service formulas, special retirement eligibility, leave balances, and CSRS/FERS transfer splits are preserved as scenario inputs and reflected in the summary output.</p>
@@ -803,6 +858,25 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
               )}
             </div>
           </section>
+
+          <aside className="hidden xl:block">
+            <AdPlacement
+              label="Input Phase • Sticky"
+              title="High-engagement desktop rail"
+              description="This sticky holder stays beside longer forms so users can pause, think, and review inputs without losing their place or covering critical fields."
+              sticky
+              refreshToken={adRefreshCount}
+              className="mb-6"
+            />
+            <AdPlacement
+              label="Iteration Loop"
+              title="Refresh on recalculation or section changes"
+              description="Each step change and report generation bumps the placeholder token, modeling a controlled ad refresh cycle during scenario tweaks and repeat calculations."
+              accent="amber"
+              compact
+              refreshToken={adRefreshCount}
+            />
+          </aside>
         </div>
       </main>
     </div>

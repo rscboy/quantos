@@ -1,5 +1,6 @@
 import React from 'react';
 import { SponsorBanner } from './SponsorBanner';
+import { AdPlacement } from './AdPlacement';
 
 const CALCULATORS = [
   {
@@ -81,6 +82,18 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         </div>
       </div>
 
+      <div className="px-6 py-5 bg-bg border-b border-border">
+        <div className="max-w-[1200px] mx-auto">
+          <AdPlacement
+            label="Landing • Top Banner"
+            title="Quick impression slot below the hero"
+            description="Reserved for a single high-visibility banner so first-time visitors see useful content first while still creating immediate ad inventory."
+            className="mx-auto max-w-5xl"
+            compact
+          />
+        </div>
+      </div>
+
       <div className="bg-white border-y border-border p-6 m-0">
         <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-between gap-4 md:gap-6">
           <div className="flex items-center gap-3 text-[13px] text-text-2">
@@ -100,9 +113,11 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
       </div>
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
-        <div className="mb-12">
-          <SponsorBanner className="h-[44px] w-full max-w-2xl mx-auto" />
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
+          <div>
+            <div className="mb-12">
+              <SponsorBanner className="h-[44px] w-full max-w-2xl mx-auto" />
+            </div>
 
         {CALCULATORS.map((section, idx) => {
           const count = section.items.length;
@@ -144,7 +159,13 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             </div>
             {idx === 0 && (
               <div className="mb-14">
-                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
+                <AdPlacement
+                  label="Landing • Mid-Page"
+                  title="Inline ad between calculator sections"
+                  description="Placed between major calculator groups to capture extra impressions after visitors begin exploring, while keeping the surrounding content scannable."
+                  className="mx-auto max-w-3xl"
+                  compact
+                />
               </div>
             )}
             {idx === 2 && (
@@ -155,6 +176,25 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             </React.Fragment>
           );
         })}
+          </div>
+
+          <aside className="hidden lg:block">
+            <AdPlacement
+              label="Landing • Sticky Sidebar"
+              title="Desktop sidebar inventory"
+              description="A persistent desktop-only placement that keeps one tasteful unit in view while visitors browse calculators, without crowding the main decision flow."
+              sticky
+              className="mb-6"
+            />
+            <AdPlacement
+              label="Landing • Best Practice"
+              title="Low-intent page guardrails"
+              description="The home page now limits ad density to strategic banners between calculator groups so bounce-prone traffic still gets a clean, trustworthy first impression."
+              accent="green"
+              compact
+            />
+          </aside>
+        </div>
       </main>
     </div>
   );
