@@ -1,56 +1,104 @@
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 
 declare global {
   interface Window {
-    google_ad_client?: string;
-    google_ad_slot?: string;
-    google_ad_width?: number;
-    google_ad_height?: number;
     adsbygoogle?: Array<Record<string, unknown>>;
   }
 }
 
-const LEGACY_AD_CLIENT = 'pub-1611174753858237';
-const LEGACY_AD_SLOT = '9205751896';
-const AD_WIDTH = 300;
-const AD_HEIGHT = 250;
-const LEGACY_AD_SCRIPT_SRC = 'https://pagead2.googlesyndication.com/pagead/show_ads.js';
+const ADSENSE_CLIENT = 'ca-pub-1611174753858237';
+const ADSENSE_SLOT = '9205751896';
+const ADSENSE_SCRIPT_SRC = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+
+let adsenseScriptPromise: Promise<void> | null = null;
+
+function ensureAdsenseScript() {
+  if (typeof window === 'undefined') {
+    return Promise.resolve();
+  }
+
+  if (adsenseScriptPromise) {
+    return adsenseScriptPromise;
+  }
+
+  const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${ADSENSE_SCRIPT_SRC}"]`);
+  if (existingScript) {
+    adsenseScriptPromise = Promise.resolve();
+    return adsenseScriptPromise;
+  }
+
+  adsenseScriptPromise = new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script');
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.src = ADSENSE_SCRIPT_SRC;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Unable to load the Google AdSense script.'));
+    document.head.appendChild(script);
+  });
+
+  return adsenseScriptPromise;
+}
 
 export function SponsorBanner({ className = '' }: { className?: string }) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const adRef = useRef<HTMLElement | null>(null);
   const instanceId = useId();
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    let isCancelled = false;
 
-    container.innerHTML = '';
+    const initializeAd = async () => {
+      const adElement = adRef.current;
+      if (!adElement || adElement.dataset.adInitialized === 'true') {
+        return;
+      }
 
-    window.google_ad_client = LEGACY_AD_CLIENT;
-    window.google_ad_slot = LEGACY_AD_SLOT;
-    window.google_ad_width = AD_WIDTH;
-    window.google_ad_height = AD_HEIGHT;
+      try {
+        await ensureAdsenseScript();
+        if (isCancelled) {
+          return;
+        }
 
-    const script = document.createElement('script');
-    script.src = LEGACY_AD_SCRIPT_SRC;
-    script.async = true;
-    script.dataset.adInstance = instanceId;
-    container.appendChild(script);
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        adElement.dataset.adInitialized = 'true';
+        setLoadError(false);
+      } catch (error) {
+        if (!isCancelled) {
+          console.error(`AdSense failed to initialize for banner ${instanceId}.`, error);
+          setLoadError(true);
+        }
+      }
+    };
+
+    void initializeAd();
 
     return () => {
-      container.innerHTML = '';
+      isCancelled = true;
     };
   }, [instanceId]);
 
   return (
     <div
-      className={`bg-white border border-border rounded-lg flex items-center justify-center p-4 overflow-hidden ${className}`}
+      className={`bg-white border border-border rounded-lg overflow-hidden ${className}`}
     >
-      <div
-        ref={containerRef}
-        aria-label="Advertisement"
-        className="flex min-h-[250px] w-full items-center justify-center"
-      />
+      <div className="flex min-h-[90px] w-full items-center justify-center px-4 py-3">
+        <ins
+          ref={adRef}
+          className="adsbygoogle block min-h-[60px] w-full"
+          style={{ display: 'block' }}
+          data-ad-client={ADSENSE_CLIENT}
+          data-ad-format="auto"
+          data-ad-slot={ADSENSE_SLOT}
+          data-full-width-responsive="true"
+          aria-label="Advertisement"
+        />
+        {loadError && (
+          <p className="text-center text-xs text-text-3">
+            Ad space is temporarily unavailable.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
