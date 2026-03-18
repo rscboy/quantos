@@ -231,6 +231,7 @@ class FedcalcApiService {
     // Determine the backend URL
     // If VITE_BACKEND_BASE_URL is set, use it. Otherwise, use Mock Mode.
     const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
+    console.log('VITE_BACKEND_BASE_URL =', import.meta.env.VITE_BACKEND_BASE_URL);
     
     // If no backend is configured, use Mock Mode so the frontend preview works without credentials
     if (!backendBaseUrl) {
