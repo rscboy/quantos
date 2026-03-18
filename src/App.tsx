@@ -9,6 +9,7 @@ import { Footer } from './components/Footer';
 import { Home } from './components/Home';
 import { FersCalculator } from './components/FersCalculator';
 import { HowSoonCalculator } from './components/HowSoonCalculator';
+import { CsrsCalculator } from './components/CsrsCalculator';
 import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { NewMemberModal } from './components/NewMemberModal';
 
@@ -33,6 +34,7 @@ export default function App() {
       <div className="flex-1">
         {view === 'home' && <Home onSelectCalc={handleSelectCalc} />}
         {view === 'fers' && <FersCalculator onBack={() => handleSelectCalc('home')} />}
+        {view === 'csrs' && <CsrsCalculator onBack={() => handleSelectCalc('home')} />}
         {view === 'eligibility' && <HowSoonCalculator onBack={() => handleSelectCalc('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
         {view === 'full' && <FullRetirementAnalysis onBack={() => handleSelectCalc('home')} />}
       </div>
