@@ -22,6 +22,21 @@ type ContributionForm = {
   annualCOLA: number;
 };
 
+type ComparisonScenario = {
+  id: number;
+  label: string;
+  plannedRetirementDate: string;
+  annualPercentContribution: number;
+};
+
+type ScenarioSummary = {
+  projectedBalance: number;
+  totalContributions: number;
+  yearsProjected: number;
+  retirementAge: number;
+  estimatedAgencyMatch: number;
+};
+
 type AnalysisRow = {
   year: number;
   age: number;
@@ -77,6 +92,12 @@ const DEFAULT_FUNDS: Record<FundKey, FundInput> = FUND_ORDER.reduce((acc, fund) 
   };
   return acc;
 }, {} as Record<FundKey, FundInput>);
+
+const DEFAULT_COMPARISON_SCENARIOS: ComparisonScenario[] = [
+  { id: 1, label: 'Scenario A', plannedRetirementDate: '', annualPercentContribution: 5 },
+  { id: 2, label: 'Scenario B', plannedRetirementDate: '', annualPercentContribution: 10 },
+  { id: 3, label: 'Scenario C', plannedRetirementDate: '', annualPercentContribution: 15 },
+];
 
 function currency(value: number) {
   return value.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
@@ -176,6 +197,19 @@ function projectAnalysisRows(contributionForm: ContributionForm, primaryFund: Pr
   return { rows, totalContributions };
 }
 
+function buildScenarioSummary(contributionForm: ContributionForm, primaryFund: PrimaryFundOption, funds: Record<FundKey, FundInput>): ScenarioSummary {
+  const { rows, totalContributions } = projectAnalysisRows(contributionForm, primaryFund, funds);
+  const lastRow = rows[rows.length - 1];
+
+  return {
+    projectedBalance: lastRow?.total || 0,
+    totalContributions,
+    yearsProjected: rows.length,
+    retirementAge: lastRow?.age || 0,
+    estimatedAgencyMatch: rows.reduce((sum, row) => sum + row.agencyMatch, 0),
+  };
+}
+
 export function TspCalculator({ onBack }: { onBack: () => void }) {
   const [step, setStep] = useState(1);
   const [contributionForm, setContributionForm] = useState<ContributionForm>(DEFAULT_CONTRIBUTION_FORM);
@@ -183,11 +217,31 @@ export function TspCalculator({ onBack }: { onBack: () => void }) {
   const [funds, setFunds] = useState<Record<FundKey, FundInput>>(DEFAULT_FUNDS);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [comparisonMode, setComparisonMode] = useState(false);
+  const [comparisonScenarios, setComparisonScenarios] = useState<ComparisonScenario[]>(DEFAULT_COMPARISON_SCENARIOS);
   const totalAllocation = useMemo(() => normalizeAllocations(funds), [funds]);
   const { rows, totalContributions } = useMemo(() => projectAnalysisRows(contributionForm, primaryFund, funds), [contributionForm, primaryFund, funds]);
+  const comparisonSummaries = useMemo(() => comparisonScenarios.map((scenario) => ({
+    ...scenario,
+    summary: buildScenarioSummary({
+      ...contributionForm,
+      plannedRetirementDate: scenario.plannedRetirementDate || contributionForm.plannedRetirementDate,
+      annualPercentContribution: scenario.annualPercentContribution,
+    }, primaryFund, funds),
+  })), [comparisonScenarios, contributionForm, primaryFund, funds]);
 
   const setContributionField = (field: keyof ContributionForm, value: string | number) => {
     setContributionForm((prev) => ({ ...prev, [field]: value }));
+    if (field === 'plannedRetirementDate') {
+      setComparisonScenarios((prev) => prev.map((scenario, index) => ({
+        ...scenario,
+        plannedRetirementDate: index === 0 ? String(value) : scenario.plannedRetirementDate,
+        annualPercentContribution: index === 0 ? Number(contributionForm.annualPercentContribution || 0) : scenario.annualPercentContribution,
+      })));
+    }
+    if (field === 'annualPercentContribution') {
+      setComparisonScenarios((prev) => prev.map((scenario, index) => index === 0 ? { ...scenario, annualPercentContribution: Number(value) } : scenario));
+    }
   };
 
   const setFundField = (fund: FundKey, field: keyof FundInput, value: number | string) => {
@@ -259,6 +313,19 @@ export function TspCalculator({ onBack }: { onBack: () => void }) {
     alert(`Report sent to ${emailData.email}`);
   };
 
+  const setComparisonScenarioField = (scenarioId: number, field: keyof Omit<ComparisonScenario, 'id'>, value: string | number) => {
+    setComparisonScenarios((prev) => prev.map((scenario) => scenario.id === scenarioId ? { ...scenario, [field]: field === 'annualPercentContribution' ? Number(value) : String(value) } : scenario));
+  };
+
+  const syncComparisonScenarios = () => {
+    const baseYear = contributionForm.plannedRetirementDate ? new Date(contributionForm.plannedRetirementDate).getFullYear() : new Date().getFullYear() + 20;
+    setComparisonScenarios([
+      { id: 1, label: 'Scenario A', plannedRetirementDate: contributionForm.plannedRetirementDate, annualPercentContribution: Number(contributionForm.annualPercentContribution || 0) },
+      { id: 2, label: 'Scenario B', plannedRetirementDate: `${baseYear + 3}-01-01`, annualPercentContribution: Number(contributionForm.annualPercentContribution || 0) + 5 },
+      { id: 3, label: 'Scenario C', plannedRetirementDate: `${baseYear + 5}-01-01`, annualPercentContribution: Number(contributionForm.annualPercentContribution || 0) + 10 },
+    ]);
+  };
+
   const handlePrint = () => window.print();
   const lastRow = rows[rows.length - 1];
   const currentAge = contributionForm.dateOfBirth ? getAgeOnDate(contributionForm.dateOfBirth, new Date()) : 0;
@@ -272,7 +339,20 @@ export function TspCalculator({ onBack }: { onBack: () => void }) {
         </button>
 
         <h1 className="font-serif text-4xl font-normal text-text mb-3">Thrift Savings Plan Calculator</h1>
-        <p className="text-text-2 text-sm mb-8">Focused four-step TSP projection flow with required annual contribution inputs, fund allocation math, year-by-year analysis, and legacy report delivery actions.</p>
+        <p className="text-text-2 text-sm mb-4">Focused four-step TSP projection flow with required annual contribution inputs, fund allocation math, year-by-year analysis, and legacy report delivery actions.</p>
+
+        <div className="mb-8 rounded-lg border border-border bg-blue-50/60 p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-text">Scenario Comparison Mode</h2>
+              <p className="text-sm text-text-2">Run up to three retirement-date and contribution-rate variations side by side to compare balances, agency match, and years projected.</p>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => { setComparisonMode((prev) => !prev); if (!comparisonMode) syncComparisonScenarios(); }} className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${comparisonMode ? 'bg-text text-white' : 'bg-blue text-white hover:bg-blue-hover'}`}>{comparisonMode ? 'Hide comparison' : 'Enable comparison'}</button>
+              {comparisonMode && <button onClick={syncComparisonScenarios} className="px-4 py-2 text-sm font-semibold rounded-md border border-border bg-white text-text hover:bg-gray-50 transition-colors">Reset presets</button>}
+            </div>
+          </div>
+        </div>
 
         <div className="flex items-center justify-between gap-2 mb-8 overflow-x-auto pb-2">
           {STEP_TITLES.map((label, index) => {
@@ -410,6 +490,50 @@ export function TspCalculator({ onBack }: { onBack: () => void }) {
                   <ResultCard label="Years projected" value={`${rows.length}`} />
                 </div>
 
+                {comparisonMode && (
+                  <div className="space-y-5">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-text">Scenario comparison</h3>
+                        <p className="text-sm text-text-2">Adjust retirement dates and contribution percentages, then review the projected differences side by side.</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                      {comparisonSummaries.map((scenario, index) => {
+                        const baseline = comparisonSummaries[0]?.summary;
+                        const balanceDiff = scenario.summary.projectedBalance - (baseline?.projectedBalance || 0);
+                        const contribDiff = scenario.summary.totalContributions - (baseline?.totalContributions || 0);
+                        return (
+                          <div key={scenario.id} className={`rounded-lg border p-5 ${index === 0 ? 'border-blue bg-blue-50/50' : 'border-border bg-white'}`}>
+                            <div className="space-y-4">
+                              <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wide text-text-3 mb-2">Scenario label</label>
+                                <input type="text" value={scenario.label} onChange={(e) => setComparisonScenarioField(scenario.id, 'label', e.target.value)} className="w-full rounded-md border border-border p-2.5" />
+                              </div>
+                              <div className="grid grid-cols-1 gap-4">
+                                <Field label="Retirement date">
+                                  <input type="date" value={scenario.plannedRetirementDate} onChange={(e) => setComparisonScenarioField(scenario.id, 'plannedRetirementDate', e.target.value)} className="w-full p-2.5 border border-border rounded-md" />
+                                </Field>
+                                <Field label="TSP contribution %">
+                                  <input type="number" min="0" step="0.1" value={scenario.annualPercentContribution} onChange={(e) => setComparisonScenarioField(scenario.id, 'annualPercentContribution', Number(e.target.value))} className="w-full p-2.5 border border-border rounded-md" />
+                                </Field>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <ComparisonMetric label="Projected balance" value={currency(scenario.summary.projectedBalance)} delta={index === 0 ? 'Baseline' : formatDelta(balanceDiff, true)} positive={balanceDiff >= 0} />
+                                <ComparisonMetric label="Total contributions" value={currency(scenario.summary.totalContributions)} delta={index === 0 ? 'Baseline' : formatDelta(contribDiff, true)} positive={contribDiff >= 0} />
+                                <ComparisonMetric label="Retirement age" value={`${scenario.summary.retirementAge || '—'}`} delta={index === 0 ? 'Baseline' : formatYearDelta(scenario.summary.yearsProjected - (baseline?.yearsProjected || 0))} positive={scenario.summary.yearsProjected >= (baseline?.yearsProjected || 0)} />
+                                <ComparisonMetric label="Agency match" value={currency(scenario.summary.estimatedAgencyMatch)} delta={index === 0 ? 'Baseline' : formatDelta(scenario.summary.estimatedAgencyMatch - (baseline?.estimatedAgencyMatch || 0), true)} positive={scenario.summary.estimatedAgencyMatch >= (baseline?.estimatedAgencyMatch || 0)} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <div className="border border-border rounded-md p-4 bg-[#FCFCFD]">
                   <h3 className="font-semibold text-text mb-2">Data Assumptions</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-text-2">
@@ -505,4 +629,25 @@ function ErrorText({ children }: { children: React.ReactNode }) {
 
 function ResultCard({ label, value }: { label: string; value: string }) {
   return <div className="bg-blue-50 rounded-md p-4"><div className="text-xs uppercase tracking-wide text-text-3 mb-2">{label}</div><div className="text-2xl font-mono text-blue">{value}</div></div>;
+}
+
+function formatDelta(value: number, asCurrency = false) {
+  const formatted = asCurrency ? currency(Math.abs(value)) : Math.abs(value).toFixed(1);
+  if (value === 0) return 'No change';
+  return `${value > 0 ? '+' : '-'}${formatted} vs baseline`;
+}
+
+function formatYearDelta(value: number) {
+  if (value === 0) return 'Same horizon as baseline';
+  return `${value > 0 ? '+' : '-'}${Math.abs(value)} yrs vs baseline`;
+}
+
+function ComparisonMetric({ label, value, delta, positive }: { label: string; value: string; delta: string; positive: boolean }) {
+  return (
+    <div className="rounded-md border border-border bg-[#FCFCFD] p-3">
+      <div className="text-xs uppercase tracking-wide text-text-3 mb-1">{label}</div>
+      <div className="text-lg font-semibold text-text">{value}</div>
+      <div className={`text-xs mt-1 ${delta === 'Baseline' ? 'text-text-3' : positive ? 'text-green-700' : 'text-red-600'}`}>{delta}</div>
+    </div>
+  );
 }
