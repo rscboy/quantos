@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { Home } from './components/Home';
@@ -16,9 +16,22 @@ import { NewMemberModal } from './components/NewMemberModal';
 import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { SocialSecurityEstimator } from './components/SocialSecurityEstimator';
 
+const CALCULATOR_VIEWS = new Set([
+  'fers',
+  'csrs',
+  'eligibility',
+  'tsp',
+  'gap',
+  'military',
+  'full',
+  'ss',
+]);
+
 export default function App() {
   const [view, setView] = useState('home');
   const [showModal, setShowModal] = useState(false);
+  const [pendingView, setPendingView] = useState<string | null>(null);
+  const [hasCompletedProfile, setHasCompletedProfile] = useState(() => localStorage.getItem('hasCompletedProfile') === 'true');
 
   const navigateToView = useCallback((nextView: string) => {
     setView(nextView);
@@ -28,40 +41,71 @@ export default function App() {
     });
   }, []);
 
-  const handleSelectCalc = (calcId: string) => {
-    navigateToView(calcId);
+  const openRegistrationGate = useCallback((nextView: string) => {
+    setPendingView(nextView);
+    setShowModal(true);
+    navigateToView('home');
+  }, [navigateToView]);
 
-    // Check if they need to see the modal
-    const hasCompleted = localStorage.getItem('hasCompletedProfile');
-    if (!hasCompleted) {
-      setShowModal(true);
+  const handleNavigate = useCallback((nextView: string) => {
+    const isCalculatorView = CALCULATOR_VIEWS.has(nextView);
+
+    if (isCalculatorView && !hasCompletedProfile) {
+      openRegistrationGate(nextView);
+      return;
     }
-  };
+
+    navigateToView(nextView);
+  }, [hasCompletedProfile, navigateToView, openRegistrationGate]);
+
+  const handleCompleteRegistration = useCallback(() => {
+    setHasCompletedProfile(true);
+    setShowModal(false);
+
+    if (pendingView) {
+      navigateToView(pendingView);
+      setPendingView(null);
+      return;
+    }
+
+    navigateToView('home');
+  }, [navigateToView, pendingView]);
+
+  const modalMessage = useMemo(() => (
+    pendingView
+      ? 'Please complete your registration before you can access any calculator.'
+      : 'Please fill this out the first time you use the calculators.'
+  ), [pendingView]);
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-text bg-bg">
-      <Nav setView={navigateToView} />
-      
-      <div className="flex-1">
-        {view === 'home' && <Home onSelectCalc={handleSelectCalc} />}
-        {view === 'fers' && <FersCalculator onBack={() => handleSelectCalc('home')} />}
-        {view === 'csrs' && <CsrsCalculator onBack={() => handleSelectCalc('home')} />}
-        {view === 'eligibility' && <HowSoonCalculator onBack={() => handleSelectCalc('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
-        {view === 'tsp' && <TspCalculator onBack={() => handleSelectCalc('home')} />}
-        {view === 'gap' && <RetirementGapCalculator onBack={() => handleSelectCalc('home')} />}
-        {view === 'military' && <MilitaryDepositCalculator onBack={() => handleSelectCalc('home')} />}
-        {view === 'full' && <FullRetirementAnalysis onBack={() => handleSelectCalc('home')} />}
-        {view === 'ss' && <SocialSecurityEstimator onBack={() => handleSelectCalc('home')} />}
-      </div>
-      
-      <Footer setView={navigateToView} />
+      <Nav setView={handleNavigate} />
 
-      <NewMemberModal 
-        isOpen={showModal} 
-        onClose={() => setShowModal(false)} 
-        onComplete={() => setShowModal(false)} 
+      <div className="flex-1">
+        {view === 'home' && <Home onSelectCalc={handleNavigate} />}
+        {view === 'fers' && <FersCalculator onBack={() => handleNavigate('home')} />}
+        {view === 'csrs' && <CsrsCalculator onBack={() => handleNavigate('home')} />}
+        {view === 'eligibility' && <HowSoonCalculator onBack={() => handleNavigate('home')} onNavigateToFers={() => handleNavigate('fers')} />}
+        {view === 'tsp' && <TspCalculator onBack={() => handleNavigate('home')} />}
+        {view === 'gap' && <RetirementGapCalculator onBack={() => handleNavigate('home')} />}
+        {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
+        {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} />}
+        {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} />}
+      </div>
+
+      <Footer setView={handleNavigate} />
+
+      <NewMemberModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setPendingView(null);
+          navigateToView('home');
+        }}
+        onComplete={handleCompleteRegistration}
+        canClose={hasCompletedProfile}
+        description={modalMessage}
       />
     </div>
   );
 }
-

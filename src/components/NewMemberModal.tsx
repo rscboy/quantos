@@ -1,27 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onComplete: () => void;
+  canClose?: boolean;
+  description?: string;
 }
 
-export function NewMemberModal({ isOpen, onClose, onComplete }: Props) {
-  const [formData, setFormData] = useState({
-    email: '',
-    emailConfirm: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
-    phone: '',
-    termsAgreed: false,
-  });
+const initialFormData = {
+  email: '',
+  emailConfirm: '',
+  firstName: '',
+  lastName: '',
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
+  phone: '',
+  termsAgreed: false,
+};
 
+export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, description }: Props) {
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!isOpen) {
+      setErrors({});
+    }
+  }, [isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -46,7 +55,6 @@ export function NewMemberModal({ isOpen, onClose, onComplete }: Props) {
       return;
     }
 
-    // Save to local storage to remember they filled it out
     localStorage.setItem('hasCompletedProfile', 'true');
     onComplete();
   };
@@ -60,7 +68,7 @@ export function NewMemberModal({ isOpen, onClose, onComplete }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-navy/80 backdrop-blur-sm"
-            onClick={onClose}
+            onClick={canClose ? onClose : undefined}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -70,7 +78,7 @@ export function NewMemberModal({ isOpen, onClose, onComplete }: Props) {
           >
             <div className="bg-navy p-6 text-white shrink-0">
               <h2 className="font-serif text-2xl mb-1">New Member Registration</h2>
-              <p className="text-white/60 text-sm">Please fill this out the first time you use the calculators.</p>
+              <p className="text-white/60 text-sm">{description ?? 'Please fill this out the first time you use the calculators.'}</p>
             </div>
 
             <div className="overflow-y-auto p-6 flex-1">
@@ -202,13 +210,15 @@ export function NewMemberModal({ isOpen, onClose, onComplete }: Props) {
             </div>
 
             <div className="p-6 border-t border-border bg-gray-50 flex justify-end gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-5 py-2.5 text-sm font-semibold text-text-2 hover:bg-gray-200 rounded-md transition-colors"
-              >
-                Cancel
-              </button>
+              {canClose && (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-5 py-2.5 text-sm font-semibold text-text-2 hover:bg-gray-200 rounded-md transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
               <button
                 type="submit"
                 form="new-member-form"
