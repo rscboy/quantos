@@ -15,6 +15,7 @@ import { MilitaryDepositCalculator } from './components/MilitaryDepositCalculato
 import { NewMemberModal } from './components/NewMemberModal';
 import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { SocialSecurityEstimator } from './components/SocialSecurityEstimator';
+import { AdPlacement } from './components/AdPlacement';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -81,7 +82,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans text-text bg-bg">
       <Nav setView={handleNavigate} />
 
-      <div className="flex-1">
+      <div className="flex-1 pb-24 md:pb-0">
         {view === 'home' && <Home onSelectCalc={handleNavigate} />}
         {view === 'fers' && <FersCalculator onBack={() => handleNavigate('home')} />}
         {view === 'csrs' && <CsrsCalculator onBack={() => handleNavigate('home')} />}
@@ -94,6 +95,16 @@ export default function App() {
       </div>
 
       <Footer setView={handleNavigate} />
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
+        <AdPlacement
+          title={view === 'home' ? 'Quick mobile placement' : 'Sticky mobile placement'}
+          subtitle={view === 'home' ? 'Reserved for a lightweight mobile ad below the primary content.' : 'Reserved for a bottom mobile unit that stays visible without covering any calculator inputs.'}
+          compact
+          refreshToken={view}
+          bannerClassName="min-h-[60px]"
+        />
+      </div>
 
       <NewMemberModal
         isOpen={showModal}

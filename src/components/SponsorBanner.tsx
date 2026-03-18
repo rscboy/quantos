@@ -40,10 +40,12 @@ function ensureAdsenseScript() {
   return adsenseScriptPromise;
 }
 
-export function SponsorBanner({ className = '' }: { className?: string }) {
+export function SponsorBanner({ className = '', refreshToken }: { className?: string; refreshToken?: string | number }) {
   const adRef = useRef<HTMLElement | null>(null);
   const instanceId = useId();
   const [loadError, setLoadError] = useState(false);
+  const [renderNonce, setRenderNonce] = useState(0);
+  const lastRefreshTime = useRef(0);
 
   useEffect(() => {
     let isCancelled = false;
@@ -76,7 +78,59 @@ export function SponsorBanner({ className = '' }: { className?: string }) {
     return () => {
       isCancelled = true;
     };
-  }, [instanceId]);
+  }, [instanceId, renderNonce]);
+
+  useEffect(() => {
+    if (refreshToken === undefined) {
+      return;
+    }
+
+    setRenderNonce((value) => value + 1);
+    lastRefreshTime.current = Date.now();
+  }, [refreshToken]);
+
+  useEffect(() => {
+    const minRefreshInterval = 30000;
+
+    const maybeRefresh = () => {
+      const now = Date.now();
+      if (now - lastRefreshTime.current < minRefreshInterval) {
+        return;
+      }
+
+      lastRefreshTime.current = now;
+      setRenderNonce((value) => value + 1);
+    };
+
+    const interval = window.setInterval(maybeRefresh, 60000);
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        maybeRefresh();
+      }
+    };
+
+    const onScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) {
+        return;
+      }
+
+      const progress = window.scrollY / scrollHeight;
+      if (progress >= 0.5) {
+        maybeRefresh();
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
 
   return (
     <div
@@ -84,6 +138,7 @@ export function SponsorBanner({ className = '' }: { className?: string }) {
     >
       <div className="flex min-h-[56px] w-full items-center justify-center px-3 py-2">
         <ins
+          key={renderNonce}
           ref={adRef}
           className="adsbygoogle block min-h-[40px] w-full"
           style={{ display: 'block' }}

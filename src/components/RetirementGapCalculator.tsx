@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { AdPlacement } from './AdPlacement';
 
 type GapForm = {
   plannedRetirementDate: string;
@@ -221,7 +222,9 @@ export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="animate-in fade-in duration-300">
-      <main className="max-w-[1040px] mx-auto px-6 pb-20 pt-12">
+      <main className="max-w-[1280px] mx-auto px-6 pb-20 pt-12">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-8 items-start">
+          <div>
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
@@ -293,6 +296,12 @@ export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
                   </div>
                 ))}
               </div>
+
+              <AdPlacement
+                title="Inline input-phase placement"
+                subtitle="Reserved after the assumption fields so the ad appears during a natural thinking pause before calculation."
+                refreshToken={`gap-input-${step}`}
+              />
             </div>
           )}
 
@@ -323,6 +332,13 @@ export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
                   <ResultCell label="Shortfall" now={currency(metrics.shortfallNow)} retirement={currency(metrics.shortfallAtRetirement)} emphasize />
                 </div>
               </div>
+
+              <AdPlacement
+                title="Post-summary results placement"
+                subtitle="Reserved directly under the results summary, before users continue into deeper breakdown sections."
+                refreshToken={`gap-results-${Math.round(metrics.additionalSavingsNeeded)}`}
+                className="mb-8"
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="border border-border rounded-lg p-6 bg-white">
@@ -391,7 +407,17 @@ export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
             </div>
           )}
 
-          <div className="flex items-center justify-between gap-4 px-8 py-5 border-t border-border bg-[#FBFBFC]">
+          <div className="border-t border-border bg-[#FBFBFC]">
+            <div className="px-8 pt-6">
+              <AdPlacement
+                title={step === 2 ? 'Before next steps' : 'Before calculate action'}
+                subtitle={step === 2 ? 'Reserved before next-step guidance and email actions on the highest-value page.' : 'Reserved above the main calculation action while the user reviews inputs.'}
+                compact
+                refreshToken={`gap-cta-${step}`}
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-4 px-8 py-5">
             <button onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1} className="inline-flex items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium text-text disabled:opacity-40 disabled:cursor-not-allowed hover:bg-bg">
               Back
             </button>
@@ -406,6 +432,19 @@ export function RetirementGapCalculator({ onBack }: { onBack: () => void }) {
                 </button>
               )}
             </div>
+            </div>
+          </div>
+        </div>
+          </div>
+
+          <div className="hidden xl:block">
+            <AdPlacement
+              title="Desktop sticky results rail"
+              subtitle="Reserved for a persistent calculator ad while users compare assumptions, review shortfalls, and revisit scenarios."
+              sticky
+              refreshToken={`gap-sidebar-${step}`}
+              bannerClassName="min-h-[250px]"
+            />
           </div>
         </div>
       </main>

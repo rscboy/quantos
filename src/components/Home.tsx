@@ -1,30 +1,31 @@
 import React from 'react';
+import { AdPlacement } from './AdPlacement';
 import { SponsorBanner } from './SponsorBanner';
 
 const CALCULATORS = [
   {
-    category: "Primary Pension Systems",
+    category: 'Primary Pension Systems',
     items: [
-      { id: 'fers', name: "FERS Annuity Calculator", desc: "Includes MRA+10, early retirement, FERS transfer, deposits, redeposits, part-time service, and special rules for law enforcement, firefighters, and air traffic controllers.", tag: "Advanced" },
-      { id: 'csrs', name: "CSRS Annuity Calculator", desc: "Includes early retirement, deposits, redeposits, life insurance, sick-leave adjustments, and special rules for law enforcement, firefighters, and air traffic controllers.", tag: "Advanced" },
-      { id: 'eligibility', name: "How Soon Can I Retire?", desc: "Find out the soonest possible date you can retire from Federal service and still receive a retirement annuity.", tag: "Standard" },
-    ]
+      { id: 'fers', name: 'FERS Annuity Calculator', desc: 'Includes MRA+10, early retirement, FERS transfer, deposits, redeposits, part-time service, and special rules for law enforcement, firefighters, and air traffic controllers.', tag: 'Advanced' },
+      { id: 'csrs', name: 'CSRS Annuity Calculator', desc: 'Includes early retirement, deposits, redeposits, life insurance, sick-leave adjustments, and special rules for law enforcement, firefighters, and air traffic controllers.', tag: 'Advanced' },
+      { id: 'eligibility', name: 'How Soon Can I Retire?', desc: 'Find out the soonest possible date you can retire from Federal service and still receive a retirement annuity.', tag: 'Standard' },
+    ],
   },
   {
-    category: "Savings & Investment",
+    category: 'Savings & Investment',
     items: [
-      { id: 'tsp', name: "Thrift Savings Plan Calculator", desc: "Calculate how much your TSP deposits and future savings will be worth in 5, 10, or 20 years. Includes allocation formulas for Lifecycle (L) Funds.", tag: "Advanced" },
-      { id: 'gap', name: "Retirement Savings Gap Calculator", desc: "Are you saving enough for retirement? Run this calculator and find out if you're on track to meet your goals.", tag: "Standard" },
-      { id: 'full', name: "Full Retirement Analysis", desc: "The complete suite — all calculators with future time projections. Save your data locally or upload a saved scenario to pick up where you left off.", tag: "Comprehensive" },
-    ]
+      { id: 'tsp', name: 'Thrift Savings Plan Calculator', desc: 'Calculate how much your TSP deposits and future savings will be worth in 5, 10, or 20 years. Includes allocation formulas for Lifecycle (L) Funds.', tag: 'Advanced' },
+      { id: 'gap', name: 'Retirement Savings Gap Calculator', desc: "Are you saving enough for retirement? Run this calculator and find out if you're on track to meet your goals.", tag: 'Standard' },
+      { id: 'full', name: 'Full Retirement Analysis', desc: 'The complete suite — all calculators with future time projections. Save your data locally or upload a saved scenario to pick up where you left off.', tag: 'Comprehensive' },
+    ],
   },
   {
-    category: "Specialized Credits & Estimates",
+    category: 'Specialized Credits & Estimates',
     items: [
-      { id: 'military', name: "Military Deposit Calculator", desc: "Your military service can increase your retirement annuity. Calculate how much you need to repay to receive that service credit.", tag: "Standard" },
-      { id: 'ss', name: "Social Security Estimator", desc: "Find out how much your monthly Social Security benefit will be at retirement. Works best when run inside the Full Retirement Analysis.", tag: "Advanced" },
-    ]
-  }
+      { id: 'military', name: 'Military Deposit Calculator', desc: 'Your military service can increase your retirement annuity. Calculate how much you need to repay to receive that service credit.', tag: 'Standard' },
+      { id: 'ss', name: 'Social Security Estimator', desc: 'Find out how much your monthly Social Security benefit will be at retirement. Works best when run inside the Full Retirement Analysis.', tag: 'Advanced' },
+    ],
+  },
 ];
 
 export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
@@ -99,62 +100,92 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         </div>
       </div>
 
-      <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
-        <div className="mb-12">
-          <SponsorBanner className="h-[44px] w-full max-w-2xl mx-auto" />
+      <div className="border-b border-border bg-[#F9FBFF] px-6 py-4">
+        <div className="max-w-[1200px] mx-auto">
+          <AdPlacement
+            title="Top-banner quick impression zone"
+            subtitle="Reserved directly below the header for low-intent visitors who may leave fast, keeping the unit visible without blocking the first useful content."
+            bannerClassName="min-h-[72px]"
+            refreshToken="landing-top"
+          />
         </div>
+      </div>
 
-        {CALCULATORS.map((section, idx) => {
-          const count = section.items.length;
-          return (
-            <React.Fragment key={idx}>
-              <div className="mb-14">
-                <div className="flex items-center gap-4 mb-7">
-                <span className="font-serif text-[13px] font-normal text-text-2 tracking-[0.02em]">{section.category}</span>
-                <div className="flex-1 h-px bg-border"></div>
-                <span className="font-mono text-[11px] text-text-3">{count} tool{count !== 1 ? 's' : ''}</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-border border border-border rounded-lg overflow-hidden">
-                {section.items.map((item) => {
-                  const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
-                  const target = ['fers', 'csrs', 'eligibility', 'tsp', 'military', 'gap', 'full', 'ss'].includes(item.id) ? item.id : 'home';
-                  return (
-                    <div
-                      key={item.id}
-                      className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF]"
-                      onClick={() => onSelectCalc(target)}
-                    >
-                      <div className={`text-[10px] font-semibold tracking-[0.08em] uppercase mb-3.5 ${tagClass}`}>
-                        {item.tag}
-                      </div>
-                      <h3 className="font-serif text-lg font-normal text-text leading-[1.25] mb-2.5">
-                        {item.name}
-                      </h3>
-                      <p className="text-[13px] text-text-2 leading-[1.65] flex-1">
-                        {item.desc}
-                      </p>
-                      <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
-                        <span className="text-xs font-semibold text-blue tracking-[0.02em]">Open calculator</span>
-                        <span className="opacity-0 -translate-x-1 transition-all duration-150 text-blue text-base leading-none group-hover:opacity-100 group-hover:translate-x-0">→</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+      <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-8 items-start">
+          <div>
+            <div className="mb-12">
+              <SponsorBanner className="h-[44px] w-full max-w-2xl mx-auto" refreshToken="landing-inline-hero" />
             </div>
-            {idx === 0 && (
-              <div className="mb-14">
-                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
-              </div>
-            )}
-            {idx === 2 && (
-              <div className="mb-14">
-                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
-              </div>
-            )}
-            </React.Fragment>
-          );
-        })}
+
+            {CALCULATORS.map((section, idx) => {
+              const count = section.items.length;
+              return (
+                <React.Fragment key={idx}>
+                  <div className="mb-14">
+                    <div className="flex items-center gap-4 mb-7">
+                      <span className="font-serif text-[13px] font-normal text-text-2 tracking-[0.02em]">{section.category}</span>
+                      <div className="flex-1 h-px bg-border"></div>
+                      <span className="font-mono text-[11px] text-text-3">{count} tool{count !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-border border border-border rounded-lg overflow-hidden">
+                      {section.items.map((item) => {
+                        const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
+                        const target = ['fers', 'csrs', 'eligibility', 'tsp', 'military', 'gap', 'full', 'ss'].includes(item.id) ? item.id : 'home';
+                        return (
+                          <div
+                            key={item.id}
+                            className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF]"
+                            onClick={() => onSelectCalc(target)}
+                          >
+                            <div className={`text-[10px] font-semibold tracking-[0.08em] uppercase mb-3.5 ${tagClass}`}>
+                              {item.tag}
+                            </div>
+                            <h3 className="font-serif text-lg font-normal text-text leading-[1.25] mb-2.5">
+                              {item.name}
+                            </h3>
+                            <p className="text-[13px] text-text-2 leading-[1.65] flex-1">
+                              {item.desc}
+                            </p>
+                            <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
+                              <span className="text-xs font-semibold text-blue tracking-[0.02em]">Open calculator</span>
+                              <span className="opacity-0 -translate-x-1 transition-all duration-150 text-blue text-base leading-none group-hover:opacity-100 group-hover:translate-x-0">→</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  {idx === 0 && (
+                    <div className="mb-14">
+                      <AdPlacement
+                        title="Mid-page section break"
+                        subtitle="Reserved between calculator sections so scanning users see a second unit during the natural comparison pause."
+                        bannerClassName="min-h-[72px]"
+                        refreshToken={`landing-mid-${idx}`}
+                      />
+                    </div>
+                  )}
+                  {idx === 2 && (
+                    <div className="mb-14">
+                      <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" refreshToken="landing-footer" />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+
+          <div className="hidden lg:block">
+            <AdPlacement
+              title="Desktop sticky sidebar"
+              subtitle="Reserved for a persistent but non-intrusive unit while visitors compare calculators on the landing page."
+              sticky
+              refreshToken="landing-sidebar"
+              bannerClassName="min-h-[250px]"
+            />
+          </div>
+        </div>
       </main>
     </div>
   );
