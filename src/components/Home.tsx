@@ -30,10 +30,18 @@ const CALCULATORS = [
 export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
   return (
     <div className="animate-in fade-in duration-300">
-      <div className="bg-navy text-white pt-[72px] px-6 pb-20 border-b border-white/5">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_380px] gap-16 items-start">
+      <div className="hero-section bg-navy text-white pt-[72px] px-6 pb-20 border-b border-white/5 overflow-hidden isolate">
+        <div className="hero-section__backdrop" aria-hidden="true">
+          <div className="hero-section__aurora hero-section__aurora--one"></div>
+          <div className="hero-section__aurora hero-section__aurora--two"></div>
+          <div className="hero-section__grid"></div>
+          <div className="hero-section__glow hero-section__glow--left"></div>
+          <div className="hero-section__glow hero-section__glow--right"></div>
+        </div>
+
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_380px] gap-16 items-start relative z-10">
           <div>
-            <div className="inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5">
+            <div className="inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5 backdrop-blur-sm">
               New — Phased Retirement Estimates
             </div>
             <h1 className="font-serif text-[clamp(30px,4vw,46px)] leading-[1.15] text-white mb-5 font-normal">
@@ -57,7 +65,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               </div>
             </div>
           </div>
-          <div className="hidden md:block bg-white/5 border border-white/10 rounded-lg p-7">
+          <div className="hidden md:block bg-white/5 border border-white/10 rounded-lg p-7 backdrop-blur-md shadow-[0_20px_70px_rgba(5,12,24,0.24)]">
             <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-white/30 mb-3.5 flex items-center gap-1.5 before:content-[''] before:inline-block before:w-5 before:h-0.5 before:bg-blue">
               Developer
             </div>
