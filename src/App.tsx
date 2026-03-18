@@ -10,6 +10,7 @@ import { Home } from './components/Home';
 import { CsrsCalculator, FersCalculator } from './components/FersCalculator';
 import { TspCalculator } from './components/TspCalculator';
 import { HowSoonCalculator } from './components/HowSoonCalculator';
+import { MilitaryDepositCalculator } from './components/MilitaryDepositCalculator';
 import { NewMemberModal } from './components/NewMemberModal';
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
         {view === 'csrs' && <CsrsCalculator onBack={() => handleSelectCalc('home')} />}
         {view === 'eligibility' && <HowSoonCalculator onBack={() => handleSelectCalc('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
         {view === 'tsp' && <TspCalculator onBack={() => handleSelectCalc('home')} />}
+        {view === 'military' && <MilitaryDepositCalculator onBack={() => handleSelectCalc('home')} />}
       </div>
       
       <Footer setView={setView} />
