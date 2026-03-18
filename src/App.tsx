@@ -13,6 +13,7 @@ import { RetirementGapCalculator } from './components/RetirementGapCalculator';
 import { HowSoonCalculator } from './components/HowSoonCalculator';
 import { MilitaryDepositCalculator } from './components/MilitaryDepositCalculator';
 import { NewMemberModal } from './components/NewMemberModal';
+import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 
 export default function App() {
   const [view, setView] = useState('home');
@@ -41,6 +42,7 @@ export default function App() {
         {view === 'tsp' && <TspCalculator onBack={() => handleSelectCalc('home')} />}
         {view === 'gap' && <RetirementGapCalculator onBack={() => handleSelectCalc('home')} />}
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleSelectCalc('home')} />}
+        {view === 'full' && <FullRetirementAnalysis onBack={() => handleSelectCalc('home')} />}
       </div>
       
       <Footer setView={setView} />
