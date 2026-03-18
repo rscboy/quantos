@@ -8,9 +8,9 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
           <div>
             <div className="flex items-center gap-3 mb-3.5">
               <img 
-                src="https://raw.githubusercontent.com/rscboy/quantos/refs/heads/main/logo2.png" 
+                src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
                 alt="FedCalc by Quantos" 
-                className="h-10 w-auto object-contain brightness-0 invert" 
+                className="h-10 w-auto object-contain" 
                 referrerPolicy="no-referrer" 
               />
               <div className="flex flex-col justify-center items-start">
