@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { Home } from './components/Home';
@@ -19,8 +19,11 @@ export default function App() {
   const [view, setView] = useState('home');
   const [showModal, setShowModal] = useState(false);
 
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [view]);
+
   const handleSelectCalc = (calcId: string) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     setView(calcId);
     
     // Check if they need to see the modal
