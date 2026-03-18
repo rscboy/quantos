@@ -82,10 +82,10 @@ export function SponsorBanner({ className = '' }: { className?: string }) {
     <div
       className={`bg-white border border-border rounded-lg overflow-hidden ${className}`}
     >
-      <div className="flex min-h-[90px] w-full items-center justify-center px-4 py-3">
+      <div className="flex min-h-[56px] w-full items-center justify-center px-3 py-2">
         <ins
           ref={adRef}
-          className="adsbygoogle block min-h-[60px] w-full"
+          className="adsbygoogle block min-h-[40px] w-full"
           style={{ display: 'block' }}
           data-ad-client={ADSENSE_CLIENT}
           data-ad-format="auto"
