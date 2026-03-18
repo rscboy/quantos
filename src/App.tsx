@@ -4,6 +4,7 @@
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
+import { LinkedCalculatorData, loadLinkedCalculatorData, mergeLinkedData } from './utils/calculatorLinking';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { Home } from './components/Home';
@@ -32,6 +33,11 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [pendingView, setPendingView] = useState<string | null>(null);
   const [hasCompletedProfile, setHasCompletedProfile] = useState(() => localStorage.getItem('hasCompletedProfile') === 'true');
+  const [linkedCalculatorData, setLinkedCalculatorData] = useState<LinkedCalculatorData>(() => loadLinkedCalculatorData());
+
+  const handleLinkedDataUpdate = useCallback((update: Partial<LinkedCalculatorData>) => {
+    setLinkedCalculatorData((current) => mergeLinkedData(current, update));
+  }, []);
 
   const navigateToView = useCallback((nextView: string) => {
     setView(nextView);
@@ -86,11 +92,11 @@ export default function App() {
         {view === 'fers' && <FersCalculator onBack={() => handleNavigate('home')} />}
         {view === 'csrs' && <CsrsCalculator onBack={() => handleNavigate('home')} />}
         {view === 'eligibility' && <HowSoonCalculator onBack={() => handleNavigate('home')} onNavigateToFers={() => handleNavigate('fers')} />}
-        {view === 'tsp' && <TspCalculator onBack={() => handleNavigate('home')} />}
-        {view === 'gap' && <RetirementGapCalculator onBack={() => handleNavigate('home')} />}
+        {view === 'tsp' && <TspCalculator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
+        {view === 'gap' && <RetirementGapCalculator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
-        {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} />}
-        {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} />}
+        {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
+        {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
       </div>
 
       <Footer setView={handleNavigate} />
