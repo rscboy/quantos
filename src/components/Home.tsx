@@ -114,7 +114,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-border border border-border rounded-lg overflow-hidden">
                 {section.items.map((item) => {
                   const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
-                  const target = item.id === 'fers' ? 'fers' : 'home';
+                  const target = (item.id === 'fers' || item.id === 'eligibility') ? item.id : 'home';
                   return (
                     <div
                       key={item.id}

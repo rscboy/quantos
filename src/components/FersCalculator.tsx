@@ -7,6 +7,7 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
   const [isCalculating, setIsCalculating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<Partial<FedEmployee>>({
     dateRetire: '',
@@ -72,11 +73,57 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
     });
   };
 
+  const handleNext = () => {
+    const errors: Record<string, string> = {};
+    
+    if (step === 1) {
+      if (!formData.dateRetire) errors.dateRetire = 'Planned retirement date is required';
+      if (!formData.dateServiceComp) errors.dateServiceComp = 'Service computation date is required';
+      if (!formData.dateOfBirth) errors.dateOfBirth = 'Date of birth is required';
+    } else if (step === 5) {
+      const hasSalary = (formData.fLastSalary && formData.fLastSalary > 0) || 
+                        (formData.fManualHigh3 && formData.fManualHigh3 > 0) || 
+                        (formData.salaryHistory && formData.salaryHistory.some(s => s.startAmount && s.startAmount > 0));
+      if (!hasSalary) {
+        errors.salary = 'Please provide either last salary, High-3 salary, or salary history';
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    setValidationErrors({});
+    setStep(s => Math.min(7, s + 1));
+  };
+
   const handleApiCalculate = async () => {
+    // Final validation check
+    const errors: Record<string, string> = {};
+    if (!formData.dateRetire) errors.dateRetire = 'Planned retirement date is required';
+    if (!formData.dateServiceComp) errors.dateServiceComp = 'Service computation date is required';
+    if (!formData.dateOfBirth) errors.dateOfBirth = 'Date of birth is required';
+    
+    const hasSalary = (formData.fLastSalary && formData.fLastSalary > 0) || 
+                      (formData.fManualHigh3 && formData.fManualHigh3 > 0) || 
+                      (formData.salaryHistory && formData.salaryHistory.some(s => s.startAmount && s.startAmount > 0));
+    if (!hasSalary) {
+      errors.salary = 'Please provide either last salary, High-3 salary, or salary history';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setApiError('Please go back and fill in all required fields (Step 1 dates and Step 5 salary).');
+      return;
+    }
+
     setIsCalculating(true);
     setApiError(null);
     
     try {
+      const payload = fedcalcApi.mapToFedEmployee(formData);
+      console.log('Submitting FERS payload to /api/fedcalc/calculate?type=fers:', JSON.stringify(payload, null, 2));
       const apiResults = await fedcalcApi.calculateRetirement(formData, 'fers');
       setReportData(apiResults);
       setStep(8); // Go to report step
@@ -298,16 +345,19 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-text-2 mb-2">Planned Full (or Phased) Retirement</label>
-                    <input type="date" name="dateRetire" value={formData.dateRetire} onChange={handleChange} className="w-full p-2.5 border border-border rounded-md" />
+                    <label className="block text-sm font-semibold text-text-2 mb-2">Planned Full (or Phased) Retirement <span className="text-red-500">*</span></label>
+                    <input type="date" name="dateRetire" value={formData.dateRetire} onChange={handleChange} className={`w-full p-2.5 border ${validationErrors.dateRetire ? 'border-red-500' : 'border-border'} rounded-md`} />
+                    {validationErrors.dateRetire && <p className="text-red-500 text-xs mt-1">{validationErrors.dateRetire}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-text-2 mb-2">Service Computation Date (SCD)</label>
-                    <input type="date" name="dateServiceComp" value={formData.dateServiceComp} onChange={handleChange} className="w-full p-2.5 border border-border rounded-md" />
+                    <label className="block text-sm font-semibold text-text-2 mb-2">Service Computation Date (SCD) <span className="text-red-500">*</span></label>
+                    <input type="date" name="dateServiceComp" value={formData.dateServiceComp} onChange={handleChange} className={`w-full p-2.5 border ${validationErrors.dateServiceComp ? 'border-red-500' : 'border-border'} rounded-md`} />
+                    {validationErrors.dateServiceComp && <p className="text-red-500 text-xs mt-1">{validationErrors.dateServiceComp}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-text-2 mb-2">Date of Birth</label>
-                    <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} className="w-full p-2.5 border border-border rounded-md" />
+                    <label className="block text-sm font-semibold text-text-2 mb-2">Date of Birth <span className="text-red-500">*</span></label>
+                    <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} className={`w-full p-2.5 border ${validationErrors.dateOfBirth ? 'border-red-500' : 'border-border'} rounded-md`} />
+                    {validationErrors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{validationErrors.dateOfBirth}</p>}
                   </div>
                 </div>
 
@@ -451,13 +501,18 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
               <h2 className="text-xl font-semibold mb-6">Salary History</h2>
               
               <div className="space-y-6 mb-8">
+                {validationErrors.salary && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm mb-4">
+                    {validationErrors.salary}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Enter your salary at time of retirement</label>
-                  <input type="number" name="fLastSalary" value={formData.fLastSalary || ''} onChange={handleChange} className="w-full max-w-md p-2.5 border border-border rounded-md" />
+                  <input type="number" name="fLastSalary" value={formData.fLastSalary || ''} onChange={handleChange} className={`w-full max-w-md p-2.5 border ${validationErrors.salary ? 'border-red-500' : 'border-border'} rounded-md`} />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">If you already know your 'High 3', enter it here</label>
-                  <input type="number" name="fManualHigh3" value={formData.fManualHigh3 || ''} onChange={handleChange} className="w-full max-w-md p-2.5 border border-border rounded-md" />
+                  <input type="number" name="fManualHigh3" value={formData.fManualHigh3 || ''} onChange={handleChange} className={`w-full max-w-md p-2.5 border ${validationErrors.salary ? 'border-red-500' : 'border-border'} rounded-md`} />
                 </div>
               </div>
 
@@ -687,7 +742,7 @@ export function FersCalculator({ onBack }: { onBack: () => void }) {
               
               {step < 7 ? (
                 <button
-                  onClick={() => setStep(s => Math.min(7, s + 1))}
+                  onClick={handleNext}
                   className="px-6 py-2.5 text-sm font-semibold text-white bg-blue hover:bg-blue-hover rounded-md transition-colors shadow-sm"
                 >
                   Next

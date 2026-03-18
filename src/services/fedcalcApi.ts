@@ -12,30 +12,30 @@ export interface FedEmployee {
   dateSpecialTo?: string;
   dateCSRSTransfer?: string;
   dateAnniversaryDate?: string;
-  bLawEnforce?: boolean;
-  bAirTraffic?: boolean;
-  bLifeIns?: boolean;
-  bCustomsBorderPatrol?: boolean;
-  bLifeInsA?: boolean;
-  bLifeInsB?: boolean;
-  bLifeInsC?: boolean;
-  bLifeFullOptionB?: boolean;
-  bLifeFullOptionC?: boolean;
-  bEarlyOut?: boolean;
-  bPhasedRetire?: boolean;
-  bSSEligible?: boolean;
-  bSpecialComp?: boolean;
-  bCSRS?: boolean;
-  bCSRSTransfer?: boolean;
-  bRptSummary?: boolean;
-  bRptAnnuity?: boolean;
-  bRptTSP?: boolean;
-  bRptFEGLI?: boolean;
-  bRptFEHB?: boolean;
-  bRptLTC?: boolean;
-  bRptSocSec?: boolean;
-  bRptData?: boolean;
-  bRptGap?: boolean;
+  bLawEnforce?: string;
+  bAirTraffic?: string;
+  bLifeIns?: string;
+  bCustomsBorderPatrol?: string;
+  bLifeInsA?: string;
+  bLifeInsB?: string;
+  bLifeInsC?: string;
+  bLifeFullOptionB?: string;
+  bLifeFullOptionC?: string;
+  bEarlyOut?: string;
+  bPhasedRetire?: string;
+  bSSEligible?: string;
+  bSpecialComp?: string;
+  bCSRS?: string;
+  bCSRSTransfer?: string;
+  bRptSummary?: string;
+  bRptAnnuity?: string;
+  bRptTSP?: string;
+  bRptFEGLI?: string;
+  bRptFEHB?: string;
+  bRptLTC?: string;
+  bRptSocSec?: string;
+  bRptData?: string;
+  bRptGap?: string;
   nSickLeaveHrs?: number;
   nAnnualLeaveHrs?: number;
   nLifeInsBasic?: number;
@@ -112,31 +112,31 @@ class FedcalcApiService {
       dateAnniversaryDate: uiData.dateAnniversaryDate || '',
       sLFundType: uiData.sLFundType || '',
       
-      // Booleans
-      bLawEnforce: uiData.bLawEnforce || false,
-      bAirTraffic: uiData.bAirTraffic || false,
-      bLifeIns: uiData.bLifeIns || false,
-      bCustomsBorderPatrol: uiData.bCustomsBorderPatrol || false,
-      bLifeInsA: uiData.bLifeInsA || false,
-      bLifeInsB: uiData.bLifeInsB || false,
-      bLifeInsC: uiData.bLifeInsC || false,
-      bLifeFullOptionB: uiData.bLifeFullOptionB || false,
-      bLifeFullOptionC: uiData.bLifeFullOptionC || false,
-      bEarlyOut: uiData.bEarlyOut || false,
-      bPhasedRetire: uiData.bPhasedRetire || false,
-      bSSEligible: uiData.bSSEligible || false,
-      bSpecialComp: uiData.bSpecialComp || false,
-      bCSRS: uiData.bCSRS || false,
-      bCSRSTransfer: uiData.bCSRSTransfer || false,
-      bRptSummary: uiData.bRptSummary || false,
-      bRptAnnuity: uiData.bRptAnnuity || false,
-      bRptTSP: uiData.bRptTSP || false,
-      bRptFEGLI: uiData.bRptFEGLI || false,
-      bRptFEHB: uiData.bRptFEHB || false,
-      bRptLTC: uiData.bRptLTC || false,
-      bRptSocSec: uiData.bRptSocSec || false,
-      bRptData: uiData.bRptData || false,
-      bRptGap: uiData.bRptGap || false,
+      // Booleans mapped to Y/N
+      bLawEnforce: (uiData.bLawEnforce === true || uiData.bLawEnforce === 'Y') ? 'Y' : 'N',
+      bAirTraffic: (uiData.bAirTraffic === true || uiData.bAirTraffic === 'Y') ? 'Y' : 'N',
+      bLifeIns: (uiData.bLifeIns === true || uiData.bLifeIns === 'Y') ? 'Y' : 'N',
+      bCustomsBorderPatrol: (uiData.bCustomsBorderPatrol === true || uiData.bCustomsBorderPatrol === 'Y') ? 'Y' : 'N',
+      bLifeInsA: (uiData.bLifeInsA === true || uiData.bLifeInsA === 'Y') ? 'Y' : 'N',
+      bLifeInsB: (uiData.bLifeInsB === true || uiData.bLifeInsB === 'Y') ? 'Y' : 'N',
+      bLifeInsC: (uiData.bLifeInsC === true || uiData.bLifeInsC === 'Y') ? 'Y' : 'N',
+      bLifeFullOptionB: (uiData.bLifeFullOptionB === true || uiData.bLifeFullOptionB === 'Y') ? 'Y' : 'N',
+      bLifeFullOptionC: (uiData.bLifeFullOptionC === true || uiData.bLifeFullOptionC === 'Y') ? 'Y' : 'N',
+      bEarlyOut: (uiData.bEarlyOut === true || uiData.bEarlyOut === 'Y') ? 'Y' : 'N',
+      bPhasedRetire: (uiData.bPhasedRetire === true || uiData.bPhasedRetire === 'Y') ? 'Y' : 'N',
+      bSSEligible: (uiData.bSSEligible === true || uiData.bSSEligible === 'Y') ? 'Y' : 'N',
+      bSpecialComp: (uiData.bSpecialComp === true || uiData.bSpecialComp === 'Y') ? 'Y' : 'N',
+      bCSRS: (uiData.bCSRS === true || uiData.bCSRS === 'Y') ? 'Y' : 'N',
+      bCSRSTransfer: (uiData.bCSRSTransfer === true || uiData.bCSRSTransfer === 'Y') ? 'Y' : 'N',
+      bRptSummary: (uiData.bRptSummary === true || uiData.bRptSummary === 'Y') ? 'Y' : 'N',
+      bRptAnnuity: (uiData.bRptAnnuity === true || uiData.bRptAnnuity === 'Y') ? 'Y' : 'N',
+      bRptTSP: (uiData.bRptTSP === true || uiData.bRptTSP === 'Y') ? 'Y' : 'N',
+      bRptFEGLI: (uiData.bRptFEGLI === true || uiData.bRptFEGLI === 'Y') ? 'Y' : 'N',
+      bRptFEHB: (uiData.bRptFEHB === true || uiData.bRptFEHB === 'Y') ? 'Y' : 'N',
+      bRptLTC: (uiData.bRptLTC === true || uiData.bRptLTC === 'Y') ? 'Y' : 'N',
+      bRptSocSec: (uiData.bRptSocSec === true || uiData.bRptSocSec === 'Y') ? 'Y' : 'N',
+      bRptData: (uiData.bRptData === true || uiData.bRptData === 'Y') ? 'Y' : 'N',
+      bRptGap: (uiData.bRptGap === true || uiData.bRptGap === 'Y') ? 'Y' : 'N',
       
       // Integers
       nSickLeaveHrs: uiData.nSickLeaveHrs !== undefined ? Number(uiData.nSickLeaveHrs) : 0,
@@ -251,6 +251,10 @@ class FedcalcApiService {
           replacementRate: years * 0.01 * 100,
           html: "<p>Mock report generated successfully (Client-side fallback).</p>"
         },
+        howSoon: {
+          eligibilityDate: "2035-01-01",
+          html: "<p>Mock eligibility report generated successfully.</p>"
+        },
         rawResponse: { message: "Mock response generated successfully" }
       };
     } else {
@@ -282,6 +286,10 @@ class FedcalcApiService {
             monthlyAnnuity: data.MonthlyAnnuity || data.BasicAnnuityMo || 0,
             annualAnnuity: (data.MonthlyAnnuity || data.BasicAnnuityMo || 0) * 12,
             replacementRate: data.PctHigh3 || 0,
+            html: data.html || ''
+          },
+          howSoon: {
+            eligibilityDate: data.EligibilityDate || data.eligibilityDate || data.DateRetire || data.dateRetire || '',
             html: data.html || ''
           },
           rawResponse: data
