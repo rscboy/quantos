@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { Home } from './components/Home';
@@ -19,13 +19,17 @@ export default function App() {
   const [view, setView] = useState('home');
   const [showModal, setShowModal] = useState(false);
 
-  useLayoutEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [view]);
+  const navigateToView = useCallback((nextView: string) => {
+    setView(nextView);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+  }, []);
 
   const handleSelectCalc = (calcId: string) => {
-    setView(calcId);
-    
+    navigateToView(calcId);
+
     // Check if they need to see the modal
     const hasCompleted = localStorage.getItem('hasCompletedProfile');
     if (!hasCompleted) {
@@ -35,7 +39,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-text bg-bg">
-      <Nav setView={setView} />
+      <Nav setView={navigateToView} />
       
       <div className="flex-1">
         {view === 'home' && <Home onSelectCalc={handleSelectCalc} />}
@@ -48,7 +52,7 @@ export default function App() {
         {view === 'full' && <FullRetirementAnalysis onBack={() => handleSelectCalc('home')} />}
       </div>
       
-      <Footer setView={setView} />
+      <Footer setView={navigateToView} />
 
       <NewMemberModal 
         isOpen={showModal} 
