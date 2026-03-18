@@ -33,16 +33,6 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
                 Calculators
               </a>
             </li>
-            <li>
-              <a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white hover:no-underline">
-                Retirement Guides
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white hover:no-underline">
-                Pay Scales
-              </a>
-            </li>
           </ul>
         </div>
       </nav>
