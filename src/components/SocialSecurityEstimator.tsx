@@ -45,7 +45,8 @@ const MONTHS = [
   { value: '12', label: 'December' },
 ];
 const DAYS = Array.from({ length: 31 }, (_, index) => String(index + 1));
-const YEARS_FOR_DROPDOWN = Array.from({ length: CURRENT_YEAR - 1900 + 1 }, (_, index) => String(1900 + index)).reverse();
+const BIRTH_YEARS_FOR_DROPDOWN = Array.from({ length: CURRENT_YEAR - 1900 + 1 }, (_, index) => String(1900 + index)).reverse();
+const RETIREMENT_YEARS_FOR_DROPDOWN = Array.from({ length: (CURRENT_YEAR + 50) - 1900 + 1 }, (_, index) => String(1900 + index)).reverse();
 const CURRENCY = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 const QUARTER_COVERAGE_AMOUNT: Record<number, number> = {
@@ -227,7 +228,7 @@ function computeResults(form: FormState): EstimateResults {
   };
 }
 
-function DateSelectors({ label, value, onChange, error }: { label: string; value: DateParts; onChange: (field: keyof DateParts, next: string) => void; error?: string }) {
+function DateSelectors({ label, value, onChange, error, years }: { label: string; value: DateParts; onChange: (field: keyof DateParts, next: string) => void; error?: string; years: string[] }) {
   const selectClass = `w-full rounded-md border px-3 py-2.5 text-sm ${error ? 'border-red-500' : 'border-border'}`;
   return (
     <div>
@@ -243,7 +244,7 @@ function DateSelectors({ label, value, onChange, error }: { label: string; value
         </select>
         <select value={value.year} onChange={(e) => onChange('year', e.target.value)} className={selectClass}>
           <option value="">Year</option>
-          {YEARS_FOR_DROPDOWN.map((year) => <option key={year} value={year}>{year}</option>)}
+          {years.map((year) => <option key={year} value={year}>{year}</option>)}
         </select>
       </div>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
@@ -283,12 +284,6 @@ export function SocialSecurityEstimator({ onBack }: { onBack: () => void }) {
       if (birthDate && retirementDate && retirementDate <= birthDate) nextErrors.retirementDate = 'Retirement Date must be after Date of Birth.';
       if (form.currentYearEarnings === '') nextErrors.currentYearEarnings = 'Current Year Earnings is required.';
       if (form.futureYearEarnings === '') nextErrors.futureYearEarnings = 'Future Year Earnings is required.';
-      YEARS.forEach((year) => {
-        const birthYear = birthDate?.getFullYear() ?? START_YEAR;
-        if (year >= birthYear && year <= CURRENT_YEAR && form.earningsHistory[year] === '') {
-          nextErrors[`earnings-${year}`] = 'Required';
-        }
-      });
     }
     if (targetStep === 3) {
       if (!email.primary) nextErrors.email = 'Email Address is required.';
@@ -341,8 +336,8 @@ export function SocialSecurityEstimator({ onBack }: { onBack: () => void }) {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <DateSelectors label="Date of Birth" value={form.birthDate} onChange={(field, value) => setDateField('birthDate', field, value)} error={errors.birthDate} />
-                <DateSelectors label="Retirement Date" value={form.retirementDate} onChange={(field, value) => setDateField('retirementDate', field, value)} error={errors.retirementDate} />
+                <DateSelectors label="Date of Birth" value={form.birthDate} onChange={(field, value) => setDateField('birthDate', field, value)} error={errors.birthDate} years={BIRTH_YEARS_FOR_DROPDOWN} />
+                <DateSelectors label="Retirement Date" value={form.retirementDate} onChange={(field, value) => setDateField('retirementDate', field, value)} error={errors.retirementDate} years={RETIREMENT_YEARS_FOR_DROPDOWN} />
               </div>
 
               <div className="rounded-lg border border-blue/20 bg-[#F7FAFF] p-5">
@@ -366,8 +361,6 @@ export function SocialSecurityEstimator({ onBack }: { onBack: () => void }) {
                       </thead>
                       <tbody>
                         {YEARS.map((year) => {
-                          const birthYear = birthDate?.getFullYear() ?? START_YEAR;
-                          const required = year >= birthYear && year <= CURRENT_YEAR;
                           return (
                             <tr key={year} className="border-b border-border/80 last:border-b-0">
                               <td className="px-4 py-3 font-mono text-text">{year}</td>
@@ -379,7 +372,6 @@ export function SocialSecurityEstimator({ onBack }: { onBack: () => void }) {
                                   className={`w-full rounded-md border px-3 py-2.5 text-sm ${errors[`earnings-${year}`] ? 'border-red-500' : 'border-border'}`}
                                   aria-label={`${year} earnings`}
                                 />
-                                {required && <p className="text-[11px] text-text-3 mt-1">Required where applicable.</p>}
                                 {errors[`earnings-${year}`] && <p className="text-red-500 text-xs mt-1">{errors[`earnings-${year}`]}</p>}
                               </td>
                             </tr>
