@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type CalculatorType = 'fers' | 'csrs';
 
@@ -247,7 +248,37 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     }
   };
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => openBrandedPrintReport({
+    title,
+    subtitle: 'Friendly printer version of your annuity estimate report.',
+    sections: [
+      {
+        title: 'Retirement Inputs',
+        lines: [
+          { label: 'Retirement System', value: calculatorType === 'csrs' ? 'CSRS' : 'FERS' },
+          { label: 'Retirement Date', value: formData.dateRetire || 'N/A' },
+          { label: 'Date of Birth', value: formData.dateOfBirth || 'N/A' },
+          { label: 'Service Computation Date', value: formData.dateServiceComp || 'N/A' },
+          { label: 'Age at Retirement', value: ageAtRetirement === null ? 'N/A' : formatYears(ageAtRetirement) },
+          { label: 'Creditable Service', value: serviceYears === null ? 'N/A' : formatYears(serviceYears) },
+          { label: 'Final Salary', value: `$${currency(Number(formData.fLastSalary || 0))}` },
+          { label: 'High-3 Salary', value: `$${currency(Number(formData.fManualHigh3 || 0) || Number(formData.fLastSalary || 0))}` },
+        ],
+      },
+      {
+        title: 'Annuity Summary',
+        lines: [
+          { label: 'Monthly Annuity', value: `$${currency(results.monthlyAnnuity)}` },
+          { label: 'Annual Annuity', value: `$${currency(results.annualAnnuity)}` },
+          { label: 'Replacement Rate', value: `${results.replacementRate.toFixed(1)}%` },
+          { label: 'Basic Annuity', value: `$${currency(results.basicAnnuity)}` },
+          { label: 'Monthly Deductions', value: `$${currency(results.monthlyDeductions)}` },
+          { label: 'Full Monthly Annuity', value: `$${currency(results.fullAnnuity)}` },
+          { label: 'Net Monthly Annuity', value: `$${currency(results.netMonthlyAnnuity)}` },
+        ],
+      },
+    ],
+  });
 
   const handleEmailSubmit = () => {
     const errors: Record<string, string> = {};
@@ -545,7 +576,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button onClick={() => setStep(9)} className="px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Email Report</button>
-                <button onClick={handlePrint} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Printer-Friendly Report</button>
+                <button onClick={handlePrint} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
               </div>
             </div>
           )}
@@ -566,7 +597,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
               </Field>
               <div className="space-y-3">
                 <button onClick={handleEmailSubmit} className="w-full px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Send it!</button>
-                <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Printer-Friendly Report</button>
+                <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
                 <button onClick={() => setStep(8)} className="w-full text-text-2 font-medium hover:text-text transition-colors">Back to Report</button>
               </div>
             </div>

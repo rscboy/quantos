@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type RetirementSystem = 'FERS' | 'CSRS' | 'CSRS Offset' | 'Other';
 type FormData = {
@@ -195,7 +196,36 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
     alert(`Report sent to ${emailData.email}`);
   };
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => openBrandedPrintReport({
+    title: 'Military Deposits Calculator',
+    subtitle: 'Friendly printer version of your military deposit report.',
+    sections: [
+      {
+        title: 'Input Summary',
+        lines: [
+          { label: 'Calculation Mode', value: reportData?.mode === 'simplified' ? 'Simplified interest check' : 'Full military deposit calculation' },
+          { label: 'Retirement System', value: formData.retirementSystem },
+          { label: 'Civilian Employment Date', value: formData.civilianEmploymentDate || 'N/A' },
+          { label: 'Anniversary Date', value: formData.anniversaryDate || 'N/A' },
+          { label: 'Current Balance', value: formatCurrency(parseAmount(formData.simplifiedBalance)) },
+          { label: 'Total Military Earnings', value: formatCurrency(parseAmount(formData.totalMilitaryEarnings)) },
+          { label: '1999 Earnings', value: formatCurrency(parseAmount(formData.earnings1999)) },
+          { label: '2000 Earnings', value: formatCurrency(parseAmount(formData.earnings2000)) },
+          { label: 'USERRA Deduction Equivalent', value: formatCurrency(parseAmount(formData.userraDeductionEquivalent)) },
+        ],
+      },
+      {
+        title: 'Deposit Summary',
+        lines: [
+          { label: 'Interest Accrual Date', value: reportData?.accrualDate || 'N/A' },
+          { label: 'Principal Amount', value: formatCurrency(reportData?.principal || 0) },
+          { label: 'Calculated Interest', value: formatCurrency(reportData?.interest || 0) },
+          { label: 'Total Balance', value: formatCurrency(reportData?.balance || 0) },
+          { label: 'Prior Balance Due', value: formatCurrency(reportData?.priorBalanceDue || 0) },
+        ],
+      },
+    ],
+  });
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -356,7 +386,7 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
 
               <div className="flex flex-col gap-3">
                 <button onClick={handleSend} className="w-full px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Send it!</button>
-                <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Printer-Friendly Report</button>
+                <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
                 <button onClick={() => setStep(2)} className="w-full mt-2 px-6 py-3 text-text-2 font-medium hover:text-text transition-colors">Back to Results</button>
               </div>
             </div>

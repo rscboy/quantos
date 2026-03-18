@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type RetirementSystem = 'FERS' | 'CSRS';
 type FundKey = 'G Fund' | 'F Fund' | 'C Fund' | 'S Fund' | 'I Fund';
@@ -300,7 +301,42 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
     alert(`Report sent to ${emailData.email}`);
   };
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => openBrandedPrintReport({
+    title: 'Thrift Savings Plan Calculator',
+    subtitle: 'Friendly printer version of your TSP analysis and projection.',
+    sections: [
+      {
+        title: 'Contribution Inputs',
+        lines: [
+          { label: 'Retirement System', value: contributionForm.retirementSystem },
+          { label: 'Planned Retirement Date', value: contributionForm.plannedRetirementDate || 'N/A' },
+          { label: 'Date of Birth', value: contributionForm.dateOfBirth || 'N/A' },
+          { label: 'Current Annual Salary', value: currency(Number(contributionForm.currentAnnualSalary || 0)) },
+          { label: 'Employee Contribution Rate', value: percent(Number(contributionForm.annualPercentContribution || 0)) },
+          { label: 'Catch-Up Contribution', value: currency(Number(contributionForm.annualCatchUpContribution || 0)) },
+          { label: 'Annual COLA', value: percent(Number(contributionForm.annualCOLA || 0)) },
+          { label: 'Primary Allocation Strategy', value: primaryFund },
+        ],
+      },
+      {
+        title: 'Projection Summary',
+        lines: [
+          { label: 'Current Balance', value: currency(FUND_ORDER.reduce((sum, fund) => sum + Number(funds[fund].balance || 0), 0)) },
+          { label: 'Projected Balance', value: currency(rows[rows.length - 1]?.total || 0) },
+          { label: 'Total Contributions', value: currency(totalContributions) },
+          { label: 'Final Projection Year', value: rows[rows.length - 1]?.year ? String(rows[rows.length - 1].year) : 'N/A' },
+          { label: 'Final Projection Age', value: rows[rows.length - 1]?.age ? String(rows[rows.length - 1].age) : 'N/A' },
+        ],
+      },
+      {
+        title: 'Fund Allocation Snapshot',
+        lines: FUND_ORDER.flatMap((fund) => ([
+          { label: `${fund} Allocation`, value: percent(Number(funds[fund].allocation || 0)) },
+          { label: `${fund} Current Balance`, value: currency(Number(funds[fund].balance || 0)) },
+        ])),
+      },
+    ],
+  });
   const lastRow = rows[rows.length - 1];
   const currentAge = contributionForm.dateOfBirth ? getAgeOnDate(contributionForm.dateOfBirth, new Date()) : 0;
 
@@ -511,7 +547,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               </Field>
               <div className="space-y-3">
                 <button onClick={handleSend} className="w-full px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Send it!</button>
-                <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Printer-Friendly Report</button>
+                <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
                 <button onClick={() => setStep(3)} className="w-full text-text-2 font-medium hover:text-text transition-colors">Back to Report</button>
               </div>
             </div>
@@ -525,7 +561,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               ) : (
                 <div className="flex gap-3">
                   <button onClick={() => setStep(4)} className="px-6 py-2.5 text-sm font-semibold text-white bg-blue hover:bg-blue-hover rounded-md transition-colors shadow-sm">Email Report</button>
-                  <button onClick={handlePrint} className="px-6 py-2.5 text-sm font-semibold bg-white border border-border text-text rounded-md hover:bg-gray-50 transition-colors shadow-sm">Printer-Friendly Report</button>
+                  <button onClick={handlePrint} className="px-6 py-2.5 text-sm font-semibold bg-white border border-border text-text rounded-md hover:bg-gray-50 transition-colors shadow-sm">Friendly Printer Version</button>
                 </div>
               )}
             </div>

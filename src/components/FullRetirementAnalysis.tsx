@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type AnalysisStep =
   | 'background'
@@ -381,7 +382,38 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
     setStepIndex((index) => Math.max(index - 1, 0));
   };
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => openBrandedPrintReport({
+    title: 'Full Retirement Analysis',
+    subtitle: 'Friendly printer version of your multi-report retirement analysis.',
+    sections: [
+      {
+        title: 'Scenario Summary',
+        lines: [
+          { label: 'Retirement System', value: formData.bCSRS === 'Y' ? 'CSRS' : 'FERS' },
+          { label: 'Date of Birth', value: formData.dateOfBirth || 'N/A' },
+          { label: 'Service Computation Date', value: formData.dateServiceComp || 'N/A' },
+          { label: 'Planned Retirement Date', value: formData.dateRetire || 'N/A' },
+          { label: 'Age at Retirement', value: formatYears(ageAtRetirement) },
+          { label: 'Creditable Service', value: formatYears(serviceYears) },
+          { label: 'High-3 Salary', value: `$${currency(high3Value)}` },
+          { label: 'Selected Modules', value: reportSections.length ? reportSections.map((section) => section.label).join(', ') : 'None selected' },
+        ],
+      },
+      {
+        title: 'Income Summary',
+        lines: [
+          { label: 'Annual Annuity', value: `$${currency(summary.annualAnnuity)}` },
+          { label: 'Monthly Annuity', value: `$${currency(summary.monthlyAnnuity)}` },
+          { label: 'Monthly Deductions', value: `$${currency(summary.deductions)}` },
+          { label: 'Net Monthly Income', value: `$${currency(summary.netMonthly)}` },
+          { label: 'Current TSP Balance', value: `$${currency(currentTspBalance)}` },
+          { label: 'Projected TSP at Retirement', value: `$${currency(projectedTspAtRetirement)}` },
+          { label: 'Social Security Estimate', value: `$${currency(Number(formData.fSocSec || 0))}` },
+          { label: 'Other Pension Income', value: `$${currency(Number(formData.fOtherPensions || 0))}` },
+        ],
+      },
+    ],
+  });
 
   const systemLabel = formData.bCSRS === 'Y' ? (formData.bCSRSTransfer === 'Y' ? 'CSRS Offset / CSRS-to-FERS Transfer' : 'CSRS') : 'FERS';
 
@@ -786,7 +818,7 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                   <Field label="Email address *" error={errors.email}><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass(errors.email)} /></Field>
                   <Field label="Confirm email address *" error={errors.confirmEmail}><input type="email" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} className={inputClass(errors.confirmEmail)} /></Field>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <button onClick={handlePrint} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Printer-Friendly Report</button>
+                    <button onClick={handlePrint} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
                     <button onClick={() => validateCurrentStep() && alert(`Report queued for ${email}`)} className="px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Email My Report</button>
                   </div>
                 </div>
