@@ -85,6 +85,7 @@ export interface CalculatorResults {
   fers?: any;
   csrs?: any;
   howSoon?: any;
+  military?: any;
   rawResponse?: any;
 }
 
@@ -255,12 +256,26 @@ class FedcalcApiService {
         html: "<p>Mock report generated successfully (Client-side fallback).</p>"
       };
 
+      const militaryPrincipal = payload.fCurBalance > 0 ? Number(payload.fCurBalance || 0) : Math.max(Number(payload.fTotEarnings || 0) * 0.03 - Number(payload.fCivilEarnings || 0), 0);
+      const militaryInterest = payload.fCurBalance > 0
+        ? militaryPrincipal * 0.03
+        : Math.max(militaryPrincipal * 0.03 + Number(payload.fEarnings1999 || 0) * 0.02875 + Number(payload.fEarnings2000 || 0) * 0.0325, 0);
+      const militaryBalance = militaryPrincipal + militaryInterest;
+
       return {
         fers: annuityPayload,
         csrs: annuityPayload,
         howSoon: {
           eligibilityDate: "2035-01-01",
           html: "<p>Mock eligibility report generated successfully.</p>"
+        },
+        military: {
+          interestAccrualDate: payload.dateAnniversaryDate || payload.dateServiceComp || '',
+          principal: militaryPrincipal,
+          interest: militaryInterest,
+          balance: militaryBalance,
+          priorBalanceDue: militaryPrincipal,
+          html: "<p>Mock military deposit report generated successfully.</p>"
         },
         rawResponse: { message: "Mock response generated successfully" }
       };
@@ -297,6 +312,14 @@ class FedcalcApiService {
           },
           howSoon: {
             eligibilityDate: data.EligibilityDate || data.eligibilityDate || data.DateRetire || data.dateRetire || '',
+            html: data.html || ''
+          },
+          military: {
+            interestAccrualDate: data.InterestAccrualDate || data.interestAccrualDate || data.AccrualDate || data.accrualDate || '',
+            principal: data.Principal || data.principal || 0,
+            interest: data.Interest || data.interest || 0,
+            balance: data.Balance || data.balance || 0,
+            priorBalanceDue: data.PriorBalanceDue || data.priorBalanceDue || data.Principal || data.principal || 0,
             html: data.html || ''
           },
           rawResponse: data
