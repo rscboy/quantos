@@ -32,9 +32,9 @@ export default function App() {
       
       <div className="flex-1">
         {view === 'home' && <Home onSelectCalc={handleSelectCalc} />}
-        {view === 'fers' && <FersCalculator onBack={() => setView('home')} />}
-        {view === 'eligibility' && <HowSoonCalculator onBack={() => setView('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
-        {view === 'full' && <FullRetirementAnalysis onBack={() => setView('home')} />}
+        {view === 'fers' && <FersCalculator onBack={() => handleSelectCalc('home')} />}
+        {view === 'eligibility' && <HowSoonCalculator onBack={() => handleSelectCalc('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
+        {view === 'full' && <FullRetirementAnalysis onBack={() => handleSelectCalc('home')} />}
       </div>
       
       <Footer setView={setView} />
