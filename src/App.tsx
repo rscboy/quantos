@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { Home } from './components/Home';
-import { FersCalculator } from './components/FersCalculator';
+import { CsrsCalculator, FersCalculator } from './components/FersCalculator';
 import { HowSoonCalculator } from './components/HowSoonCalculator';
 import { NewMemberModal } from './components/NewMemberModal';
 
@@ -16,6 +16,7 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
 
   const handleSelectCalc = (calcId: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setView(calcId);
     
     // Check if they need to see the modal
@@ -31,8 +32,9 @@ export default function App() {
       
       <div className="flex-1">
         {view === 'home' && <Home onSelectCalc={handleSelectCalc} />}
-        {view === 'fers' && <FersCalculator onBack={() => setView('home')} />}
-        {view === 'eligibility' && <HowSoonCalculator onBack={() => setView('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
+        {view === 'fers' && <FersCalculator onBack={() => handleSelectCalc('home')} />}
+        {view === 'csrs' && <CsrsCalculator onBack={() => handleSelectCalc('home')} />}
+        {view === 'eligibility' && <HowSoonCalculator onBack={() => handleSelectCalc('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
       </div>
       
       <Footer setView={setView} />
