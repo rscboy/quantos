@@ -9,6 +9,7 @@ import { Footer } from './components/Footer';
 import { Home } from './components/Home';
 import { FersCalculator } from './components/FersCalculator';
 import { HowSoonCalculator } from './components/HowSoonCalculator';
+import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { NewMemberModal } from './components/NewMemberModal';
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
         {view === 'home' && <Home onSelectCalc={handleSelectCalc} />}
         {view === 'fers' && <FersCalculator onBack={() => setView('home')} />}
         {view === 'eligibility' && <HowSoonCalculator onBack={() => setView('home')} onNavigateToFers={() => handleSelectCalc('fers')} />}
+        {view === 'full' && <FullRetirementAnalysis onBack={() => setView('home')} />}
       </div>
       
       <Footer setView={setView} />
