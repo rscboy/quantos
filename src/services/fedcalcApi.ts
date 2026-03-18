@@ -244,13 +244,20 @@ class FedcalcApiService {
       const salary = payload.fLastSalary || 100000;
       const monthlyAnnuity = salary * years * 0.01 / 12;
 
+      const annuityPayload = {
+        monthlyAnnuity: monthlyAnnuity,
+        annualAnnuity: monthlyAnnuity * 12,
+        replacementRate: years * 0.01 * 100,
+        basicAnnuity: monthlyAnnuity * 12,
+        monthlyDeductions: Number(payload.fHealthInsDeduct || 0),
+        fullAnnuity: monthlyAnnuity,
+        netMonthlyAnnuity: Math.max(monthlyAnnuity - Number(payload.fHealthInsDeduct || 0), 0),
+        html: "<p>Mock report generated successfully (Client-side fallback).</p>"
+      };
+
       return {
-        fers: {
-          monthlyAnnuity: monthlyAnnuity,
-          annualAnnuity: monthlyAnnuity * 12,
-          replacementRate: years * 0.01 * 100,
-          html: "<p>Mock report generated successfully (Client-side fallback).</p>"
-        },
+        fers: annuityPayload,
+        csrs: annuityPayload,
         howSoon: {
           eligibilityDate: "2035-01-01",
           html: "<p>Mock eligibility report generated successfully.</p>"
