@@ -101,7 +101,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
         <div className="mb-12">
-          <SponsorBanner className="h-[60px] w-full max-w-3xl mx-auto" />
+          <SponsorBanner className="h-[44px] w-full max-w-2xl mx-auto" />
         </div>
 
         {CALCULATORS.map((section, idx) => {
@@ -144,12 +144,12 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             </div>
             {idx === 0 && (
               <div className="mb-14">
-                <SponsorBanner className="h-[60px] w-full max-w-4xl mx-auto" />
+                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
               </div>
             )}
             {idx === 2 && (
               <div className="mb-14">
-                <SponsorBanner className="h-[60px] w-full max-w-4xl mx-auto" />
+                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
               </div>
             )}
             </React.Fragment>
