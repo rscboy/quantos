@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedSocialSecurityData } from '../utils/calculatorLinking';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type Step = 1 | 2 | 3;
 type DateParts = { month: string; day: string; year: string };
@@ -332,6 +333,45 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
     return Object.keys(nextErrors).length === 0;
   };
 
+  const handlePrint = () => openBrandedPrintReport({
+    title: 'Social Security Estimator',
+    subtitle: 'Friendly printer version of your Social Security estimate.',
+    sections: [
+      {
+        title: 'Personal Inputs',
+        lines: [
+          { label: 'Birth Date', value: toIsoDate(form.birthDate) || 'N/A' },
+          { label: 'Retirement Date', value: toIsoDate(form.retirementDate) || 'N/A' },
+          { label: 'Current Year Earnings', value: formatCurrency(Number(form.currentYearEarnings || 0)) },
+          { label: 'Future Annual Earnings', value: formatCurrency(Number(form.futureYearEarnings || 0)) },
+        ],
+      },
+      {
+        title: 'Eligibility Summary',
+        lines: [
+          { label: 'Retirement Age', value: results.retirementAgeText },
+          { label: 'Retirement Insured', value: results.retirementInsured ? 'Yes' : 'No' },
+          { label: 'Disability Insured', value: results.disabilityInsured ? 'Yes' : 'No' },
+          { label: 'Survivor Insured', value: results.survivorInsured ? 'Yes' : 'No' },
+          { label: 'Quarters Earned', value: String(results.quartersEarned) },
+          { label: 'Required Quarters', value: String(results.requiredQuartersRetirement) },
+          { label: 'Recent Quarters for Disability', value: String(results.recentQuartersDisability) },
+        ],
+      },
+      {
+        title: 'Benefit Estimates',
+        lines: [
+          { label: 'Retirement Benefit', value: formatCurrency(results.retirementBenefit) },
+          { label: 'Disability Benefit', value: formatCurrency(results.disabilityBenefit) },
+          { label: 'Child Benefit', value: formatCurrency(results.childBenefit) },
+          { label: 'Spouse Benefit', value: formatCurrency(results.spouseBenefit) },
+          { label: 'Surviving Spouse Benefit', value: formatCurrency(results.survivingSpouseBenefit) },
+          { label: 'Family Maximum', value: formatCurrency(results.familyMaximum) },
+        ],
+      },
+    ],
+  });
+
   const fieldClass = (key: string) => `w-full rounded-md border px-3 py-2.5 text-sm ${errors[key] ? 'border-red-500' : 'border-border'}`;
 
   return (
@@ -530,10 +570,13 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
 
               <div className="flex items-center justify-between gap-4">
                 <button onClick={() => setStep(2)} className="rounded-md border border-border px-5 py-3 text-sm font-semibold text-text hover:bg-bg">Back</button>
-                <button onClick={() => {
-                  if (!validateStep(3)) return;
-                  alert(`Report sent to ${email.primary}`);
-                }} className="rounded-md bg-blue px-5 py-3 text-sm font-semibold text-white hover:opacity-95">Send it!</button>
+                <div className="flex flex-wrap justify-end gap-3">
+                  <button onClick={handlePrint} className="rounded-md border border-border px-5 py-3 text-sm font-semibold text-text hover:bg-bg">Friendly Printer Version</button>
+                  <button onClick={() => {
+                    if (!validateStep(3)) return;
+                    alert(`Report sent to ${email.primary}`);
+                  }} className="rounded-md bg-blue px-5 py-3 text-sm font-semibold text-white hover:opacity-95">Send it!</button>
+                </div>
               </div>
             </div>
           )}

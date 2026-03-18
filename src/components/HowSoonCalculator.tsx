@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { fedcalcApi, FedEmployee } from '../services/fedcalcApi';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => void, onNavigateToFers: () => void }) {
   const [step, setStep] = useState(1);
@@ -71,61 +72,39 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
   };
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      const ageAtRetirement = formData.dateOfBirth && reportData?.howSoon?.eligibilityDate
-        ? Math.floor((new Date(reportData.howSoon.eligibilityDate).getTime() - new Date(formData.dateOfBirth).getTime()) / 31557600000) 
-        : 'N/A';
-        
-      const serviceTime = formData.dateServiceComp && reportData?.howSoon?.eligibilityDate
-        ? Math.floor((new Date(reportData.howSoon.eligibilityDate).getTime() - new Date(formData.dateServiceComp).getTime()) / 31557600000)
-        : 'N/A';
+    const ageAtRetirement = formData.dateOfBirth && reportData?.howSoon?.eligibilityDate
+      ? Math.floor((new Date(reportData.howSoon.eligibilityDate).getTime() - new Date(formData.dateOfBirth).getTime()) / 31557600000)
+      : null;
+    const serviceTime = formData.dateServiceComp && reportData?.howSoon?.eligibilityDate
+      ? Math.floor((new Date(reportData.howSoon.eligibilityDate).getTime() - new Date(formData.dateServiceComp).getTime()) / 31557600000)
+      : null;
 
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>How Soon Can I Retire? - Report</title>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-w-3xl mx-auto p-8; }
-              h1 { color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-              .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-              .summary-item { margin-bottom: 10px; }
-              .summary-label { font-weight: bold; color: #4a5568; }
-              .result-box { background-color: #ebf8ff; padding: 20px; border-radius: 8px; border: 1px solid #bee3f8; margin-top: 30px; }
-              .result-title { font-size: 1.2rem; font-weight: bold; color: #2b6cb0; margin-bottom: 10px; }
-              .result-value { font-size: 2rem; font-weight: bold; color: #2b6cb0; font-family: monospace; }
-            </style>
-          </head>
-          <body>
-            <h1>How Soon Can I Retire? - Report</h1>
-            
-            <div class="summary-grid">
-              <div>
-                <div class="summary-item"><span class="summary-label">Retirement System:</span> ${formData.bCSRS === 'Y' ? 'CSRS' : 'FERS'}</div>
-                <div class="summary-item"><span class="summary-label">Date of Birth:</span> ${formData.dateOfBirth} (Age: ${ageAtRetirement})</div>
-                <div class="summary-item"><span class="summary-label">Service Comp Date:</span> ${formData.dateServiceComp} (Service: ${serviceTime} years)</div>
-              </div>
-              <div>
-                <div class="summary-item"><span class="summary-label">Air Traffic Controller:</span> ${formData.bAirTraffic === 'Y' ? 'Yes' : 'No'}</div>
-                <div class="summary-item"><span class="summary-label">Customs/Border Patrol:</span> ${formData.bCustomsBorderPatrol === 'Y' ? 'Yes' : 'No'}</div>
-                <div class="summary-item"><span class="summary-label">Law Enforcement/Firefighter:</span> ${formData.bLawEnforce === 'Y' ? 'Yes' : 'No'}</div>
-                <div class="summary-item"><span class="summary-label">Phased Retirement:</span> ${formData.bPhasedRetire === 'Y' ? 'Yes' : 'No'}</div>
-              </div>
-            </div>
-
-            <div class="result-box">
-              <div class="result-title">Earliest Unreduced Retirement Date</div>
-              <div class="result-value">${reportData?.howSoon?.eligibilityDate || 'N/A'}</div>
-            </div>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-      }, 250);
-    }
+    openBrandedPrintReport({
+      title: 'How Soon Can I Retire?',
+      subtitle: 'Friendly printer version of your retirement eligibility report.',
+      sections: [
+        {
+          title: 'Eligibility Summary',
+          lines: [
+            { label: 'Retirement System', value: formData.bCSRS === 'Y' ? 'CSRS' : 'FERS' },
+            { label: 'Date of Birth', value: formData.dateOfBirth || 'N/A' },
+            { label: 'Age at Eligibility', value: ageAtRetirement === null ? 'N/A' : `${ageAtRetirement} years` },
+            { label: 'Service Computation Date', value: formData.dateServiceComp || 'N/A' },
+            { label: 'Service at Eligibility', value: serviceTime === null ? 'N/A' : `${serviceTime} years` },
+            { label: 'Air Traffic Controller', value: formData.bAirTraffic === 'Y' ? 'Yes' : 'No' },
+            { label: 'Customs / Border Patrol', value: formData.bCustomsBorderPatrol === 'Y' ? 'Yes' : 'No' },
+            { label: 'Law Enforcement / Firefighter', value: formData.bLawEnforce === 'Y' ? 'Yes' : 'No' },
+            { label: 'Phased Retirement', value: formData.bPhasedRetire === 'Y' ? 'Yes' : 'No' },
+          ],
+        },
+        {
+          title: 'Report Result',
+          lines: [
+            { label: 'Earliest Unreduced Retirement Date', value: reportData?.howSoon?.eligibilityDate || 'N/A' },
+          ],
+        },
+      ],
+    });
   };
 
   const renderStepIndicator = () => (
@@ -313,7 +292,7 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
                   Send it!
                 </button>
                 <button onClick={handlePrint} className="w-full px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">
-                  Printer-Friendly Report
+                  Friendly Printer Version
                 </button>
                 <button onClick={() => setStep(2)} className="w-full mt-2 px-6 py-3 text-text-2 font-medium hover:text-text transition-colors">
                   Back to Results

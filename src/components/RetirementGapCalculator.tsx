@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToGapForm } from '../utils/calculatorLinking';
+import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type GapForm = {
   plannedRetirementDate: string;
@@ -210,7 +211,45 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
   };
 
   const handlePrinterFriendly = () => {
-    window.print();
+    openBrandedPrintReport({
+      title: 'Retirement Savings GAP Calculator',
+      subtitle: 'Friendly printer version of your retirement income gap analysis.',
+      sections: [
+        {
+          title: 'Assumptions',
+          lines: [
+            { label: 'Planned Retirement Date', value: form.plannedRetirementDate || 'N/A' },
+            { label: 'Current Annual Salary', value: currency(form.currentAnnualSalary) },
+            { label: 'Income Needed in Retirement', value: percent(form.percentIncomeNeeded) },
+            { label: 'Future Salary Increase', value: percent(form.futureSalaryIncrease) },
+            { label: 'Current Savings', value: currency(form.currentSavings) },
+            { label: 'Savings Return', value: percent(form.savingsReturn) },
+            { label: 'Years in Retirement', value: String(form.yearsInRetirement) },
+          ],
+        },
+        {
+          title: 'Projected Income Sources',
+          lines: [
+            { label: 'Federal Retirement at Retirement', value: currency(metrics.federalAtRetirement) },
+            { label: 'Social Security at Retirement', value: currency(metrics.socialSecurityAtRetirement) },
+            { label: 'Other Pensions at Retirement', value: currency(metrics.otherPensionsAtRetirement) },
+            { label: 'Guaranteed Income at Retirement', value: currency(metrics.guaranteedIncomeAtRetirement) },
+          ],
+        },
+        {
+          title: 'Gap Summary',
+          lines: [
+            { label: 'Target Income at Retirement', value: currency(metrics.targetIncomeAtRetirement) },
+            { label: 'Projected Shortfall at Retirement', value: currency(metrics.shortfallAtRetirement) },
+            { label: 'Total Projected Shortfall', value: currency(metrics.totalProjectedShortfall) },
+            { label: 'Future Value of Current Savings', value: currency(metrics.futureValueCurrentSavings) },
+            { label: 'Additional Savings Needed', value: currency(metrics.additionalSavingsNeeded) },
+            { label: 'Annual Savings Needed', value: currency(metrics.annualSavingsNeeded) },
+            { label: 'Annual Savings Rate', value: percent(metrics.annualSavingsRate) },
+          ],
+        },
+      ],
+    });
   };
 
   const handleSend = () => {
@@ -372,7 +411,7 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
                   <p className="text-sm text-text-2 max-w-xl">Enter and confirm your email address to receive your personalized retirement gap analysis. Both fields are required and must match.</p>
                 </div>
                 <button onClick={handlePrinterFriendly} className="inline-flex items-center justify-center rounded-md border border-blue px-4 py-2 text-sm font-semibold text-blue hover:bg-blue-lt">
-                  Printer-Friendly Report
+                  Friendly Printer Version
                 </button>
               </div>
 
