@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { AdPlaceholder } from './AdPlaceholder';
 
 type CalculatorType = 'fers' | 'csrs';
 
@@ -161,6 +162,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [blockingMessages, setBlockingMessages] = useState<string[]>([]);
   const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [adRefreshCount, setAdRefreshCount] = useState(1);
   const [emailErrors, setEmailErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<Partial<FedEmployee>>(defaultFormData(calculatorType));
 
@@ -217,6 +219,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
     setValidationErrors({});
     setBlockingMessages([]);
+    if (step >= 2) setAdRefreshCount((current) => current + 1);
     setStep((current) => Math.min(7, current + 1));
   };
 
@@ -240,6 +243,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     try {
       const apiResults = await fedcalcApi.calculateRetirement(formData, calculatorType);
       setReportData(apiResults);
+      setAdRefreshCount((current) => current + 1);
       setStep(8);
     } catch (error) {
       setApiError(error instanceof Error ? error.message : 'An unknown error occurred');
@@ -289,6 +293,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     }
     setEmailErrors(errors);
     if (Object.keys(errors).length === 0) {
+      setAdRefreshCount((current) => current + 1);
       alert(`Report sent to ${emailData.email}`);
       setStep(8);
     }
@@ -324,7 +329,17 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
         {step <= 7 && renderStepIndicator()}
 
-        <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
+        <div className="mb-6 md:hidden">
+          <AdPlaceholder
+            slot={step >= 8 ? 'Mobile results banner' : 'Mobile inline input banner'}
+            detail={step >= 8 ? 'Mobile placement shown after the annuity summary and before follow-up actions.' : 'Inline mobile placement between the annuity input steps without obstructing form completion.'}
+            refreshKey={adRefreshCount}
+            compact
+          />
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
+          <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {blockingMessages.length > 0 && (
             <div className="m-6 mb-0 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm space-y-1">
               {blockingMessages.map((message) => <p key={message}>{message}</p>)}
@@ -358,6 +373,13 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   {validationErrors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{validationErrors.dateOfBirth}</p>}
                 </div>
               </div>
+
+              <AdPlaceholder
+                slot="Required information inline placement"
+                detail="Displayed after the first cluster of required fields while users pause to review age and service calculations."
+                refreshKey={adRefreshCount}
+                compact
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-border">
                 {ELIGIBILITY_QUESTIONS.map((question) => (
@@ -416,6 +438,13 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                 <h2 className="text-xl font-semibold mb-2">Salary History</h2>
                 <p className="text-text-2 text-sm">Enter your salary at retirement first. Then either provide a known High-3 salary or at least 3 full years of salary history.</p>
               </div>
+
+              <AdPlaceholder
+                slot="Salary step inline placement"
+                detail="Inserted before the salary history table so the ad sits in a natural review pause during data entry."
+                refreshKey={adRefreshCount}
+                compact
+              />
 
               <div>
                 <label className="block text-sm font-semibold text-text-2 mb-2">Salary at time of retirement <span className="text-red-500">*</span></label>
@@ -546,6 +575,13 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   <ResultCard label="Full annuity" value={`$${currency(results.fullAnnuity || results.monthlyAnnuity)}`} />
                   <ResultCard label="Net monthly annuity" value={`$${currency(results.netMonthlyAnnuity || Math.max(results.monthlyAnnuity - Number(formData.fHealthInsDeduct || 0), 0))}`} />
                 </div>
+                <AdPlaceholder
+                  slot="Results banner after summary"
+                  detail="Primary high-value placement directly below the annuity result cards."
+                  refreshKey={adRefreshCount}
+                  compact
+                />
+
                 <div className="mt-8">
                   <h3 className="font-semibold text-text mb-3">Salary history breakdown</h3>
                   <div className="overflow-x-auto">
@@ -569,6 +605,13 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                     </table>
                   </div>
                 </div>
+                <AdPlaceholder
+                  slot="Results follow-up banner"
+                  detail="Secondary results placement before recommendations, print actions, and the next-step CTA cluster."
+                  refreshKey={adRefreshCount}
+                  compact
+                />
+
                 <div className="text-sm text-text-2 space-y-2 border-t pt-6 mt-8">
                   <p><strong>Additional notes:</strong> Figures are estimates based on the inputs above and current calculator logic.</p>
                   <p>Backend calculation behavior remains unchanged; this flow focuses on collecting complete inputs and enforcing the required validation gates.</p>
@@ -613,6 +656,17 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
               )}
             </div>
           )}
+        </div>
+
+          <div className="hidden xl:block">
+            <AdPlaceholder
+              stickyDesktop
+              className="min-h-[320px]"
+              slot={step >= 8 ? 'Results sticky sidebar' : 'Input phase sticky sidebar'}
+              detail={step >= 8 ? 'Desktop sticky inventory shown while users review annuity results and iterate on scenarios.' : 'Desktop sticky rail anchored beside the multi-step annuity input flow.'}
+              refreshKey={adRefreshCount}
+            />
+          </div>
         </div>
 
         {apiError && <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md border border-red-200 text-sm">{apiError}</div>}

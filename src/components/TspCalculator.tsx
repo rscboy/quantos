@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { AdPlaceholder } from './AdPlaceholder';
 
 type RetirementSystem = 'FERS' | 'CSRS';
 type FundKey = 'G Fund' | 'F Fund' | 'C Fund' | 'S Fund' | 'I Fund';
@@ -205,6 +206,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [adRefreshCount, setAdRefreshCount] = useState(1);
   const totalAllocation = useMemo(() => normalizeAllocations(funds), [funds]);
   const { rows, totalContributions } = useMemo(() => projectAnalysisRows(contributionForm, primaryFund, funds), [contributionForm, primaryFund, funds]);
 
@@ -293,11 +295,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
 
   const handleContinue = () => {
     if (!validateStep(step)) return;
+    if (step >= 2) setAdRefreshCount((current) => current + 1);
     setStep((current) => Math.min(current + 1, 4));
   };
 
   const handleSend = () => {
     if (!validateStep(4)) return;
+    setAdRefreshCount((current) => current + 1);
     alert(`Report sent to ${emailData.email}`);
   };
 
@@ -366,7 +370,17 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           })}
         </div>
 
-        <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
+        <div className="mb-6 md:hidden">
+          <AdPlaceholder
+            slot={step >= 3 ? 'Mobile results banner' : 'Mobile inline input banner'}
+            detail={step >= 3 ? 'Visible before detailed projections and recommendations on smaller screens.' : 'Keeps mobile ad exposure between engaged form sections without covering inputs.'}
+            refreshKey={adRefreshCount}
+            compact
+          />
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
+          <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {step === 1 && (
             <div className="p-8 space-y-8">
               <div>
@@ -410,6 +424,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                   {errors.annualCOLA && <ErrorText>{errors.annualCOLA}</ErrorText>}
                 </Field>
               </div>
+
+              <AdPlaceholder
+                slot="Inline input placement"
+                detail="Placed after the core contribution fields while users pause to review assumptions."
+                refreshKey={adRefreshCount}
+                compact
+              />
             </div>
           )}
 
@@ -435,6 +456,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                   {errors.totalAllocation && <ErrorText>{errors.totalAllocation}</ErrorText>}
                 </div>
               </div>
+
+              <AdPlaceholder
+                slot="Allocation step inline placement"
+                detail="Shown between fund strategy selection and the detailed allocation table."
+                refreshKey={adRefreshCount}
+                compact
+              />
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border border-border rounded-md overflow-hidden">
@@ -487,6 +515,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                   <ResultCard label="Years projected" value={`${rows.length}`} />
                 </div>
 
+                <AdPlaceholder
+                  slot="Results banner after summary"
+                  detail="High-value placement immediately after the projection summary while users linger on totals."
+                  refreshKey={adRefreshCount}
+                  compact
+                />
+
                 <div className="border border-border rounded-md p-4 bg-[#FCFCFD]">
                   <h3 className="font-semibold text-text mb-2">Data Assumptions</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-text-2">
@@ -527,6 +562,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                     </tbody>
                   </table>
                 </div>
+
+                <AdPlaceholder
+                  slot="Results follow-up banner"
+                  detail="Reserved before next-step actions so refreshed inventory appears during comparison and recalculation loops."
+                  refreshKey={adRefreshCount}
+                  compact
+                />
               </div>
             </div>
           )}
@@ -566,6 +608,17 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               )}
             </div>
           )}
+          </div>
+
+          <div className="hidden xl:block">
+            <AdPlaceholder
+              stickyDesktop
+              className="min-h-[320px]"
+              slot={step >= 3 ? 'Results sticky sidebar' : 'Input phase sticky sidebar'}
+              detail={step >= 3 ? 'Desktop sidebar inventory for high-value results review and comparison loops.' : 'Desktop sticky rail shown while users work through high-engagement contribution inputs.'}
+              refreshKey={adRefreshCount}
+            />
+          </div>
         </div>
       </main>
     </div>

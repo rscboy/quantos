@@ -1,5 +1,6 @@
 import React from 'react';
 import { SponsorBanner } from './SponsorBanner';
+import { AdPlaceholder } from './AdPlaceholder';
 
 const CALCULATORS = [
   {
@@ -101,60 +102,87 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
         <div className="mb-12">
-          <SponsorBanner className="h-[44px] w-full max-w-2xl mx-auto" />
+          <AdPlaceholder
+            className="w-full max-w-4xl mx-auto"
+            slot="Landing top banner"
+            detail="Quick-impression placement directly below the header for low-intent, high-bounce visits."
+            compact
+          />
         </div>
 
-        {CALCULATORS.map((section, idx) => {
-          const count = section.items.length;
-          return (
-            <React.Fragment key={idx}>
-              <div className="mb-14">
-                <div className="flex items-center gap-4 mb-7">
-                <span className="font-serif text-[13px] font-normal text-text-2 tracking-[0.02em]">{section.category}</span>
-                <div className="flex-1 h-px bg-border"></div>
-                <span className="font-mono text-[11px] text-text-3">{count} tool{count !== 1 ? 's' : ''}</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-border border border-border rounded-lg overflow-hidden">
-                {section.items.map((item) => {
-                  const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
-                  const target = ['fers', 'csrs', 'eligibility', 'tsp', 'military', 'gap', 'full', 'ss'].includes(item.id) ? item.id : 'home';
-                  return (
-                    <div
-                      key={item.id}
-                      className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF]"
-                      onClick={() => onSelectCalc(target)}
-                    >
-                      <div className={`text-[10px] font-semibold tracking-[0.08em] uppercase mb-3.5 ${tagClass}`}>
-                        {item.tag}
-                      </div>
-                      <h3 className="font-serif text-lg font-normal text-text leading-[1.25] mb-2.5">
-                        {item.name}
-                      </h3>
-                      <p className="text-[13px] text-text-2 leading-[1.65] flex-1">
-                        {item.desc}
-                      </p>
-                      <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
-                        <span className="text-xs font-semibold text-blue tracking-[0.02em]">Open calculator</span>
-                        <span className="opacity-0 -translate-x-1 transition-all duration-150 text-blue text-base leading-none group-hover:opacity-100 group-hover:translate-x-0">→</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
+          <div>
+            <div className="mb-12">
+              <SponsorBanner className="w-full max-w-2xl mx-auto" />
             </div>
-            {idx === 0 && (
-              <div className="mb-14">
-                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
-              </div>
-            )}
-            {idx === 2 && (
-              <div className="mb-14">
-                <SponsorBanner className="h-[44px] w-full max-w-3xl mx-auto" />
-              </div>
-            )}
-            </React.Fragment>
-          );
-        })}
+
+            {CALCULATORS.map((section, idx) => {
+              const count = section.items.length;
+              return (
+                <React.Fragment key={idx}>
+                  <div className="mb-14">
+                    <div className="flex items-center gap-4 mb-7">
+                      <span className="font-serif text-[13px] font-normal text-text-2 tracking-[0.02em]">{section.category}</span>
+                      <div className="flex-1 h-px bg-border"></div>
+                      <span className="font-mono text-[11px] text-text-3">{count} tool{count !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-border border border-border rounded-lg overflow-hidden">
+                      {section.items.map((item) => {
+                        const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
+                        const target = ['fers', 'csrs', 'eligibility', 'tsp', 'military', 'gap', 'full', 'ss'].includes(item.id) ? item.id : 'home';
+                        return (
+                          <div
+                            key={item.id}
+                            className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF]"
+                            onClick={() => onSelectCalc(target)}
+                          >
+                            <div className={`text-[10px] font-semibold tracking-[0.08em] uppercase mb-3.5 ${tagClass}`}>
+                              {item.tag}
+                            </div>
+                            <h3 className="font-serif text-lg font-normal text-text leading-[1.25] mb-2.5">
+                              {item.name}
+                            </h3>
+                            <p className="text-[13px] text-text-2 leading-[1.65] flex-1">
+                              {item.desc}
+                            </p>
+                            <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
+                              <span className="text-xs font-semibold text-blue tracking-[0.02em]">Open calculator</span>
+                              <span className="opacity-0 -translate-x-1 transition-all duration-150 text-blue text-base leading-none group-hover:opacity-100 group-hover:translate-x-0">→</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  {idx === 0 && (
+                    <div className="mb-14">
+                      <AdPlaceholder
+                        className="w-full max-w-3xl mx-auto"
+                        slot="Landing mid-page banner"
+                        detail="Inline inventory between calculator sections to capture continued browsing without blocking utility."
+                        compact
+                      />
+                    </div>
+                  )}
+                  {idx === 2 && (
+                    <div className="mb-14">
+                      <SponsorBanner className="w-full max-w-3xl mx-auto" />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+
+          <div className="hidden lg:block">
+            <AdPlaceholder
+              stickyDesktop
+              className="min-h-[360px]"
+              slot="Landing sticky sidebar"
+              detail="Persistent desktop inventory that stays visible while users scan the calculator catalog."
+            />
+          </div>
+        </div>
       </main>
     </div>
   );
