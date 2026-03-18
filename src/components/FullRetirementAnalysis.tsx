@@ -151,6 +151,7 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
   const [apiError, setApiError] = useState<string | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [reportData, setReportData] = useState<any>(null);
+  const [timelineMode, setTimelineMode] = useState<'nominal' | 'real'>('real');
 
   const currentStep = STEPS[stepIndex];
   const ageAtRetirement = useMemo(() => yearsBetween(formData.dateOfBirth, formData.dateRetire), [formData.dateOfBirth, formData.dateRetire]);
@@ -185,6 +186,10 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
   }, [formData.dateRetire, formData.fCurrentYearSalary, formData.fLastSalary, formData.nFuncPctContrib, formData.fCatchupContrib, avgFundReturn, formData.fRateOfReturn, currentTspBalance, ageAtRetirement]);
 
   const reportSections = REPORT_OPTIONS.filter((option) => formData[option.key] === 'Y');
+  const socialSecurityStartAge = useMemo(() => {
+    if (Number(formData.fSocSec || 0) <= 0) return null;
+    return Math.max(62, Math.ceil(ageAtRetirement || 62));
+  }, [formData.fSocSec, ageAtRetirement]);
   const summary = useMemo(() => {
     const result = reportData?.fers || reportData?.csrs || {};
     const annualAnnuity = Number(result.annualAnnuity || result.basicAnnuity || high3Value * (formData.bCSRS === 'Y' ? 0.018 : serviceYears >= 20 && ageAtRetirement >= 62 ? 0.011 : 0.01) * serviceYears);
@@ -202,6 +207,100 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
     };
   }, [reportData, high3Value, formData.bCSRS, serviceYears, ageAtRetirement, formData.nSurvivor, formData.bLifeIns, formData.nLifeInsOption, formData.nLifeInsBasic, monthlyHealth]);
 
+  const lifeProjection = useMemo(() => {
+    const retirementDate = formData.dateRetire ? new Date(formData.dateRetire) : null;
+    const currentDate = new Date();
+    const yearsToRetirement = Math.max(0, yearsBetween(currentDate.toISOString().slice(0, 10), formData.dateRetire));
+    const retirementYears = Math.max(1, Math.round(Number(formData.fYearsR || 25)));
+    const currentSalary = Number(formData.fCurrentYearSalary || formData.fLastSalary || 0);
+    const salaryGrowth = Number(formData.fSalaryCOLA || 0) / 100;
+    const annuityGrowth = Number(formData.fAnnuityCOLA || 0) / 100;
+    const inflationRate = Number(formData.fAnnuityCOLA || formData.fSalaryCOLA || 0) / 100;
+    const annualPension = Number(summary.annualAnnuity || 0);
+    const annualOtherPension = Number(formData.fOtherPensions || 0);
+    const annualSocialSecurity = Number(formData.fSocSec || 0);
+
+    const timeline = [] as Array<{
+      yearIndex: number;
+      calendarYear: number;
+      age: number | null;
+      phase: string;
+      salary: number;
+      pension: number;
+      socialSecurity: number;
+      otherPension: number;
+      total: number;
+      displayTotal: number;
+      displaySalary: number;
+      displayPension: number;
+      displaySocialSecurity: number;
+      displayOtherPension: number;
+    }>;
+
+    for (let yearIndex = 0; yearIndex <= yearsToRetirement + retirementYears; yearIndex += 1) {
+      const isWorking = yearIndex < yearsToRetirement;
+      const yearsIntoRetirement = Math.max(0, yearIndex - Math.ceil(yearsToRetirement));
+      const salary = isWorking ? currentSalary * Math.pow(1 + salaryGrowth, yearIndex) : 0;
+      const pension = !isWorking ? annualPension * Math.pow(1 + annuityGrowth, yearsIntoRetirement) : 0;
+      const otherPension = !isWorking ? annualOtherPension * Math.pow(1 + annuityGrowth, yearsIntoRetirement) : 0;
+      const age = formData.dateOfBirth ? ageAtRetirement - yearsToRetirement + yearIndex : null;
+      const socialSecurityActive = socialSecurityStartAge !== null && age !== null && age >= socialSecurityStartAge;
+      const socialSecurity = socialSecurityActive ? annualSocialSecurity * Math.pow(1 + annuityGrowth, Math.max(0, (age || 0) - socialSecurityStartAge)) : 0;
+      const total = salary + pension + otherPension + socialSecurity;
+      const discountFactor = timelineMode === 'real' ? Math.pow(1 + inflationRate, yearIndex) : 1;
+      timeline.push({
+        yearIndex,
+        calendarYear: currentDate.getUTCFullYear() + yearIndex,
+        age: age === null ? null : Number(age.toFixed(1)),
+        phase: isWorking ? 'Salary years' : socialSecurity > 0 ? 'Retirement + Social Security' : 'Retirement income only',
+        salary,
+        pension,
+        socialSecurity,
+        otherPension,
+        total,
+        displayTotal: total / discountFactor,
+        displaySalary: salary / discountFactor,
+        displayPension: pension / discountFactor,
+        displaySocialSecurity: socialSecurity / discountFactor,
+        displayOtherPension: otherPension / discountFactor,
+      });
+    }
+
+    const maxIncome = timeline.reduce((max, row) => Math.max(max, row.displayTotal), 0);
+    const milestones = [
+      {
+        label: 'Today',
+        yearIndex: 0,
+        detail: currentSalary ? `Salary $${currency(timeline[0]?.displaySalary || 0)}` : 'Baseline'
+      },
+      ...(retirementDate ? [{
+        label: 'Retirement',
+        yearIndex: Math.round(yearsToRetirement),
+        detail: `Pension starts at age ${ageAtRetirement.toFixed(1)}`
+      }] : []),
+      ...(socialSecurityStartAge !== null ? [{
+        label: 'Social Security',
+        yearIndex: Math.max(0, Math.round(socialSecurityStartAge - (ageAtRetirement - yearsToRetirement))),
+        detail: `Starts at age ${socialSecurityStartAge}`
+      }] : []),
+    ];
+
+    return { timeline, maxIncome, milestones, yearsToRetirement, inflationRate };
+  }, [
+    formData.dateRetire,
+    formData.dateOfBirth,
+    formData.fYearsR,
+    formData.fCurrentYearSalary,
+    formData.fLastSalary,
+    formData.fSalaryCOLA,
+    formData.fAnnuityCOLA,
+    formData.fOtherPensions,
+    formData.fSocSec,
+    summary.annualAnnuity,
+    timelineMode,
+    socialSecurityStartAge,
+    ageAtRetirement,
+  ]);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = event.target;
     const checked = (event.target as HTMLInputElement).checked;
@@ -611,9 +710,71 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     </div>
                   </div>
 
+                  <div className="rounded-xl border border-border bg-gradient-to-br from-slate-50 to-white p-5 space-y-5">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                      <div>
+                        <h3 className="font-semibold text-text">Timeline / Life Projection View</h3>
+                        <p className="text-sm text-text-2 mt-1">See the transition from working salary to retirement pension and the later Social Security step-up in {timelineMode === 'real' ? 'inflation-adjusted' : 'nominal'} dollars.</p>
+                      </div>
+                      <div className="inline-flex rounded-md border border-border bg-white p-1">
+                        <button onClick={() => setTimelineMode('real')} className={`px-3 py-2 text-sm rounded ${timelineMode === 'real' ? 'bg-blue text-white' : 'text-text-2'}`}>Inflation-adjusted</button>
+                        <button onClick={() => setTimelineMode('nominal')} className={`px-3 py-2 text-sm rounded ${timelineMode === 'nominal' ? 'bg-blue text-white' : 'text-text-2'}`}>Nominal</button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                      {lifeProjection.milestones.map((milestone) => (
+                        <div key={milestone.label} className="rounded-md border border-border bg-white px-4 py-3">
+                          <div className="text-xs uppercase tracking-wide text-text-3">{milestone.label}</div>
+                          <div className="font-semibold text-text mt-1">Year {new Date().getUTCFullYear() + milestone.yearIndex}</div>
+                          <div className="text-text-2 mt-1">{milestone.detail}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      {lifeProjection.timeline.map((row) => {
+                        return (
+                          <div key={row.yearIndex} className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 items-center">
+                            <div className="text-xs text-text-3">
+                              <div className="font-semibold text-text">{row.calendarYear}</div>
+                              <div>{row.age !== null ? `Age ${row.age.toFixed(1)}` : 'Age —'}</div>
+                            </div>
+                            <div>
+                              <div className="relative h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
+                                <div className="absolute inset-y-0 left-0 bg-sky-500" style={{ width: `${lifeProjection.maxIncome ? (row.displaySalary / lifeProjection.maxIncome) * 100 : 0}%` }} />
+                                <div className="absolute inset-y-0 bg-emerald-500" style={{ left: `${lifeProjection.maxIncome ? (row.displaySalary / lifeProjection.maxIncome) * 100 : 0}%`, width: `${lifeProjection.maxIncome ? (row.displayPension / lifeProjection.maxIncome) * 100 : 0}%` }} />
+                                <div className="absolute inset-y-0 bg-violet-500" style={{ left: `${lifeProjection.maxIncome ? ((row.displaySalary + row.displayPension) / lifeProjection.maxIncome) * 100 : 0}%`, width: `${lifeProjection.maxIncome ? (row.displaySocialSecurity / lifeProjection.maxIncome) * 100 : 0}%` }} />
+                                <div className="absolute inset-y-0 bg-amber-400" style={{ left: `${lifeProjection.maxIncome ? ((row.displaySalary + row.displayPension + row.displaySocialSecurity) / lifeProjection.maxIncome) * 100 : 0}%`, width: `${lifeProjection.maxIncome ? (row.displayOtherPension / lifeProjection.maxIncome) * 100 : 0}%` }} />
+                                <div className="absolute inset-0 flex items-center justify-between px-4 text-xs font-medium text-slate-900">
+                                  <span>{row.phase}</span>
+                                  <span>${currency(row.displayTotal)}</span>
+                                </div>
+                              </div>
+                              <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-3">
+                                <span>Salary ${currency(row.displaySalary)}</span>
+                                <span>Pension ${currency(row.displayPension)}</span>
+                                <span>Social Security ${currency(row.displaySocialSecurity)}</span>
+                                <span>Other ${currency(row.displayOtherPension)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 text-xs text-text-3">
+                      <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-sky-500" />Salary</span>
+                      <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />Pension / annuity</span>
+                      <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-violet-500" />Social Security</span>
+                      <span className="inline-flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-amber-400" />Other pension</span>
+                    </div>
+                  </div>
+
                   <div className="space-y-2 text-sm text-text-2">
                     <p><strong>Selected report modules:</strong> {reportSections.length ? reportSections.map((section) => section.label).join(', ') : 'None selected.'}</p>
                     <p><strong>Additional explanatory notes:</strong> Age/service formulas, special retirement eligibility, leave balances, and CSRS/FERS transfer splits are preserved as scenario inputs and reflected in the summary output.</p>
+                    <p><strong>Projection note:</strong> Timeline amounts use salary growth of {Number(formData.fSalaryCOLA || 0).toFixed(1)}% and retirement-income COLA / inflation assumption of {(lifeProjection.inflationRate * 100).toFixed(1)}%.</p>
                     {formData.bCSRSTransfer === 'Y' && <p>This scenario includes CSRS-to-FERS transfer handling with transfer date {formData.dateCSRSTransfer || '—'} and transfer sick leave of {Number(formData.nXFerSickLeave || 0)} hours.</p>}
                     {Number(formData.nSurvivor || 0) > 0 && <p>Survivor reduction assumptions are included using the selected {Number(formData.nSurvivor || 0)}% option.</p>}
                   </div>
