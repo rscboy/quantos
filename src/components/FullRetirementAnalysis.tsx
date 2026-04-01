@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { DebugPanel } from './DebugPanel';
 
 type AnalysisStep =
   | 'background'
@@ -339,9 +340,10 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
     }
 
     if (currentStep.id === 'salary') {
-      if (!Number(formData.fLastSalary || 0)) nextErrors.fLastSalary = 'Salary at time of retirement is required.';
-      const validRows = (formData.salaryHistory || []).filter((row) => row.startDate && Number(row.startAmount || 0) > 0);
-      if (!Number(formData.fManualHigh3 || 0) && validRows.length < 3) nextErrors.salaryHistory = 'Provide a known High-3 salary or at least three salary history rows.';
+      // Removed strict blocking validation to allow partial data testing
+      // if (!Number(formData.fLastSalary || 0)) nextErrors.fLastSalary = 'Salary at time of retirement is required.';
+      // const validRows = (formData.salaryHistory || []).filter((row) => row.startDate && Number(row.startAmount || 0) > 0);
+      // if (!Number(formData.fManualHigh3 || 0) && validRows.length < 3) nextErrors.salaryHistory = 'Provide a known High-3 salary or at least three salary history rows.';
     }
 
     if (currentStep.id === 'tsp') {
@@ -810,6 +812,25 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     {formData.bCSRSTransfer === 'Y' && <p>This scenario includes CSRS-to-FERS transfer handling with transfer date {formData.dateCSRSTransfer || '—'} and transfer sick leave of {Number(formData.nXFerSickLeave || 0)} hours.</p>}
                     {Number(formData.nSurvivor || 0) > 0 && <p>Survivor reduction assumptions are included using the selected {Number(formData.nSurvivor || 0)}% option.</p>}
                   </div>
+
+                  {reportData?.fers?.html && formData.bCSRS !== 'Y' && (
+                    <div className="mt-8">
+                      <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
+                      <div 
+                        className="fedcalc-report"
+                        dangerouslySetInnerHTML={{ __html: reportData.fers.html }}
+                      />
+                    </div>
+                  )}
+                  {reportData?.csrs?.html && formData.bCSRS === 'Y' && (
+                    <div className="mt-8">
+                      <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
+                      <div 
+                        className="fedcalc-report"
+                        dangerouslySetInnerHTML={{ __html: reportData.csrs.html }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -836,6 +857,12 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
             </div>
           </section>
         </div>
+
+        <DebugPanel 
+          debugInfo={reportData?.debugInfo} 
+          parsedData={formData.bCSRS === 'Y' ? reportData?.csrs : reportData?.fers} 
+          rawResponse={reportData?.rawResponse}
+        />
       </main>
     </div>
   );

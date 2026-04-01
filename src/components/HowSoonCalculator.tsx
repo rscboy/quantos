@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { fedcalcApi, FedEmployee } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { DebugPanel } from './DebugPanel';
 
 export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => void, onNavigateToFers: () => void }) {
   const [step, setStep] = useState(1);
@@ -72,11 +73,11 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
   };
 
   const handlePrint = () => {
-    const ageAtRetirement = formData.dateOfBirth && reportData?.howSoon?.eligibilityDate
-      ? Math.floor((new Date(reportData.howSoon.eligibilityDate).getTime() - new Date(formData.dateOfBirth).getTime()) / 31557600000)
+    const ageAtRetirement = formData.dateOfBirth && reportData?.howSoon?.fullRetire
+      ? Math.floor((new Date(reportData.howSoon.fullRetire).getTime() - new Date(formData.dateOfBirth).getTime()) / 31557600000)
       : null;
-    const serviceTime = formData.dateServiceComp && reportData?.howSoon?.eligibilityDate
-      ? Math.floor((new Date(reportData.howSoon.eligibilityDate).getTime() - new Date(formData.dateServiceComp).getTime()) / 31557600000)
+    const serviceTime = formData.dateServiceComp && reportData?.howSoon?.fullRetire
+      ? Math.floor((new Date(reportData.howSoon.fullRetire).getTime() - new Date(formData.dateServiceComp).getTime()) / 31557600000)
       : null;
 
     openBrandedPrintReport({
@@ -100,7 +101,8 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
         {
           title: 'Report Result',
           lines: [
-            { label: 'Earliest Unreduced Retirement Date', value: reportData?.howSoon?.eligibilityDate || 'N/A' },
+            { label: 'Earliest Unreduced Retirement Date', value: reportData?.howSoon?.fullRetire || 'N/A' },
+            { label: 'Earliest Reduced (Partial) Retirement Date', value: reportData?.howSoon?.partialRetire || 'N/A' },
           ],
         },
       ],
@@ -234,12 +236,34 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
                 <div className="bg-blue-50 p-6 rounded-md mb-8">
                   <h3 className="font-semibold text-lg mb-4">Earliest Unreduced Retirement Date</h3>
                   <div className="text-4xl font-mono text-blue mb-2">
-                    {reportData?.howSoon?.eligibilityDate || 'N/A'}
+                    {reportData?.howSoon?.fullRetire || 'N/A'}
                   </div>
                   <div className="text-sm text-text-2 mt-4">
                     This is the earliest date you can retire with a full, non-reduced annuity based on the information provided.
                   </div>
                 </div>
+
+                {reportData?.howSoon?.partialRetire && (
+                  <div className="bg-gray-50 p-6 rounded-md mb-8 border border-border">
+                    <h3 className="font-semibold text-lg mb-4">Earliest Reduced (MRA+10) Retirement Date</h3>
+                    <div className="text-3xl font-mono text-text mb-2">
+                      {reportData.howSoon.partialRetire}
+                    </div>
+                    <div className="text-sm text-text-2 mt-4">
+                      This is the earliest date you can retire with a reduced annuity (Minimum Retirement Age with at least 10 years of service).
+                    </div>
+                  </div>
+                )}
+
+                {reportData?.howSoon?.html && (
+                  <div className="mb-8">
+                    <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
+                    <div 
+                      className="fedcalc-report"
+                      dangerouslySetInnerHTML={{ __html: reportData.howSoon.html }}
+                    />
+                  </div>
+                )}
 
                 <div className="text-sm text-text-2 space-y-4 border-t pt-6">
                   <div className="bg-gray-50 p-4 rounded-md border border-border">
@@ -329,6 +353,12 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
             {apiError}
           </div>
         )}
+
+        <DebugPanel 
+          debugInfo={reportData?.debugInfo} 
+          parsedData={reportData?.howSoon} 
+          rawResponse={reportData?.rawResponse}
+        />
       </main>
     </div>
   );

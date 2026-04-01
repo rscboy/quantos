@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { AdPlaceholder } from './AdPlaceholder';
+import { DebugPanel } from './DebugPanel';
 
 type CalculatorType = 'fers' | 'csrs';
 
@@ -114,12 +115,13 @@ function validateStepOne(formData: Partial<FedEmployee>) {
   }
 
   const blockingMessages: string[] = [];
-  if (serviceYears !== null && serviceYears < 5) {
-    blockingMessages.push('Cannot continue because: Less than 5 years of service');
-  }
-  if (serviceYears !== null && ageAtRetirement !== null && serviceYears < 20 && ageAtRetirement < 62) {
-    blockingMessages.push('Cannot continue because: Less than 20 years of service and under 62 years old.');
-  }
+  // Removed strict blocking messages to allow partial data testing as per API design
+  // if (serviceYears !== null && serviceYears < 5) {
+  //   blockingMessages.push('Cannot continue because: Less than 5 years of service');
+  // }
+  // if (serviceYears !== null && ageAtRetirement !== null && serviceYears < 20 && ageAtRetirement < 62) {
+  //   blockingMessages.push('Cannot continue because: Less than 20 years of service and under 62 years old.');
+  // }
 
   return { errors, blockingMessages };
 }
@@ -143,15 +145,16 @@ function validateSalaryStep(formData: Partial<FedEmployee>) {
   const salaryCoverageYears = getSalaryHistoryCoverageYears(formData.salaryHistory);
   const hasThreeYearsSalaryHistory = salaryCoverageYears >= 3;
 
-  if (!hasLastSalary) {
-    errors.fLastSalary = 'Cannot continue because: Salary at time of retirement is missing.';
-    messages.push('Cannot continue because: Salary at time of retirement is missing.');
-  }
+  // Removed strict blocking validation to allow partial data testing
+  // if (!hasLastSalary) {
+  //   errors.fLastSalary = 'Cannot continue because: Salary at time of retirement is missing.';
+  //   messages.push('Cannot continue because: Salary at time of retirement is missing.');
+  // }
 
-  if (!hasHigh3 && !hasThreeYearsSalaryHistory) {
-    errors.salaryHistory = 'Cannot continue because: High-3 salary OR 3 full years of salary history must be entered.';
-    messages.push('Cannot continue because: High-3 salary OR 3 full years of salary history must be entered.');
-  }
+  // if (!hasHigh3 && !hasThreeYearsSalaryHistory) {
+  //   errors.salaryHistory = 'Cannot continue because: High-3 salary OR 3 full years of salary history must be entered.';
+  //   messages.push('Cannot continue because: High-3 salary OR 3 full years of salary history must be entered.');
+  // }
 
   return { errors, messages, hasThreeYearsSalaryHistory, salaryCoverageYears };
 }
@@ -166,6 +169,7 @@ function calculateResultSection(reportData: any, calculatorType: CalculatorType)
     monthlyDeductions: Number(result.monthlyDeductions || 0),
     fullAnnuity: Number(result.fullAnnuity || result.monthlyAnnuity || 0),
     netMonthlyAnnuity: Number(result.netMonthlyAnnuity || result.monthlyAnnuity || 0),
+    html: result.html || '',
   };
 }
 
@@ -745,6 +749,17 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                     </table>
                   </div>
                 </div>
+
+                {results.html && (
+                  <div className="mt-8">
+                    <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
+                    <div 
+                      className="fedcalc-report"
+                      dangerouslySetInnerHTML={{ __html: results.html }}
+                    />
+                  </div>
+                )}
+
                 <AdPlaceholder
                   slot="Results follow-up banner"
                   detail="Secondary results placement before recommendations, print actions, and the next-step CTA cluster."
@@ -810,6 +825,12 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         </div>
 
         {apiError && <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md border border-red-200 text-sm">{apiError}</div>}
+
+        <DebugPanel 
+          debugInfo={reportData?.debugInfo} 
+          parsedData={reportData?.[calculatorType]} 
+          rawResponse={reportData?.rawResponse}
+        />
       </main>
     </div>
   );

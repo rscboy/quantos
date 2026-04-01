@@ -82,17 +82,97 @@ export interface FedEmployee {
 }
 
 export interface CalculatorResults {
-  fers?: any;
-  csrs?: any;
-  howSoon?: any;
-  military?: any;
+  fers?: {
+    monthlyAnnuity: number;
+    annualAnnuity: number;
+    replacementRate: number;
+    basicAnnuity: number;
+    high3: number;
+    dateRetire: string;
+    html: string;
+  };
+  csrs?: {
+    monthlyAnnuity: number;
+    annualAnnuity: number;
+    replacementRate: number;
+    basicAnnuity: number;
+    high3: number;
+    dateRetire: string;
+    html: string;
+  };
+  howSoon?: {
+    fullRetire: string;
+    partialRetire: string;
+    html: string;
+  };
   rawResponse?: any;
+  debugInfo?: {
+    payload: any;
+    calculatorType: string;
+    backendUrl: string;
+    isMockMode: boolean;
+  };
 }
 
 class FedcalcApiService {
   /**
-   * Map UI inputs to the FedEmployee schema
-   * Ensures all fields are present and safely defaulted if missing.
+   * Map UI inputs to the FedEmployee schema for HowSoon calculator
+   */
+  mapToHowSoonFedEmployee(uiData: any): Partial<FedEmployee> {
+    return {
+      dateOfBirth: uiData.dateOfBirth || '',
+      dateServiceComp: uiData.dateServiceComp || '',
+      bLawEnforce: (uiData.bLawEnforce === true || uiData.bLawEnforce === 'Y') ? 'Y' : 'N',
+      bAirTraffic: (uiData.bAirTraffic === true || uiData.bAirTraffic === 'Y') ? 'Y' : 'N',
+      bCustomsBorderPatrol: (uiData.bCustomsBorderPatrol === true || uiData.bCustomsBorderPatrol === 'Y') ? 'Y' : 'N',
+      bCSRS: (uiData.bCSRS === true || uiData.bCSRS === 'Y') ? 'Y' : 'N',
+    };
+  }
+
+  /**
+   * Map UI inputs to the FedEmployee schema for FERS calculator
+   */
+  mapToFersFedEmployee(uiData: any): Partial<FedEmployee> {
+    return {
+      dateOfBirth: uiData.dateOfBirth || '',
+      dateServiceComp: uiData.dateServiceComp || '',
+      dateRetire: uiData.dateRetire || '',
+      bCSRS: 'N',
+      fLastSalary: uiData.fLastSalary !== undefined ? Number(uiData.fLastSalary) : (uiData.salary ? Number(uiData.salary) : 0),
+      fManualHigh3: uiData.fManualHigh3 !== undefined ? Number(uiData.fManualHigh3) : (uiData.salary ? Number(uiData.salary) : 0),
+      nSickLeaveHrs: uiData.nSickLeaveHrs !== undefined ? Number(uiData.nSickLeaveHrs) : 0,
+      nAnnualLeaveHrs: uiData.nAnnualLeaveHrs !== undefined ? Number(uiData.nAnnualLeaveHrs) : 0,
+      bLawEnforce: (uiData.bLawEnforce === true || uiData.bLawEnforce === 'Y') ? 'Y' : 'N',
+      bAirTraffic: (uiData.bAirTraffic === true || uiData.bAirTraffic === 'Y') ? 'Y' : 'N',
+      bCustomsBorderPatrol: (uiData.bCustomsBorderPatrol === true || uiData.bCustomsBorderPatrol === 'Y') ? 'Y' : 'N',
+      nSurvivor: uiData.survivor !== undefined ? Number(uiData.survivor) : (uiData.nSurvivor !== undefined ? Number(uiData.nSurvivor) : 0),
+      fYearsR: uiData.years ? Number(uiData.years) : 0,
+    };
+  }
+
+  /**
+   * Map UI inputs to the FedEmployee schema for CSRS calculator
+   */
+  mapToCsrsFedEmployee(uiData: any): Partial<FedEmployee> {
+    return {
+      dateOfBirth: uiData.dateOfBirth || '',
+      dateServiceComp: uiData.dateServiceComp || '',
+      dateRetire: uiData.dateRetire || '',
+      bCSRS: 'Y',
+      fLastSalary: uiData.fLastSalary !== undefined ? Number(uiData.fLastSalary) : (uiData.salary ? Number(uiData.salary) : 0),
+      fManualHigh3: uiData.fManualHigh3 !== undefined ? Number(uiData.fManualHigh3) : (uiData.salary ? Number(uiData.salary) : 0),
+      nSickLeaveHrs: uiData.nSickLeaveHrs !== undefined ? Number(uiData.nSickLeaveHrs) : 0,
+      nAnnualLeaveHrs: uiData.nAnnualLeaveHrs !== undefined ? Number(uiData.nAnnualLeaveHrs) : 0,
+      bLawEnforce: (uiData.bLawEnforce === true || uiData.bLawEnforce === 'Y') ? 'Y' : 'N',
+      bAirTraffic: (uiData.bAirTraffic === true || uiData.bAirTraffic === 'Y') ? 'Y' : 'N',
+      bCustomsBorderPatrol: (uiData.bCustomsBorderPatrol === true || uiData.bCustomsBorderPatrol === 'Y') ? 'Y' : 'N',
+      nSurvivor: uiData.survivor !== undefined ? Number(uiData.survivor) : (uiData.nSurvivor !== undefined ? Number(uiData.nSurvivor) : 0),
+      fYearsR: uiData.years ? Number(uiData.years) : 0,
+    };
+  }
+
+  /**
+   * Fallback mapper for other calculators or full payload
    */
   mapToFedEmployee(uiData: any): FedEmployee {
     // Initialize with defaults as requested: blank string, 0, false, or empty array
@@ -226,14 +306,45 @@ class FedcalcApiService {
    * Submit the FedEmployee payload to the API and get calculator results
    */
   async calculateRetirement(employeeData: Partial<FedEmployee>, calculatorType: string = 'howsoon'): Promise<CalculatorResults> {
-    // Ensure all fields are properly defaulted
-    const payload = this.mapToFedEmployee(employeeData);
+    // Determine the correct payload based on the calculator type
+    let payload: Partial<FedEmployee>;
+    
+    switch (calculatorType.toLowerCase()) {
+      case 'howsoon':
+        payload = this.mapToHowSoonFedEmployee(employeeData);
+        break;
+      case 'fers':
+        payload = this.mapToFersFedEmployee(employeeData);
+        break;
+      case 'csrs':
+        payload = this.mapToCsrsFedEmployee(employeeData);
+        break;
+      default:
+        // Fallback to the full mapper
+        payload = this.mapToFedEmployee(employeeData);
+    }
 
     // Determine the backend URL
     // If VITE_BACKEND_BASE_URL is set, use it. Otherwise, use Mock Mode.
-    const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-    console.log('VITE_BACKEND_BASE_URL =', import.meta.env.VITE_BACKEND_BASE_URL);
+    const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL || '';
     
+    // --- TEMPORARY DEBUGGING ---
+    console.log('--- FEDCALC SUBMISSION DEBUG ---');
+    console.log('1. Exact JSON payload being sent:', JSON.stringify(payload, null, 2));
+    console.log('2. Calculator type:', calculatorType);
+    console.log('3. Mock mode being used:', !backendBaseUrl);
+    console.log('4. Final mapped FedEmployee object:', payload);
+    console.log('--------------------------------');
+
+    console.log('VITE_BACKEND_BASE_URL =', backendBaseUrl);
+    
+    const debugInfo = {
+      payload,
+      calculatorType,
+      backendUrl: backendBaseUrl,
+      isMockMode: !backendBaseUrl
+    };
+
     // If no backend is configured, use Mock Mode so the frontend preview works without credentials
     if (!backendBaseUrl) {
       console.log('[Mock Mode] No backend URL configured. Returning mock data.');
@@ -250,34 +361,21 @@ class FedcalcApiService {
         annualAnnuity: monthlyAnnuity * 12,
         replacementRate: years * 0.01 * 100,
         basicAnnuity: monthlyAnnuity * 12,
-        monthlyDeductions: Number(payload.fHealthInsDeduct || 0),
-        fullAnnuity: monthlyAnnuity,
-        netMonthlyAnnuity: Math.max(monthlyAnnuity - Number(payload.fHealthInsDeduct || 0), 0),
-        html: "<p>Mock report generated successfully (Client-side fallback).</p>"
+        high3: salary,
+        dateRetire: payload.dateRetire || '2035-01-01',
+        html: "<div class='p-4 bg-gray-50 border border-gray-200 rounded-md'><h3 class='text-lg font-semibold mb-2'>Mock Report</h3><p>Mock report generated successfully (Client-side fallback).</p></div>"
       };
-
-      const militaryPrincipal = payload.fCurBalance > 0 ? Number(payload.fCurBalance || 0) : Math.max(Number(payload.fTotEarnings || 0) * 0.03 - Number(payload.fCivilEarnings || 0), 0);
-      const militaryInterest = payload.fCurBalance > 0
-        ? militaryPrincipal * 0.03
-        : Math.max(militaryPrincipal * 0.03 + Number(payload.fEarnings1999 || 0) * 0.02875 + Number(payload.fEarnings2000 || 0) * 0.0325, 0);
-      const militaryBalance = militaryPrincipal + militaryInterest;
 
       return {
         fers: annuityPayload,
         csrs: annuityPayload,
         howSoon: {
-          eligibilityDate: "2035-01-01",
-          html: "<p>Mock eligibility report generated successfully.</p>"
+          fullRetire: "2035-01-01",
+          partialRetire: "2030-01-01",
+          html: "<div class='p-4 bg-gray-50 border border-gray-200 rounded-md'><h3 class='text-lg font-semibold mb-2'>Mock Report</h3><p>Mock eligibility report generated successfully.</p></div>"
         },
-        military: {
-          interestAccrualDate: payload.dateAnniversaryDate || payload.dateServiceComp || '',
-          principal: militaryPrincipal,
-          interest: militaryInterest,
-          balance: militaryBalance,
-          priorBalanceDue: militaryPrincipal,
-          html: "<p>Mock military deposit report generated successfully.</p>"
-        },
-        rawResponse: { message: "Mock response generated successfully" }
+        rawResponse: { message: "Mock response generated successfully" },
+        debugInfo
       };
     } else {
       try {
@@ -299,30 +397,31 @@ class FedcalcApiService {
 
         const data = await response.json();
         
-        // If the proxy returned mock data, it will have MonthlyAnnuity directly
-        // If it's the real API, it returns annuityRpt which has MonthlyAnnuity
+        // Parse and structure the results based on the real API response
+        const monthlyAnnuity = Number(data.MonthlyAnnuity || data.BasicAnnuityMo || 0);
+        const basicAnnuity = Number(data.BasicAnnuity || data.BasicAnnuityMo || monthlyAnnuity);
+        const high3 = Number(data.High3 || data.fCalcHigh3 || data.fManualHigh3 || 0);
         
-        // Parse and structure the results based on the OpenAPI spec
+        const annuityPayload = {
+          monthlyAnnuity: monthlyAnnuity,
+          annualAnnuity: monthlyAnnuity * 12,
+          replacementRate: Number(data.PctHigh3 || 0),
+          basicAnnuity: basicAnnuity,
+          high3: high3,
+          dateRetire: data.DateRetire || data.dateRetire || '',
+          html: data.html || ''
+        };
+
         return {
-          fers: {
-            monthlyAnnuity: data.MonthlyAnnuity || data.BasicAnnuityMo || 0,
-            annualAnnuity: (data.MonthlyAnnuity || data.BasicAnnuityMo || 0) * 12,
-            replacementRate: data.PctHigh3 || 0,
-            html: data.html || ''
-          },
+          fers: annuityPayload,
+          csrs: annuityPayload,
           howSoon: {
-            eligibilityDate: data.EligibilityDate || data.eligibilityDate || data.DateRetire || data.dateRetire || '',
+            fullRetire: data.FullRetire || data.fullRetire || data.EligibilityDate || data.eligibilityDate || '',
+            partialRetire: data.PartialRetire || data.partialRetire || '',
             html: data.html || ''
           },
-          military: {
-            interestAccrualDate: data.InterestAccrualDate || data.interestAccrualDate || data.AccrualDate || data.accrualDate || '',
-            principal: data.Principal || data.principal || 0,
-            interest: data.Interest || data.interest || 0,
-            balance: data.Balance || data.balance || 0,
-            priorBalanceDue: data.PriorBalanceDue || data.priorBalanceDue || data.Principal || data.principal || 0,
-            html: data.html || ''
-          },
-          rawResponse: data
+          rawResponse: data,
+          debugInfo
         };
       } catch (error) {
         console.error('Fedcalc API Calculation Error:', error);

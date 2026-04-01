@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 
 type RetirementSystem = 'FERS' | 'CSRS' | 'CSRS Offset' | 'Other';
@@ -92,18 +91,6 @@ function calculateFallbackReport(formData: FormData): ReportData {
   };
 }
 
-function mapMilitaryResults(result: any, fallback: ReportData): ReportData {
-  const raw = result?.military || result?.rawResponse || {};
-  return {
-    accrualDate: raw.interestAccrualDate || raw.InterestAccrualDate || fallback.accrualDate,
-    principal: Number(raw.principal || raw.Principal || fallback.principal),
-    interest: Number(raw.interest || raw.Interest || fallback.interest),
-    balance: Number(raw.balance || raw.Balance || fallback.balance),
-    priorBalanceDue: Number(raw.priorBalanceDue || raw.PriorBalanceDue || fallback.priorBalanceDue),
-    mode: fallback.mode,
-  };
-}
-
 function ResultCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-border bg-white p-5">
@@ -168,27 +155,12 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
     setApiError(null);
     const fallback = calculateFallbackReport(formData);
 
-    try {
-      const payload: Partial<FedEmployee> = {
-        bCSRS: formData.retirementSystem === 'FERS' ? 'N' : 'Y',
-        dateServiceComp: formData.civilianEmploymentDate,
-        dateAnniversaryDate: formData.anniversaryDate,
-        fCurBalance: parseAmount(formData.simplifiedBalance),
-        fTotEarnings: parseAmount(formData.totalMilitaryEarnings),
-        fEarnings1999: parseAmount(formData.earnings1999),
-        fEarnings2000: parseAmount(formData.earnings2000),
-        fCivilEarnings: parseAmount(formData.userraDeductionEquivalent),
-      };
-      const apiResults = await fedcalcApi.calculateRetirement(payload, 'military');
-      setReportData(mapMilitaryResults(apiResults, fallback));
-      setStep(2);
-    } catch (error) {
+    // Local-only calculation
+    setTimeout(() => {
       setReportData(fallback);
-      setApiError(error instanceof Error ? error.message : 'Unable to contact the calculation service. Showing the client-side estimate instead.');
       setStep(2);
-    } finally {
       setIsCalculating(false);
-    }
+    }, 500);
   };
 
   const handleSend = () => {
