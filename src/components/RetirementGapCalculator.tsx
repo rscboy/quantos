@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToGapForm } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { useSharedProfile } from '../hooks/useSharedProfile';
 
 type GapForm = {
   plannedRetirementDate: string;
@@ -162,17 +163,36 @@ function ResultCell({ label, now, retirement, emphasize = false }: { label: stri
 }
 
 export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
+  const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<GapForm>(() => ({ ...DEFAULT_FORM, ...applyLinkedDataToGapForm(linkedData) }));
+  const [form, setForm] = useState<GapForm>(() => ({ 
+    ...DEFAULT_FORM, 
+    ...applyLinkedDataToGapForm(linkedData),
+    plannedRetirementDate: profile.dateRetire || '',
+  }));
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
   const metrics = useMemo(() => calculateProjection(form), [form]);
+
+  // Sync profile updates if they happen externally
+  useEffect(() => {
+    setForm(prev => ({
+      ...prev,
+      plannedRetirementDate: profile.dateRetire || prev.plannedRetirementDate,
+    }));
+    if (profile.email) {
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+    }
+  }, [profile]);
 
   const setField = (field: keyof GapForm, value: string) => {
     setForm((prev) => ({
       ...prev,
       [field]: field === 'plannedRetirementDate' ? value : Number(value),
     }));
+    if (field === 'plannedRetirementDate') {
+      updateProfile({ dateRetire: value });
+    }
   };
 
   const validateStep = (stepToValidate: number) => {
@@ -261,13 +281,13 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
 
   return (
     <div className="animate-in fade-in duration-300">
-      <main className="max-w-[1040px] mx-auto px-6 pb-20 pt-12">
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
+      <main className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
+        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
         </button>
 
-        <h1 className="font-serif text-4xl font-normal text-text mb-3">Retirement Savings GAP Calculator</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">Retirement Savings GAP Calculator</h1>
         <p className="text-text-2 max-w-3xl mb-8">Estimate whether your retirement income sources will cover your target retirement lifestyle, then quantify the additional savings needed to close any projected shortfall.</p>
 
         {(linkedData.tsp || linkedData.socialSecurity) && (
@@ -277,13 +297,13 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-8 overflow-x-auto gap-4">
+        <div className="flex items-center justify-between mb-8 overflow-x-auto gap-4 pb-2">
           {STEP_TITLES.map((title, index) => {
             const stepNumber = index + 1;
             const isCurrent = step === stepNumber;
             const isComplete = step > stepNumber;
             return (
-              <div key={title} className="flex items-center min-w-0 flex-1">
+              <div key={title} className="flex items-center min-w-fit flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${isCurrent ? 'bg-blue text-white' : isComplete ? 'bg-green text-white' : 'bg-gray-200 text-gray-500'}`}>
                   {isComplete ? '✓' : stepNumber}
                 </div>
@@ -291,7 +311,7 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
                   <div className="text-[11px] uppercase tracking-[0.08em] text-text-3">Step {stepNumber}</div>
                   <div className="text-sm font-medium text-text truncate">{title}</div>
                 </div>
-                {stepNumber < STEP_TITLES.length && <div className={`mx-3 h-1 flex-1 rounded ${isComplete ? 'bg-green' : 'bg-gray-200'}`} />}
+                {stepNumber < STEP_TITLES.length && <div className={`mx-3 h-1 flex-1 rounded min-w-[20px] ${isComplete ? 'bg-green' : 'bg-gray-200'}`} />}
               </div>
             );
           })}
@@ -418,12 +438,25 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Email address <span className="text-red-500">*</span></label>
-                  <input type="email" value={emailData.email} onChange={(e) => setEmailData((prev) => ({ ...prev, email: e.target.value }))} className={fieldClass('email')} />
+                  <input 
+                    type="email" 
+                    value={emailData.email} 
+                    onChange={(e) => {
+                      setEmailData((prev) => ({ ...prev, email: e.target.value }));
+                      updateProfile({ email: e.target.value });
+                    }} 
+                    className={`${fieldClass('email')} min-h-[44px]`} 
+                  />
                   {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Confirm email address <span className="text-red-500">*</span></label>
-                  <input type="email" value={emailData.confirmEmail} onChange={(e) => setEmailData((prev) => ({ ...prev, confirmEmail: e.target.value }))} className={fieldClass('confirmEmail')} />
+                  <input 
+                    type="email" 
+                    value={emailData.confirmEmail} 
+                    onChange={(e) => setEmailData((prev) => ({ ...prev, confirmEmail: e.target.value }))} 
+                    className={`${fieldClass('confirmEmail')} min-h-[44px]`} 
+                  />
                   {errors.confirmEmail && <p className="text-xs text-red-500 mt-1">{errors.confirmEmail}</p>}
                 </div>
               </div>

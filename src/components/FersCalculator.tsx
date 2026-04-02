@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { AdPlaceholder } from './AdPlaceholder';
 import { DebugPanel } from './DebugPanel';
+import { useSharedProfile } from '../hooks/useSharedProfile';
 
 type CalculatorType = 'fers' | 'csrs';
 
@@ -185,16 +186,46 @@ function formatDelta(value: number, kind: 'currency' | 'percent' | 'years' = 'cu
 }
 
 function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: CalculatorType; onBack: () => void }) {
+  const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [blockingMessages, setBlockingMessages] = useState<string[]>([]);
-  const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
   const [adRefreshCount, setAdRefreshCount] = useState(1);
   const [emailErrors, setEmailErrors] = useState<Record<string, string>>({});
-  const [formData, setFormData] = useState<Partial<FedEmployee>>(defaultFormData(calculatorType));
+  
+  const [formData, setFormData] = useState<Partial<FedEmployee>>({
+    ...defaultFormData(calculatorType),
+    dateOfBirth: profile.dateOfBirth || '',
+    dateServiceComp: profile.dateServiceComp || '',
+    dateRetire: profile.dateRetire || '',
+    bCSRS: profile.bCSRS || (calculatorType === 'csrs' ? 'Y' : 'N'),
+    bAirTraffic: profile.bAirTraffic || '',
+    bCustomsBorderPatrol: profile.bCustomsBorderPatrol || '',
+    bLawEnforce: profile.bLawEnforce || '',
+    bPhasedRetire: profile.bPhasedRetire || '',
+  });
+
+  // Sync profile updates if they happen externally
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      dateOfBirth: profile.dateOfBirth || prev.dateOfBirth,
+      dateServiceComp: profile.dateServiceComp || prev.dateServiceComp,
+      dateRetire: profile.dateRetire || prev.dateRetire,
+      bCSRS: profile.bCSRS || prev.bCSRS,
+      bAirTraffic: profile.bAirTraffic || prev.bAirTraffic,
+      bCustomsBorderPatrol: profile.bCustomsBorderPatrol || prev.bCustomsBorderPatrol,
+      bLawEnforce: profile.bLawEnforce || prev.bLawEnforce,
+      bPhasedRetire: profile.bPhasedRetire || prev.bPhasedRetire,
+    }));
+    if (profile.email) {
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+    }
+  }, [profile]);
   const [savedScenarios, setSavedScenarios] = useState<ScenarioSnapshot[]>([]);
 
   const title = calculatorType === 'csrs' ? 'CSRS Annuity Calculator' : 'FERS Annuity Calculator';
@@ -243,10 +274,15 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
+    const finalValue = type === 'checkbox' ? (checked ? 'Y' : 'N') : type === 'number' || type === 'radio' ? Number(value) : value;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (checked ? 'Y' : 'N') : type === 'number' || type === 'radio' ? Number(value) : value,
+      [name]: finalValue,
     }));
+    // Save to shared profile
+    if (['bCSRS', 'bAirTraffic', 'bCustomsBorderPatrol', 'bLawEnforce', 'bPhasedRetire', 'dateOfBirth', 'dateServiceComp', 'dateRetire'].includes(name)) {
+      updateProfile({ [name]: finalValue as string });
+    }
   };
 
   const handleArrayChange = (arrayName: keyof FedEmployee, index: number, field: string, value: any) => {
@@ -313,7 +349,10 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
       setAdRefreshCount((current) => current + 1);
       setStep(8);
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : 'An unknown error occurred');
+      if (import.meta.env.DEV) {
+        console.error('Calculation error:', error);
+      }
+      setApiError('Unable to calculate eligibility. Please check your dates or required fields and try again.');
     } finally {
       setIsCalculating(false);
     }
@@ -384,11 +423,11 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         const stepNumber = index + 1;
         return (
           <div key={label} className="flex items-center min-w-fit">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step === stepNumber ? 'bg-blue text-white' : step > stepNumber ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+            <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold ${step === stepNumber ? 'bg-blue text-white' : step > stepNumber ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
               {step > stepNumber ? '✓' : stepNumber}
             </div>
             <span className="ml-2 mr-3 text-xs text-text-2 whitespace-nowrap">{label}</span>
-            {stepNumber < 7 && <div className={`w-6 sm:w-10 h-1 rounded ${step > stepNumber ? 'bg-green-500' : 'bg-gray-200'}`} />}
+            {stepNumber < 7 && <div className={`w-4 sm:w-10 h-1 rounded ${step > stepNumber ? 'bg-green-500' : 'bg-gray-200'}`} />}
           </div>
         );
       })}
@@ -397,13 +436,13 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
   return (
     <div className="animate-in fade-in duration-300">
-      <main className="max-w-[980px] mx-auto px-6 pb-20 pt-12">
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
+      <main className="w-full max-w-[980px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
+        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
         </button>
 
-        <h1 className="font-serif text-4xl font-normal text-text mb-3">{title}</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">{title}</h1>
         <p className="text-text-2 text-sm mb-8">Structured 9-page annuity estimate flow with required validations, salary history coverage checks, results, email delivery, and printer-friendly reporting.</p>
 
         {step <= 7 && renderStepIndicator()}
@@ -654,6 +693,11 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   <ResultCard label="Full annuity" value={`$${currency(results.fullAnnuity || results.monthlyAnnuity)}`} />
                   <ResultCard label="Net monthly annuity" value={`$${currency(results.netMonthlyAnnuity || Math.max(results.monthlyAnnuity - Number(formData.fHealthInsDeduct || 0), 0))}`} />
                 </div>
+                {results.basicAnnuity === 0 && (
+                  <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md text-amber-800 text-sm">
+                    <strong>Note:</strong> The calculated annuity is $0. Additional inputs (such as salary history or creditable service) may improve the accuracy of this estimate.
+                  </div>
+                )}
                 <div className="mt-6 rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 to-white p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
@@ -786,11 +830,24 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                 <p className="text-text-2 text-sm">Enter and confirm your email address to receive a free copy of your personalized retirement scenario.</p>
               </div>
               <Field label="Email address *">
-                <input type="email" value={emailData.email} onChange={(e) => setEmailData((prev) => ({ ...prev, email: e.target.value }))} className={`w-full p-2.5 border ${emailErrors.email ? 'border-red-500' : 'border-border'} rounded-md`} />
+                <input 
+                  type="email" 
+                  value={emailData.email} 
+                  onChange={(e) => {
+                    setEmailData((prev) => ({ ...prev, email: e.target.value }));
+                    updateProfile({ email: e.target.value });
+                  }} 
+                  className={`w-full p-2.5 border ${emailErrors.email ? 'border-red-500' : 'border-border'} rounded-md min-h-[44px]`} 
+                />
                 {emailErrors.email && <p className="text-red-500 text-xs mt-1">{emailErrors.email}</p>}
               </Field>
               <Field label="Confirm email address *">
-                <input type="email" value={emailData.confirmEmail} onChange={(e) => setEmailData((prev) => ({ ...prev, confirmEmail: e.target.value }))} className={`w-full p-2.5 border ${emailErrors.confirmEmail ? 'border-red-500' : 'border-border'} rounded-md`} />
+                <input 
+                  type="email" 
+                  value={emailData.confirmEmail} 
+                  onChange={(e) => setEmailData((prev) => ({ ...prev, confirmEmail: e.target.value }))} 
+                  className={`w-full p-2.5 border ${emailErrors.confirmEmail ? 'border-red-500' : 'border-border'} rounded-md min-h-[44px]`} 
+                />
                 {emailErrors.confirmEmail && <p className="text-red-500 text-xs mt-1">{emailErrors.confirmEmail}</p>}
               </Field>
               <div className="space-y-3">

@@ -22,7 +22,7 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
               </div>
             </div>
             <p className="text-[13px] text-white/40 leading-[1.7]">
-              The leading independent resource for Federal Retirement planning since 2004. Proprietary analysis engines optimized for OPM data integrity. A product of Quantos Software LLC.
+              The leading independent resource for Federal Retirement planning since 2004. Proprietary analysis engines based on federal retirement logic. A product of Quantos Software LLC.
             </p>
           </div>
           <div>

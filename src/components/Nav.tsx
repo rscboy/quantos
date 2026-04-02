@@ -116,7 +116,26 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
               <span className="text-[10px] font-sans font-medium text-white/50 tracking-[0.2em] uppercase mt-1">by Quantos</span>
             </div>
           </a>
-          <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0">
+          <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
+            <li className="flex items-center gap-3">
+              <span className="text-white/40 text-[11px] italic">Your information is saved for use across calculators</span>
+              <button
+                className="text-white/65 text-[13px] font-medium no-underline transition-colors duration-150 hover:text-white hover:no-underline active:text-white border border-white/20 rounded-md px-3 py-1.5"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem('fedcalc_shared_profile');
+                    alert('Saved calculator data has been cleared.');
+                    window.location.reload();
+                  } catch (e) {
+                    if (import.meta.env.DEV) {
+                      console.error(e);
+                    }
+                  }
+                }}
+              >
+                Clear Saved Data
+              </button>
+            </li>
             <li>
               <a
                 href="#"
@@ -137,7 +156,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
             OPM Tables current · 2025 · Phased Retirement supported
           </div>
           <div className="relative flex items-center gap-5 text-[11px] text-white/40">
-            <span>Audited monthly against OPM Chapter 50</span>
+            <span>Based on OPM Chapter 50 rules</span>
             <span>|</span>
             <div ref={shareRef} className="relative">
               <button

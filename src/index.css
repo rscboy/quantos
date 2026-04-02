@@ -137,7 +137,7 @@
 
 /* FedCalc HTML Report Scoping */
 .fedcalc-report {
-  @apply text-sm text-text bg-white p-6 rounded-md border border-border;
+  @apply text-sm text-text bg-white p-4 sm:p-6 md:p-8 rounded-md border border-border overflow-x-auto max-w-full;
 }
 
 .fedcalc-report h1, .fedcalc-report h2, .fedcalc-report h3, .fedcalc-report h4 {

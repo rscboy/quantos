@@ -86,7 +86,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-between gap-4 md:gap-6">
           <div className="flex items-center gap-3 text-[13px] text-text-2">
             <div className="w-8 h-8 bg-bg border border-border rounded-md flex items-center justify-center text-sm shrink-0">📋</div>
-            <span>Audited against OPM Chapter 50 regulations</span>
+            <span>Based on OPM Chapter 50 rules</span>
           </div>
           <div className="hidden md:block w-px h-7 bg-border"></div>
           <div className="flex items-center gap-3 text-[13px] text-text-2">

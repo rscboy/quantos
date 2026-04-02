@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { AdPlaceholder } from './AdPlaceholder';
+import { useSharedProfile } from '../hooks/useSharedProfile';
 
 type RetirementSystem = 'FERS' | 'CSRS';
 type FundKey = 'G Fund' | 'F Fund' | 'C Fund' | 'S Fund' | 'I Fund';
@@ -180,12 +181,13 @@ function projectAnalysisRows(contributionForm: ContributionForm, primaryFund: Pr
 }
 
 export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBack: () => void; linkedData: LinkedCalculatorData; onLinkedDataChange: (update: Partial<LinkedCalculatorData>) => void }) {
+  const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
   const [contributionForm, setContributionForm] = useState<ContributionForm>(() => ({
     ...DEFAULT_CONTRIBUTION_FORM,
-    retirementSystem: linkedData.tsp?.retirementSystem || DEFAULT_CONTRIBUTION_FORM.retirementSystem,
-    plannedRetirementDate: linkedData.tsp?.plannedRetirementDate || DEFAULT_CONTRIBUTION_FORM.plannedRetirementDate,
-    dateOfBirth: linkedData.tsp?.dateOfBirth || linkedData.socialSecurity?.birthDate || DEFAULT_CONTRIBUTION_FORM.dateOfBirth,
+    retirementSystem: profile.bCSRS ? 'CSRS' : 'FERS',
+    plannedRetirementDate: profile.dateRetire || linkedData.tsp?.plannedRetirementDate || DEFAULT_CONTRIBUTION_FORM.plannedRetirementDate,
+    dateOfBirth: profile.dateOfBirth || linkedData.tsp?.dateOfBirth || linkedData.socialSecurity?.birthDate || DEFAULT_CONTRIBUTION_FORM.dateOfBirth,
     currentAnnualSalary: linkedData.tsp?.currentAnnualSalary || DEFAULT_CONTRIBUTION_FORM.currentAnnualSalary,
     annualPercentContribution: linkedData.tsp?.annualPercentContribution || DEFAULT_CONTRIBUTION_FORM.annualPercentContribution,
     annualCatchUpContribution: linkedData.tsp?.annualCatchUpContribution || DEFAULT_CONTRIBUTION_FORM.annualCatchUpContribution,
@@ -205,10 +207,23 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
     }, {} as Record<FundKey, FundInput>);
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
   const [adRefreshCount, setAdRefreshCount] = useState(1);
   const totalAllocation = useMemo(() => normalizeAllocations(funds), [funds]);
   const { rows, totalContributions } = useMemo(() => projectAnalysisRows(contributionForm, primaryFund, funds), [contributionForm, primaryFund, funds]);
+
+  // Sync profile updates if they happen externally
+  useEffect(() => {
+    setContributionForm(prev => ({
+      ...prev,
+      retirementSystem: profile.bCSRS ? 'CSRS' : 'FERS',
+      plannedRetirementDate: profile.dateRetire || prev.plannedRetirementDate,
+      dateOfBirth: profile.dateOfBirth || prev.dateOfBirth,
+    }));
+    if (profile.email) {
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+    }
+  }, [profile]);
 
   const linkedProjection = useMemo<LinkedTspData>(() => ({
     retirementSystem: contributionForm.retirementSystem,
@@ -232,6 +247,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
 
   const setContributionField = (field: keyof ContributionForm, value: string | number) => {
     setContributionForm((prev) => ({ ...prev, [field]: value }));
+    if (field === 'retirementSystem') {
+      updateProfile({ bCSRS: value === 'CSRS' ? 'Y' : 'N' });
+    } else if (field === 'plannedRetirementDate') {
+      updateProfile({ dateRetire: value as string });
+    } else if (field === 'dateOfBirth') {
+      updateProfile({ dateOfBirth: value as string });
+    }
   };
 
   const setFundField = (fund: FundKey, field: keyof FundInput, value: number | string) => {
@@ -360,11 +382,11 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
             const stepNumber = index + 1;
             return (
               <div key={label} className="flex items-center min-w-fit">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step === stepNumber ? 'bg-blue text-white' : step > stepNumber ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold ${step === stepNumber ? 'bg-blue text-white' : step > stepNumber ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
                   {step > stepNumber ? '✓' : stepNumber}
                 </div>
                 <span className="ml-2 mr-3 text-xs text-text-2 whitespace-nowrap">{label}</span>
-                {stepNumber < STEP_TITLES.length && <div className={`w-6 sm:w-10 h-1 rounded ${step > stepNumber ? 'bg-green-500' : 'bg-gray-200'}`} />}
+                {stepNumber < STEP_TITLES.length && <div className={`w-4 sm:w-10 h-1 rounded ${step > stepNumber ? 'bg-green-500' : 'bg-gray-200'}`} />}
               </div>
             );
           })}
@@ -580,11 +602,24 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                 <p className="text-text-2 text-sm">Enter your email address twice to validate delivery before the report is sent.</p>
               </div>
               <Field label="Email address *">
-                <input type="email" value={emailData.email} onChange={(e) => setEmailData((prev) => ({ ...prev, email: e.target.value }))} className={`w-full p-2.5 border ${errors.email ? 'border-red-500' : 'border-border'} rounded-md`} />
+                <input 
+                  type="email" 
+                  value={emailData.email} 
+                  onChange={(e) => {
+                    setEmailData((prev) => ({ ...prev, email: e.target.value }));
+                    updateProfile({ email: e.target.value });
+                  }} 
+                  className={`w-full p-2.5 border ${errors.email ? 'border-red-500' : 'border-border'} rounded-md min-h-[44px]`} 
+                />
                 {errors.email && <ErrorText>{errors.email}</ErrorText>}
               </Field>
               <Field label="Confirm email address *">
-                <input type="email" value={emailData.confirmEmail} onChange={(e) => setEmailData((prev) => ({ ...prev, confirmEmail: e.target.value }))} className={`w-full p-2.5 border ${errors.confirmEmail ? 'border-red-500' : 'border-border'} rounded-md`} />
+                <input 
+                  type="email" 
+                  value={emailData.confirmEmail} 
+                  onChange={(e) => setEmailData((prev) => ({ ...prev, confirmEmail: e.target.value }))} 
+                  className={`w-full p-2.5 border ${errors.confirmEmail ? 'border-red-500' : 'border-border'} rounded-md min-h-[44px]`} 
+                />
                 {errors.confirmEmail && <ErrorText>{errors.confirmEmail}</ErrorText>}
               </Field>
               <div className="space-y-3">

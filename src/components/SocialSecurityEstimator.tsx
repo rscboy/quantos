@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedSocialSecurityData } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { useSharedProfile } from '../hooks/useSharedProfile';
 
 type Step = 1 | 2 | 3;
 type DateParts = { month: string; day: string; year: string };
@@ -270,17 +271,30 @@ function DateSelectors({ label, value, onChange, error, years }: { label: string
 }
 
 export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange }: { onBack: () => void; linkedData: LinkedCalculatorData; onLinkedDataChange: (update: Partial<LinkedCalculatorData>) => void }) {
+  const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormState>(() => ({
     ...INITIAL_FORM,
-    birthDate: linkedData.socialSecurity?.birthDate ? toDateParts(linkedData.socialSecurity.birthDate) : linkedData.tsp?.dateOfBirth ? toDateParts(linkedData.tsp.dateOfBirth) : INITIAL_FORM.birthDate,
-    retirementDate: linkedData.socialSecurity?.retirementDate ? toDateParts(linkedData.socialSecurity.retirementDate) : linkedData.tsp?.plannedRetirementDate ? toDateParts(linkedData.tsp.plannedRetirementDate) : INITIAL_FORM.retirementDate,
+    birthDate: profile.dateOfBirth ? toDateParts(profile.dateOfBirth) : linkedData.socialSecurity?.birthDate ? toDateParts(linkedData.socialSecurity.birthDate) : linkedData.tsp?.dateOfBirth ? toDateParts(linkedData.tsp.dateOfBirth) : INITIAL_FORM.birthDate,
+    retirementDate: profile.dateRetire ? toDateParts(profile.dateRetire) : linkedData.socialSecurity?.retirementDate ? toDateParts(linkedData.socialSecurity.retirementDate) : linkedData.tsp?.plannedRetirementDate ? toDateParts(linkedData.tsp.plannedRetirementDate) : INITIAL_FORM.retirementDate,
     currentYearEarnings: linkedData.socialSecurity?.currentYearEarnings ? String(linkedData.socialSecurity.currentYearEarnings) : linkedData.tsp?.currentAnnualSalary ? String(linkedData.tsp.currentAnnualSalary) : '',
     futureYearEarnings: linkedData.socialSecurity?.futureYearEarnings ? String(linkedData.socialSecurity.futureYearEarnings) : linkedData.tsp?.currentAnnualSalary ? String(linkedData.tsp.currentAnnualSalary) : '',
   }));
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [email, setEmail] = useState({ primary: '', confirm: '' });
+  const [email, setEmail] = useState({ primary: profile.email || '', confirm: profile.email || '' });
   const results = useMemo(() => computeResults(form), [form]);
+
+  // Sync profile updates if they happen externally
+  useEffect(() => {
+    setForm(prev => ({
+      ...prev,
+      birthDate: profile.dateOfBirth ? toDateParts(profile.dateOfBirth) : prev.birthDate,
+      retirementDate: profile.dateRetire ? toDateParts(profile.dateRetire) : prev.retirementDate,
+    }));
+    if (profile.email) {
+      setEmail(prev => ({ ...prev, primary: profile.email || prev.primary, confirm: profile.email || prev.confirm }));
+    }
+  }, [profile]);
 
   const linkedEstimate = useMemo<LinkedSocialSecurityData>(() => ({
     birthDate: toIsoDate(form.birthDate),
@@ -302,7 +316,17 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
   const retirementDate = parseDate(form.retirementDate);
 
   const setDateField = (group: 'birthDate' | 'retirementDate', field: keyof DateParts, value: string) => {
-    setForm((prev) => ({ ...prev, [group]: { ...prev[group], [field]: value } }));
+    setForm((prev) => {
+      const next = { ...prev, [group]: { ...prev[group], [field]: value } };
+      if (group === 'birthDate') {
+        const iso = toIsoDate(next.birthDate);
+        if (iso) updateProfile({ dateOfBirth: iso });
+      } else if (group === 'retirementDate') {
+        const iso = toIsoDate(next.retirementDate);
+        if (iso) updateProfile({ dateRetire: iso });
+      }
+      return next;
+    });
   };
 
   const setNumericField = (field: 'currentYearEarnings' | 'futureYearEarnings', value: string) => {
@@ -376,22 +400,22 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
 
   return (
     <div className="animate-in fade-in duration-300">
-      <main className="max-w-[1100px] mx-auto px-6 pb-20 pt-12">
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
+      <main className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
+        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
         </button>
 
-        <h1 className="font-serif text-4xl font-normal text-text mb-3">Social Security Estimator</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">Social Security Estimator</h1>
         <p className="text-text-2 max-w-3xl mb-8">Three-step, form-driven Social Security workflow with legacy-style required inputs, eligibility outputs, benefit estimates, and email delivery.</p>
 
-        <div className="flex items-center justify-between mb-8 overflow-x-auto gap-4">
+        <div className="flex items-center justify-between mb-8 overflow-x-auto gap-4 pb-2">
           {STEP_TITLES.map((title, index) => {
             const stepNumber = (index + 1) as Step;
             const isCurrent = step === stepNumber;
             const isComplete = step > stepNumber;
             return (
-              <div key={title} className="flex items-center min-w-0 flex-1">
+              <div key={title} className="flex items-center min-w-fit flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${isCurrent ? 'bg-blue text-white' : isComplete ? 'bg-green text-white' : 'bg-gray-200 text-gray-500'}`}>
                   {isComplete ? '✓' : stepNumber}
                 </div>
@@ -399,7 +423,7 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
                   <div className="text-[11px] uppercase tracking-[0.08em] text-text-3">Step {stepNumber}</div>
                   <div className="text-sm font-medium text-text truncate">{title}</div>
                 </div>
-                {stepNumber < 3 && <div className={`mx-3 h-1 flex-1 rounded ${isComplete ? 'bg-green' : 'bg-gray-200'}`} />}
+                {stepNumber < 3 && <div className={`mx-3 h-1 flex-1 rounded min-w-[20px] ${isComplete ? 'bg-green' : 'bg-gray-200'}`} />}
               </div>
             );
           })}
@@ -558,12 +582,25 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" value={email.primary} onChange={(e) => setEmail((prev) => ({ ...prev, primary: e.target.value }))} className={fieldClass('email')} />
+                  <input 
+                    type="email" 
+                    value={email.primary} 
+                    onChange={(e) => {
+                      setEmail((prev) => ({ ...prev, primary: e.target.value }));
+                      updateProfile({ email: e.target.value });
+                    }} 
+                    className={`${fieldClass('email')} min-h-[44px]`} 
+                  />
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Re-enter Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" value={email.confirm} onChange={(e) => setEmail((prev) => ({ ...prev, confirm: e.target.value }))} className={fieldClass('confirm')} />
+                  <input 
+                    type="email" 
+                    value={email.confirm} 
+                    onChange={(e) => setEmail((prev) => ({ ...prev, confirm: e.target.value }))} 
+                    className={`${fieldClass('confirm')} min-h-[44px]`} 
+                  />
                   {errors.confirm && <p className="text-red-500 text-xs mt-1">{errors.confirm}</p>}
                 </div>
               </div>

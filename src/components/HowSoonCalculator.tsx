@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fedcalcApi, FedEmployee } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
+import { useSharedProfile } from '../hooks/useSharedProfile';
 
 export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => void, onNavigateToFers: () => void }) {
+  const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -11,16 +13,33 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<Partial<FedEmployee>>({
-    bCSRS: 'N',
-    bAirTraffic: 'N',
-    bCustomsBorderPatrol: 'N',
-    bLawEnforce: 'N',
-    bPhasedRetire: 'N',
-    dateOfBirth: '',
-    dateServiceComp: '',
+    bCSRS: profile.bCSRS || 'N',
+    bAirTraffic: profile.bAirTraffic || 'N',
+    bCustomsBorderPatrol: profile.bCustomsBorderPatrol || 'N',
+    bLawEnforce: profile.bLawEnforce || 'N',
+    bPhasedRetire: profile.bPhasedRetire || 'N',
+    dateOfBirth: profile.dateOfBirth || '',
+    dateServiceComp: profile.dateServiceComp || '',
   });
 
-  const [emailData, setEmailData] = useState({ email: '', confirmEmail: '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
+
+  // Sync profile updates if they happen externally
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      bCSRS: profile.bCSRS || prev.bCSRS,
+      bAirTraffic: profile.bAirTraffic || prev.bAirTraffic,
+      bCustomsBorderPatrol: profile.bCustomsBorderPatrol || prev.bCustomsBorderPatrol,
+      bLawEnforce: profile.bLawEnforce || prev.bLawEnforce,
+      bPhasedRetire: profile.bPhasedRetire || prev.bPhasedRetire,
+      dateOfBirth: profile.dateOfBirth || prev.dateOfBirth,
+      dateServiceComp: profile.dateServiceComp || prev.dateServiceComp,
+    }));
+    if (profile.email) {
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+    }
+  }, [profile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -28,6 +47,10 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
       ...prev,
       [name]: value
     }));
+    // Save to shared profile
+    if (['bCSRS', 'bAirTraffic', 'bCustomsBorderPatrol', 'bLawEnforce', 'bPhasedRetire', 'dateOfBirth', 'dateServiceComp'].includes(name)) {
+      updateProfile({ [name]: value });
+    }
   };
 
   const handleNext = async () => {
@@ -60,13 +83,17 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
     
     try {
       const payload = fedcalcApi.mapToFedEmployee(formData);
-      console.log('Submitting HowSoon payload to /api/fedcalc/calculate?type=howsoon:', JSON.stringify(payload, null, 2));
+      if (import.meta.env.DEV) {
+        console.log('Submitting HowSoon payload to /api/fedcalc/calculate?type=howsoon:', JSON.stringify(payload, null, 2));
+      }
       const apiResults = await fedcalcApi.calculateRetirement(formData, 'howsoon');
       setReportData(apiResults);
       setStep(2); // Go to results step
     } catch (error) {
-      console.error('Calculation error:', error);
-      setApiError(error instanceof Error ? error.message : 'An unknown error occurred');
+      if (import.meta.env.DEV) {
+        console.error('Calculation error:', error);
+      }
+      setApiError('Unable to calculate eligibility. Please check your dates or required fields and try again.');
     } finally {
       setIsCalculating(false);
     }
@@ -110,13 +137,13 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
   };
 
   const renderStepIndicator = () => (
-    <div className="flex items-center justify-between mb-8">
+    <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2">
       {[1, 2, 3].map(s => (
-        <div key={s} className="flex items-center">
+        <div key={s} className="flex items-center shrink-0">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step === s ? 'bg-blue text-white' : step > s ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
             {step > s ? '✓' : s}
           </div>
-          {s < 3 && <div className={`w-8 sm:w-24 h-1 mx-1 sm:mx-2 rounded ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
+          {s < 3 && <div className={`w-4 sm:w-16 md:w-24 h-1 mx-1 sm:mx-2 rounded ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
         </div>
       ))}
     </div>
@@ -136,10 +163,10 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
 
   return (
     <div className="animate-in fade-in duration-300">
-      <main className="max-w-[900px] mx-auto px-6 pb-20 pt-12">
+      <main className="w-full max-w-[900px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue"
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]"
         >
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5">
             <path d="M10 3L5 8l5 5" />
@@ -147,7 +174,7 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
           All Calculators
         </button>
 
-        <h1 className="font-serif text-4xl font-normal text-text mb-8">How Soon Can I Retire?</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-6 sm:mb-8">How Soon Can I Retire?</h1>
 
         {renderStepIndicator()}
 
@@ -241,6 +268,11 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
                   <div className="text-sm text-text-2 mt-4">
                     This is the earliest date you can retire with a full, non-reduced annuity based on the information provided.
                   </div>
+                  {!reportData?.howSoon?.fullRetire && (
+                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md text-amber-800 text-sm">
+                      <strong>Note:</strong> We could not determine a full retirement date. Additional inputs may improve the accuracy of this estimate.
+                    </div>
+                  )}
                 </div>
 
                 {reportData?.howSoon?.partialRetire && (
@@ -292,12 +324,25 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
               <div className="space-y-4 mb-8">
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Your Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" value={emailData.email} onChange={e => setEmailData({...emailData, email: e.target.value})} className="w-full p-2.5 border border-border rounded-md" />
+                  <input 
+                    type="email" 
+                    value={emailData.email} 
+                    onChange={e => {
+                      setEmailData({...emailData, email: e.target.value});
+                      updateProfile({ email: e.target.value });
+                    }} 
+                    className="w-full p-2.5 border border-border rounded-md min-h-[44px]" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-text-2 mb-2">Re-type your email <span className="text-red-500">*</span></label>
                   <p className="text-xs text-text-3 mb-2">(please type a 2nd time to validate)</p>
-                  <input type="email" value={emailData.confirmEmail} onChange={e => setEmailData({...emailData, confirmEmail: e.target.value})} className="w-full p-2.5 border border-border rounded-md" />
+                  <input 
+                    type="email" 
+                    value={emailData.confirmEmail} 
+                    onChange={e => setEmailData({...emailData, confirmEmail: e.target.value})} 
+                    className="w-full p-2.5 border border-border rounded-md min-h-[44px]" 
+                  />
                 </div>
               </div>
 

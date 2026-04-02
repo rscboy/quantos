@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
+import { useSharedProfile } from '../hooks/useSharedProfile';
 
 type AnalysisStep =
   | 'background'
@@ -145,10 +146,39 @@ function formatYears(value: number) {
 }
 
 export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
+  const { profile, updateProfile } = useSharedProfile();
   const [stepIndex, setStepIndex] = useState(0);
-  const [formData, setFormData] = useState<Partial<FedEmployee>>(() => ({ ...defaultData, ...applyLinkedDataToFullAnalysis(linkedData) }));
-  const [email, setEmail] = useState('');
-  const [confirmEmail, setConfirmEmail] = useState('');
+  const [formData, setFormData] = useState<Partial<FedEmployee>>(() => ({ 
+    ...defaultData, 
+    ...applyLinkedDataToFullAnalysis(linkedData),
+    dateOfBirth: profile.dateOfBirth || '',
+    dateServiceComp: profile.dateServiceComp || '',
+    dateRetire: profile.dateRetire || '',
+    bCSRS: profile.bCSRS || 'N',
+    bAirTraffic: profile.bAirTraffic || '',
+    bCustomsBorderPatrol: profile.bCustomsBorderPatrol || '',
+    bLawEnforce: profile.bLawEnforce || '',
+  }));
+  const [email, setEmail] = useState(profile.email || '');
+  const [confirmEmail, setConfirmEmail] = useState(profile.email || '');
+
+  // Sync profile updates if they happen externally
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      dateOfBirth: profile.dateOfBirth || prev.dateOfBirth,
+      dateServiceComp: profile.dateServiceComp || prev.dateServiceComp,
+      dateRetire: profile.dateRetire || prev.dateRetire,
+      bCSRS: profile.bCSRS || prev.bCSRS,
+      bAirTraffic: profile.bAirTraffic || prev.bAirTraffic,
+      bCustomsBorderPatrol: profile.bCustomsBorderPatrol || prev.bCustomsBorderPatrol,
+      bLawEnforce: profile.bLawEnforce || prev.bLawEnforce,
+    }));
+    if (profile.email) {
+      setEmail(prev => profile.email || prev);
+      setConfirmEmail(prev => profile.email || prev);
+    }
+  }, [profile]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -370,7 +400,10 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
         const data = await fedcalcApi.calculateRetirement(formData, formData.bCSRS === 'Y' ? 'csrs' : 'fers');
         setReportData(data);
       } catch (error) {
-        setApiError(error instanceof Error ? error.message : 'Unable to calculate report.');
+        if (import.meta.env.DEV) {
+          console.error('Calculation error:', error);
+        }
+        setApiError('Unable to calculate eligibility. Please check your dates or required fields and try again.');
       } finally {
         setIsCalculating(false);
       }
@@ -722,6 +755,12 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     <Metric label="Net monthly annuity" value={`$${currency(summary.netMonthly)}`} />
                   </div>
 
+                  {summary.annualAnnuity === 0 && (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-md text-amber-800 text-sm">
+                      <strong>Note:</strong> The calculated annuity is $0. Additional inputs (such as salary history or creditable service) may improve the accuracy of this estimate.
+                    </div>
+                  )}
+
                   <div>
                     <h3 className="font-semibold text-text mb-3">Salary history breakdown</h3>
                     <div className="overflow-x-auto border border-border rounded-md">
@@ -836,8 +875,25 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
 
               {currentStep.id === 'email' && (
                 <div className="max-w-xl space-y-6">
-                  <Field label="Email address *" error={errors.email}><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass(errors.email)} /></Field>
-                  <Field label="Confirm email address *" error={errors.confirmEmail}><input type="email" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} className={inputClass(errors.confirmEmail)} /></Field>
+                  <Field label="Email address *" error={errors.email}>
+                    <input 
+                      type="email" 
+                      value={email} 
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        updateProfile({ email: e.target.value });
+                      }} 
+                      className={`${inputClass(errors.email)} min-h-[44px]`} 
+                    />
+                  </Field>
+                  <Field label="Confirm email address *" error={errors.confirmEmail}>
+                    <input 
+                      type="email" 
+                      value={confirmEmail} 
+                      onChange={(e) => setConfirmEmail(e.target.value)} 
+                      className={`${inputClass(errors.confirmEmail)} min-h-[44px]`} 
+                    />
+                  </Field>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button onClick={handlePrint} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
                     <button onClick={() => validateCurrentStep() && alert(`Report queued for ${email}`)} className="px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Email My Report</button>
