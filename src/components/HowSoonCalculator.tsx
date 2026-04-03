@@ -3,6 +3,8 @@ import { fedcalcApi, FedEmployee } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
+import { SEO } from './SEO';
+import { RelatedCalculators } from './RelatedCalculators';
 
 export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => void, onNavigateToFers: () => void }) {
   const { profile, updateProfile } = useSharedProfile();
@@ -163,6 +165,11 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
 
   return (
     <div className="animate-in fade-in duration-300">
+      <SEO 
+        title="How Soon Can I Retire? | Federal Retirement Eligibility | FedCalc"
+        description="Find out the soonest possible date you can retire from Federal service and still receive a retirement annuity based on your age and years of service."
+        canonicalUrl="/eligibility"
+      />
       <main className="w-full max-w-[900px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button
           onClick={onBack}
@@ -174,7 +181,10 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
           All Calculators
         </button>
 
-        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-6 sm:mb-8">How Soon Can I Retire?</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">How Soon Can I Retire?</h1>
+        <p className="text-text-2 text-sm mb-8">
+          Find out the soonest possible date you can retire from Federal service and still receive a retirement annuity.
+        </p>
 
         {renderStepIndicator()}
 
@@ -403,6 +413,17 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
           debugInfo={reportData?.debugInfo} 
           parsedData={reportData?.howSoon} 
           rawResponse={reportData?.rawResponse}
+        />
+
+        <RelatedCalculators
+          links={[
+            { id: 'fers', title: 'FERS Calculator', description: 'Calculate your FERS retirement annuity based on your High-3 salary and years of service.', url: '/fers-calculator' },
+            { id: 'csrs', title: 'CSRS Calculator', description: 'Calculate your CSRS retirement annuity based on your High-3 salary and years of service.', url: '/csrs-calculator' },
+            { id: 'high3', title: 'High-3 Salary Calculator', description: 'Calculate your exact High-3 average salary based on your earnings history.', url: '/high-3-calculator' }
+          ]}
+          onNavigate={(id) => {
+            window.location.href = ['fers', 'csrs', 'high3'].includes(id) ? `/${id === 'fers' ? 'fers-calculator' : id === 'csrs' ? 'csrs-calculator' : 'high-3-calculator'}` : '/';
+          }}
         />
       </main>
     </div>

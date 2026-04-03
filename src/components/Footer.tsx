@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Footer({ setView }: { setView: (view: string) => void }) {
+export function Footer({ setView, onOpenTerms }: { setView: (view: string) => void, onOpenTerms: (tab: 'terms' | 'privacy') => void }) {
   return (
     <footer className="bg-navy text-white pt-14 px-6 pb-8 mt-0">
       <div className="max-w-[1200px] mx-auto">
@@ -30,17 +30,58 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
             <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
               <li>
                 <a
-                  href="#"
+                  href="/fers-calculator"
                   className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
                   onClick={(e) => { e.preventDefault(); setView('fers'); }}
                 >
                   FERS Annuity
                 </a>
               </li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">CSRS Annuity</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">TSP Modeler</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Retirement Gap</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Full Analysis</a></li>
+              <li>
+                <a
+                  href="/csrs-calculator"
+                  className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
+                  onClick={(e) => { e.preventDefault(); setView('csrs'); }}
+                >
+                  CSRS Annuity
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/tsp-calculator"
+                  className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
+                  onClick={(e) => { e.preventDefault(); setView('tsp'); }}
+                >
+                  TSP Modeler
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/retirement-gap-analysis"
+                  className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
+                  onClick={(e) => { e.preventDefault(); setView('gap'); }}
+                >
+                  Retirement Gap
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/full-analysis"
+                  className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
+                  onClick={(e) => { e.preventDefault(); setView('full'); }}
+                >
+                  Full Analysis
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/high-3-calculator"
+                  className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
+                  onClick={(e) => { e.preventDefault(); setView('high3'); }}
+                >
+                  High-3 Salary
+                </a>
+              </li>
             </ul>
           </div>
           <div>
@@ -50,6 +91,15 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Sick Leave Chart</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">FEGLI Rates</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Methodology</a></li>
+              <li>
+                <a
+                  href="/api"
+                  className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white"
+                  onClick={(e) => { e.preventDefault(); setView('api'); }}
+                >
+                  API Support
+                </a>
+              </li>
               <li><a href={`${import.meta.env.BASE_URL}openapi.yaml`} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">API Spec</a></li>
             </ul>
           </div>
@@ -65,8 +115,8 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
           <span>© 2026 Quantos Software LLC. All rights reserved.</span>
           <div className="flex gap-6">
-            <a href={`${import.meta.env.BASE_URL}termsandconditions.htm`} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</a>
-            <a href={`${import.meta.env.BASE_URL}privacystatement.htm`} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</a>
+            <button onClick={() => onOpenTerms('terms')} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 cursor-pointer">Terms of Use</button>
+            <button onClick={() => onOpenTerms('privacy')} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 cursor-pointer">Privacy Statement</button>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ interface Props {
   onComplete: () => void;
   canClose?: boolean;
   description?: string;
+  onOpenTerms: (tab: 'terms' | 'privacy') => void;
 }
 
 const initialFormData = {
@@ -22,7 +23,7 @@ const initialFormData = {
   termsAgreed: false,
 };
 
-export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, description }: Props) {
+export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, description, onOpenTerms }: Props) {
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -201,7 +202,7 @@ export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, d
                       className="mt-1 w-4 h-4 text-blue border-border rounded focus:ring-blue"
                     />
                     <span className="text-sm text-text-2 leading-relaxed">
-                      Yes, I have read and agree to the Terms and Conditions statement. (*)
+                      Yes, I have read and agree to the <button type="button" onClick={() => onOpenTerms('terms')} className="text-blue hover:underline">Terms and Conditions</button> statement. (*)
                     </span>
                   </label>
                   {errors.termsAgreed && <p className="text-red text-xs mt-1 ml-7">{errors.termsAgreed}</p>}

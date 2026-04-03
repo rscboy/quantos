@@ -4,6 +4,8 @@ import { openBrandedPrintReport } from '../utils/reportPrint';
 import { AdPlaceholder } from './AdPlaceholder';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
+import { SEO } from './SEO';
+import { RelatedCalculators } from './RelatedCalculators';
 
 type CalculatorType = 'fers' | 'csrs';
 
@@ -436,6 +438,11 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
   return (
     <div className="animate-in fade-in duration-300">
+      <SEO 
+        title={isCsrs ? "CSRS Retirement Calculator | Free Federal Pension Estimate | FedCalc" : "FERS Retirement Calculator | Free Federal Pension Estimate | FedCalc"}
+        description={isCsrs ? "Calculate your Civil Service Retirement System (CSRS) pension benefits. Run High-3 salary calculations and estimate your federal retirement income instantly." : "Calculate your Federal Employees Retirement System (FERS) pension benefits. Run High-3 salary calculations and estimate your federal retirement income instantly."}
+        canonicalUrl={isCsrs ? "/csrs-calculator" : "/fers-calculator"}
+      />
       <main className="w-full max-w-[980px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -443,15 +450,17 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         </button>
 
         <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">{title}</h1>
-        <p className="text-text-2 text-sm mb-8">Structured 9-page annuity estimate flow with required validations, salary history coverage checks, results, email delivery, and printer-friendly reporting.</p>
+        <p className="text-text-2 text-sm mb-8">
+          {isCsrs 
+            ? "Estimate your CSRS retirement benefits, including early retirement, deposits, redeposits, and special rules for law enforcement, firefighters, and air traffic controllers."
+            : "Estimate your FERS retirement benefits, including MRA+10, early retirement, FERS transfer, deposits, redeposits, and special rules for law enforcement, firefighters, and air traffic controllers."}
+        </p>
 
         {step <= 7 && renderStepIndicator()}
 
         <div className="mb-6 md:hidden">
           <AdPlaceholder
-            slot={step >= 8 ? 'Mobile results banner' : 'Mobile inline input banner'}
-            detail={step >= 8 ? 'Mobile placement shown after the annuity summary and before follow-up actions.' : 'Inline mobile placement between the annuity input steps without obstructing form completion.'}
-            refreshKey={adRefreshCount}
+            hideAbove="md"
             compact
           />
         </div>
@@ -493,9 +502,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
               </div>
 
               <AdPlaceholder
-                slot="Required information inline placement"
-                detail="Displayed after the first cluster of required fields while users pause to review age and service calculations."
-                refreshKey={adRefreshCount}
+                hideAbove="md"
                 compact
               />
 
@@ -558,9 +565,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
               </div>
 
               <AdPlaceholder
-                slot="Salary step inline placement"
-                detail="Inserted before the salary history table so the ad sits in a natural review pause during data entry."
-                refreshKey={adRefreshCount}
+                hideAbove="md"
                 compact
               />
 
@@ -764,9 +769,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   )}
                 </div>
                 <AdPlaceholder
-                  slot="Results banner after summary"
-                  detail="Primary high-value placement directly below the annuity result cards."
-                  refreshKey={adRefreshCount}
+                  hideAbove="md"
                   compact
                 />
 
@@ -805,9 +808,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                 )}
 
                 <AdPlaceholder
-                  slot="Results follow-up banner"
-                  detail="Secondary results placement before recommendations, print actions, and the next-step CTA cluster."
-                  refreshKey={adRefreshCount}
+                  hideAbove="md"
                   compact
                 />
 
@@ -873,10 +874,8 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
           <div className="hidden xl:block">
             <AdPlaceholder
               stickyDesktop
+              hideBelow="xl"
               className="min-h-[320px]"
-              slot={step >= 8 ? 'Results sticky sidebar' : 'Input phase sticky sidebar'}
-              detail={step >= 8 ? 'Desktop sticky inventory shown while users review annuity results and iterate on scenarios.' : 'Desktop sticky rail anchored beside the multi-step annuity input flow.'}
-              refreshKey={adRefreshCount}
             />
           </div>
         </div>
@@ -887,6 +886,19 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
           debugInfo={reportData?.debugInfo} 
           parsedData={reportData?.[calculatorType]} 
           rawResponse={reportData?.rawResponse}
+        />
+
+        <RelatedCalculators
+          links={[
+            { id: 'tsp', title: 'TSP Calculator', description: 'Project your Thrift Savings Plan balance based on your contributions and expected returns.', url: '/tsp-calculator' },
+            { id: 'gap', title: 'Retirement Gap Analysis', description: 'Determine if your projected retirement income will cover your expected expenses.', url: '/retirement-gap-analysis' },
+            { id: 'high3', title: 'High-3 Salary Calculator', description: 'Calculate your exact High-3 average salary based on your earnings history.', url: '/high-3-calculator' },
+            { id: 'ss', title: 'Social Security Estimator', description: 'Estimate your Social Security benefits at various retirement ages.', url: '/social-security' }
+          ]}
+          onNavigate={(id) => {
+            // We need to pass onNavigate down from App, but for now we can use window.location
+            window.location.href = ['tsp', 'gap', 'high3', 'ss'].includes(id) ? `/${id === 'high3' ? 'high-3-calculator' : id === 'ss' ? 'social-security' : id === 'gap' ? 'retirement-gap-analysis' : 'tsp-calculator'}` : '/';
+          }}
         />
       </main>
     </div>

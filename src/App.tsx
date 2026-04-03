@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { LinkedCalculatorData, loadLinkedCalculatorData, mergeLinkedData } from './utils/calculatorLinking';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
@@ -16,6 +16,9 @@ import { MilitaryDepositCalculator } from './components/MilitaryDepositCalculato
 import { NewMemberModal } from './components/NewMemberModal';
 import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { SocialSecurityEstimator } from './components/SocialSecurityEstimator';
+import { TermsModal } from './components/TermsModal';
+import { High3Calculator } from './components/High3Calculator';
+import { ApiPage } from './components/ApiPage';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -28,10 +31,35 @@ const CALCULATOR_VIEWS = new Set([
   'ss',
 ]);
 
+const PATH_TO_VIEW: Record<string, string> = {
+  '/': 'home',
+  '/calculators': 'home',
+  '/fers-calculator': 'fers',
+  '/csrs-calculator': 'csrs',
+  '/tsp-calculator': 'tsp',
+  '/high-3-calculator': 'high3',
+  '/api': 'api',
+  '/retirement-gap-analysis': 'gap',
+  '/eligibility': 'eligibility',
+  '/military-deposit': 'military',
+  '/full-analysis': 'full',
+  '/social-security': 'ss',
+};
+
+const VIEW_TO_PATH: Record<string, string> = Object.entries(PATH_TO_VIEW).reduce((acc, [path, view]) => {
+  if (!acc[view] || path !== '/') acc[view] = path;
+  return acc;
+}, {} as Record<string, string>);
+
 export default function App() {
-  const [view, setView] = useState('home');
+  const [view, setView] = useState(() => {
+    const path = window.location.pathname;
+    return PATH_TO_VIEW[path] || 'home';
+  });
   const [showModal, setShowModal] = useState(false);
   const [pendingView, setPendingView] = useState<string | null>(null);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsTab, setTermsTab] = useState<'terms' | 'privacy'>('terms');
   const [hasCompletedProfile, setHasCompletedProfile] = useState(() => localStorage.getItem('hasCompletedProfile') === 'true');
   const [linkedCalculatorData, setLinkedCalculatorData] = useState<LinkedCalculatorData>(() => loadLinkedCalculatorData());
 
@@ -41,10 +69,25 @@ export default function App() {
 
   const navigateToView = useCallback((nextView: string) => {
     setView(nextView);
+    
+    const newPath = VIEW_TO_PATH[nextView] || '/calculators';
+    if (window.location.pathname !== newPath) {
+      window.history.pushState({}, '', newPath);
+    }
+
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     });
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      setView(PATH_TO_VIEW[path] || 'home');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const openRegistrationGate = useCallback((nextView: string) => {
@@ -83,6 +126,11 @@ export default function App() {
       : 'Please fill this out the first time you use the calculators.'
   ), [pendingView]);
 
+  const openTermsModal = useCallback((tab: 'terms' | 'privacy') => {
+    setTermsTab(tab);
+    setShowTermsModal(true);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col font-sans text-text bg-bg">
       <Nav setView={handleNavigate} />
@@ -97,9 +145,11 @@ export default function App() {
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
         {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
+        {view === 'high3' && <High3Calculator onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />}
+        {view === 'api' && <ApiPage onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />}
       </div>
 
-      <Footer setView={handleNavigate} />
+      <Footer setView={handleNavigate} onOpenTerms={openTermsModal} />
 
       <NewMemberModal
         isOpen={showModal}
@@ -111,6 +161,13 @@ export default function App() {
         onComplete={handleCompleteRegistration}
         canClose={hasCompletedProfile}
         description={modalMessage}
+        onOpenTerms={openTermsModal}
+      />
+
+      <TermsModal 
+        isOpen={showTermsModal} 
+        onClose={() => setShowTermsModal(false)} 
+        initialTab={termsTab} 
       />
     </div>
   );
