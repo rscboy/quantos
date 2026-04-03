@@ -3,8 +3,6 @@ import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking'
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { AdPlaceholder } from './AdPlaceholder';
 import { useSharedProfile } from '../hooks/useSharedProfile';
-import { SEO } from './SEO';
-import { RelatedCalculators } from './RelatedCalculators';
 
 type RetirementSystem = 'FERS' | 'CSRS';
 type FundKey = 'G Fund' | 'F Fund' | 'C Fund' | 'S Fund' | 'I Fund';
@@ -370,11 +368,6 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
 
   return (
     <div className="animate-in fade-in duration-300">
-      <SEO 
-        title="TSP Calculator | Thrift Savings Plan Projection | FedCalc"
-        description="Calculate how much your TSP deposits and future savings will be worth in 5, 10, or 20 years. Includes allocation formulas for Lifecycle (L) Funds."
-        canonicalUrl="/tsp-calculator"
-      />
       <main className="max-w-[1200px] mx-auto px-6 pb-20 pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -382,9 +375,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
         </button>
 
         <h1 className="font-serif text-4xl font-normal text-text mb-3">Thrift Savings Plan Calculator</h1>
-        <p className="text-text-2 text-sm mb-8">
-          Calculate how much your TSP deposits and future savings will be worth in 5, 10, or 20 years. Includes allocation formulas for Lifecycle (L) Funds.
-        </p>
+        <p className="text-text-2 text-sm mb-8">Focused four-step TSP projection flow with required annual contribution inputs, fund allocation math, year-by-year analysis, and legacy report delivery actions.</p>
 
         <div className="flex items-center justify-between gap-2 mb-8 overflow-x-auto pb-2">
           {STEP_TITLES.map((label, index) => {
@@ -403,7 +394,9 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
 
         <div className="mb-6 md:hidden">
           <AdPlaceholder
-            hideAbove="md"
+            slot={step >= 3 ? 'Mobile results banner' : 'Mobile inline input banner'}
+            detail={step >= 3 ? 'Visible before detailed projections and recommendations on smaller screens.' : 'Keeps mobile ad exposure between engaged form sections without covering inputs.'}
+            refreshKey={adRefreshCount}
             compact
           />
         </div>
@@ -455,7 +448,9 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               </div>
 
               <AdPlaceholder
-                hideAbove="md"
+                slot="Inline input placement"
+                detail="Placed after the core contribution fields while users pause to review assumptions."
+                refreshKey={adRefreshCount}
                 compact
               />
             </div>
@@ -485,7 +480,9 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               </div>
 
               <AdPlaceholder
-                hideAbove="md"
+                slot="Allocation step inline placement"
+                detail="Shown between fund strategy selection and the detailed allocation table."
+                refreshKey={adRefreshCount}
                 compact
               />
 
@@ -541,7 +538,9 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                 </div>
 
                 <AdPlaceholder
-                  hideAbove="md"
+                  slot="Results banner after summary"
+                  detail="High-value placement immediately after the projection summary while users linger on totals."
+                  refreshKey={adRefreshCount}
                   compact
                 />
 
@@ -587,7 +586,9 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
                 </div>
 
                 <AdPlaceholder
-                  hideAbove="md"
+                  slot="Results follow-up banner"
+                  detail="Reserved before next-step actions so refreshed inventory appears during comparison and recalculation loops."
+                  refreshKey={adRefreshCount}
                   compact
                 />
               </div>
@@ -647,23 +648,13 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           <div className="hidden xl:block">
             <AdPlaceholder
               stickyDesktop
-              hideBelow="xl"
               className="min-h-[320px]"
+              slot={step >= 3 ? 'Results sticky sidebar' : 'Input phase sticky sidebar'}
+              detail={step >= 3 ? 'Desktop sidebar inventory for high-value results review and comparison loops.' : 'Desktop sticky rail shown while users work through high-engagement contribution inputs.'}
+              refreshKey={adRefreshCount}
             />
           </div>
         </div>
-
-        <RelatedCalculators
-          links={[
-            { id: 'fers', title: 'FERS Calculator', description: 'Calculate your FERS retirement annuity based on your High-3 salary and years of service.', url: '/fers-calculator' },
-            { id: 'csrs', title: 'CSRS Calculator', description: 'Calculate your CSRS retirement annuity based on your High-3 salary and years of service.', url: '/csrs-calculator' },
-            { id: 'gap', title: 'Retirement Gap Analysis', description: 'Determine if your projected retirement income will cover your expected expenses.', url: '/retirement-gap-analysis' },
-            { id: 'full', title: 'Full Retirement Analysis', description: 'A comprehensive guided scenario builder that collects all your retirement inputs.', url: '/full-analysis' }
-          ]}
-          onNavigate={(id) => {
-            window.location.href = ['fers', 'csrs', 'gap', 'full'].includes(id) ? `/${id === 'fers' ? 'fers-calculator' : id === 'csrs' ? 'csrs-calculator' : id === 'gap' ? 'retirement-gap-analysis' : 'full-analysis'}` : '/';
-          }}
-        />
       </main>
     </div>
   );

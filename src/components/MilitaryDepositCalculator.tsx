@@ -1,8 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { useSharedProfile } from '../hooks/useSharedProfile';
-import { SEO } from './SEO';
-import { RelatedCalculators } from './RelatedCalculators';
 
 type RetirementSystem = 'FERS' | 'CSRS' | 'CSRS Offset' | 'Other';
 type FormData = {
@@ -227,11 +225,6 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="animate-in fade-in duration-300">
-      <SEO 
-        title="Military Deposit Calculator | Federal Retirement Service Credit | FedCalc"
-        description="Your military service can increase your retirement annuity. Calculate how much you need to repay to receive that service credit."
-        canonicalUrl="/military-deposit"
-      />
       <main className="w-full max-w-[980px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -239,9 +232,7 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
         </button>
 
         <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">Military Deposits Calculator</h1>
-        <p className="text-text-2 text-sm mb-8">
-          Your military service can increase your retirement annuity. Calculate how much you need to repay to receive that service credit.
-        </p>
+        <p className="text-text-2 text-sm mb-8">Three-step military deposit workflow with a simplified one-year interest check, a full deposit calculation path, results summary, email delivery, and printer-friendly output.</p>
 
         <div className="flex items-center justify-between gap-2 mb-8 overflow-x-auto pb-2">
           {STEP_TITLES.map((label, index) => {
@@ -415,17 +406,6 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
           <button onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1 || isCalculating} className="px-5 py-2.5 border border-border rounded-md bg-white text-text font-medium disabled:opacity-50 disabled:cursor-not-allowed">Back</button>
           {step === 1 && <button onClick={handleCalculate} disabled={isCalculating} className="px-6 py-2.5 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover disabled:opacity-70">{isCalculating ? 'Calculating...' : 'Calculate'}</button>}
         </div>
-
-        <RelatedCalculators
-          links={[
-            { id: 'fers', title: 'FERS Calculator', description: 'Calculate your FERS retirement annuity based on your High-3 salary and years of service.', url: '/fers-calculator' },
-            { id: 'csrs', title: 'CSRS Calculator', description: 'Calculate your CSRS retirement annuity based on your High-3 salary and years of service.', url: '/csrs-calculator' },
-            { id: 'full', title: 'Full Retirement Analysis', description: 'A comprehensive guided scenario builder that collects all your retirement inputs.', url: '/full-analysis' }
-          ]}
-          onNavigate={(id) => {
-            window.location.href = ['fers', 'csrs', 'full'].includes(id) ? `/${id === 'fers' ? 'fers-calculator' : id === 'csrs' ? 'csrs-calculator' : 'full-analysis'}` : '/';
-          }}
-        />
       </main>
     </div>
   );

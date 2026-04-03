@@ -1,6 +1,6 @@
 import React from 'react';
+import { SponsorBanner } from './SponsorBanner';
 import { AdPlaceholder } from './AdPlaceholder';
-import { SEO } from './SEO';
 
 const CALCULATORS = [
   {
@@ -31,11 +31,6 @@ const CALCULATORS = [
 export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
   return (
     <div className="animate-in fade-in duration-300">
-      <SEO 
-        title="CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | FedCalc"
-        description="FedCalc provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds."
-        canonicalUrl="/calculators"
-      />
       <div className="hero-section bg-navy text-white pt-[72px] px-6 pb-20 border-b border-white/5 overflow-hidden isolate">
         <div className="hero-section__backdrop" aria-hidden="true">
           <div className="hero-section__aurora hero-section__aurora--one"></div>
@@ -51,10 +46,10 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               New — Phased Retirement Estimates
             </div>
             <h1 className="font-serif text-[clamp(30px,4vw,46px)] leading-[1.15] text-white mb-5 font-normal">
-              Federal Retirement<br /><em className="italic text-[#93B4F4]">Calculators</em>
+              Federal Retirement<br /><em className="italic text-[#93B4F4]">Simplified.</em>
             </h1>
             <p className="text-base text-white/60 max-w-[520px] leading-[1.7] mb-8">
-              FedCalc provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds.
+              Calculate your FERS, CSRS, and TSP estimates. Run exact High-3 calculations, Military Deposit, Social Security, and more — all in one place, with free calculators you can use anytime.
             </p>
             <div className="flex gap-10 pt-8 border-t border-white/10">
               <div>
@@ -109,12 +104,18 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         <div className="mb-12">
           <AdPlaceholder
             className="w-full max-w-4xl mx-auto"
+            slot="Landing top banner"
+            detail="Quick-impression placement directly below the header for low-intent, high-bounce visits."
             compact
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
           <div>
+            <div className="mb-12">
+              <SponsorBanner className="w-full max-w-2xl mx-auto" />
+            </div>
+
             {CALCULATORS.map((section, idx) => {
               const count = section.items.length;
               return (
@@ -157,8 +158,15 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                     <div className="mb-14">
                       <AdPlaceholder
                         className="w-full max-w-3xl mx-auto"
+                        slot="Landing mid-page banner"
+                        detail="Inline inventory between calculator sections to capture continued browsing without blocking utility."
                         compact
                       />
+                    </div>
+                  )}
+                  {idx === 2 && (
+                    <div className="mb-14">
+                      <SponsorBanner className="w-full max-w-3xl mx-auto" />
                     </div>
                   )}
                 </React.Fragment>
@@ -169,8 +177,9 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
           <div className="hidden lg:block">
             <AdPlaceholder
               stickyDesktop
-              hideBelow="lg"
               className="min-h-[360px]"
+              slot="Landing sticky sidebar"
+              detail="Persistent desktop inventory that stays visible while users scan the calculator catalog."
             />
           </div>
         </div>

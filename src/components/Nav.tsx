@@ -138,7 +138,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
             </li>
             <li>
               <a
-                href="/calculators"
+                href="#"
                 className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white hover:no-underline active:text-white"
                 onClick={(e) => { e.preventDefault(); setView('home'); }}
               >
@@ -161,7 +161,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
             <div ref={shareRef} className="relative">
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 text-white/40 text-[11px] transition-colors duration-150 hover:text-white/80 cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-white/40 text-[11px] transition-colors duration-150 hover:text-white/80"
                 onClick={() => setIsShareOpen((current) => !current)}
                 aria-expanded={isShareOpen}
                 aria-haspopup="dialog"

@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedSocialSecurityData } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { useSharedProfile } from '../hooks/useSharedProfile';
-import { SEO } from './SEO';
-import { RelatedCalculators } from './RelatedCalculators';
 
 type Step = 1 | 2 | 3;
 type DateParts = { month: string; day: string; year: string };
@@ -402,11 +400,6 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
 
   return (
     <div className="animate-in fade-in duration-300">
-      <SEO 
-        title="Social Security Estimator | Federal Retirement Benefits | FedCalc"
-        description="Find out how much your monthly Social Security benefit will be at retirement. Works best when run inside the Full Retirement Analysis."
-        canonicalUrl="/social-security"
-      />
       <main className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -414,9 +407,7 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
         </button>
 
         <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">Social Security Estimator</h1>
-        <p className="text-text-2 max-w-3xl mb-8">
-          Find out how much your monthly Social Security benefit will be at retirement. Works best when run inside the Full Retirement Analysis.
-        </p>
+        <p className="text-text-2 max-w-3xl mb-8">Three-step, form-driven Social Security workflow with legacy-style required inputs, eligibility outputs, benefit estimates, and email delivery.</p>
 
         <div className="flex items-center justify-between mb-8 overflow-x-auto gap-4 pb-2">
           {STEP_TITLES.map((title, index) => {
@@ -627,17 +618,6 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
             </div>
           )}
         </div>
-
-        <RelatedCalculators
-          links={[
-            { id: 'fers', title: 'FERS Calculator', description: 'Calculate your FERS retirement annuity based on your High-3 salary and years of service.', url: '/fers-calculator' },
-            { id: 'gap', title: 'Retirement Gap Analysis', description: 'Determine if your projected retirement income will cover your expected expenses.', url: '/retirement-gap-analysis' },
-            { id: 'full', title: 'Full Retirement Analysis', description: 'A comprehensive guided scenario builder that collects all your retirement inputs.', url: '/full-analysis' }
-          ]}
-          onNavigate={(id) => {
-            window.location.href = ['fers', 'gap', 'full'].includes(id) ? `/${id === 'fers' ? 'fers-calculator' : id === 'gap' ? 'retirement-gap-analysis' : 'full-analysis'}` : '/';
-          }}
-        />
       </main>
     </div>
   );
