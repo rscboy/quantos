@@ -1,7 +1,5 @@
 import React from 'react';
-import { SponsorBanner } from './SponsorBanner';
-import { AdSenseDesktop } from './AdSenseDesktop';
-import { AdSenseMobile } from './AdSenseMobile';
+import { SEO } from './SEO';
 
 const CALCULATORS = [
   {
@@ -30,8 +28,33 @@ const CALCULATORS = [
 ];
 
 export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "FedCalc",
+    "url": "https://www.fedcalc.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.fedcalc.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FedCalc",
+    "url": "https://www.fedcalc.com",
+    "logo": "https://www.fedcalc.com/logo.png"
+  };
+
   return (
     <div className="animate-in fade-in duration-300">
+      <SEO 
+        title="CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | FedCalc"
+        description="FedCalc provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds."
+        schema={[schema, orgSchema]}
+      />
       <div className="hero-section bg-navy text-white pt-[72px] px-6 pb-20 border-b border-white/5 overflow-hidden isolate">
         <div className="hero-section__backdrop" aria-hidden="true">
           <div className="hero-section__aurora hero-section__aurora--one"></div>
@@ -50,7 +73,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               Federal Retirement<br /><em className="italic text-[#93B4F4]">Simplified.</em>
             </h1>
             <p className="text-base text-white/60 max-w-[520px] leading-[1.7] mb-8">
-              Calculate your FERS, CSRS, and TSP estimates. Run exact High-3 calculations, Military Deposit, Social Security, and more — all in one place, with free calculators you can use anytime.
+              FedCalc provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds.
             </p>
             <div className="flex gap-10 pt-8 border-t border-white/10">
               <div>
@@ -102,12 +125,8 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
       </div>
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
-        <AdSenseDesktop />
-
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
           <div>
-            <SponsorBanner className="w-full max-w-2xl mx-auto" />
-
             {CALCULATORS.map((section, idx) => {
               const count = section.items.length;
               return (
@@ -123,10 +142,11 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                         const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
                         const target = ['fers', 'csrs', 'eligibility', 'tsp', 'military', 'gap', 'full', 'ss'].includes(item.id) ? item.id : 'home';
                         return (
-                          <div
+                          <a
                             key={item.id}
-                            className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF]"
-                            onClick={() => onSelectCalc(target)}
+                            href={`/${target}`}
+                            className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF] no-underline"
+                            onClick={(e) => { e.preventDefault(); onSelectCalc(target); }}
                           >
                             <div className={`text-[10px] font-semibold tracking-[0.08em] uppercase mb-3.5 ${tagClass}`}>
                               {item.tag}
@@ -141,26 +161,17 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                               <span className="text-xs font-semibold text-blue tracking-[0.02em]">Open calculator</span>
                               <span className="opacity-0 -translate-x-1 transition-all duration-150 text-blue text-base leading-none group-hover:opacity-100 group-hover:translate-x-0">→</span>
                             </div>
-                          </div>
+                          </a>
                         );
                       })}
                     </div>
                   </div>
-                  {idx === 0 && (
-                    <AdSenseDesktop />
-                  )}
-                  {idx === 2 && (
-                    <SponsorBanner className="w-full max-w-3xl mx-auto" />
-                  )}
                 </React.Fragment>
               );
             })}
           </div>
 
           <div className="hidden lg:block">
-            <div className="sticky top-24">
-              <AdSenseDesktop />
-            </div>
           </div>
         </div>
       </main>

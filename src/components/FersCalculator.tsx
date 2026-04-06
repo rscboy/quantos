@@ -1,10 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
-import { AdSenseDesktop } from './AdSenseDesktop';
-import { AdSenseMobile } from './AdSenseMobile';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
+import { SEO } from './SEO';
 
 type CalculatorType = 'fers' | 'csrs';
 
@@ -444,13 +443,9 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         </button>
 
         <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">{title}</h1>
-        <p className="text-text-2 text-sm mb-8">Structured 9-page annuity estimate flow with required validations, salary history coverage checks, results, email delivery, and printer-friendly reporting.</p>
+        <p className="text-text-2 text-sm mb-8">{introText}</p>
 
         {step <= 7 && renderStepIndicator()}
-
-        <div className="md:hidden">
-          <AdSenseMobile />
-        </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
           <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
@@ -840,9 +835,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         </div>
 
           <div className="hidden xl:block">
-            <div className="sticky top-24">
-              <AdSenseDesktop />
-            </div>
           </div>
         </div>
 

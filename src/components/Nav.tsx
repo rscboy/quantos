@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Copy, Facebook, Mail, Share2, X } from 'lucide-react';
-import { AdSenseMobile } from './AdSenseMobile';
 
 export function Nav({ setView }: { setView: (view: string) => void }) {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -101,7 +100,8 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
         <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
           <a
             className="flex items-center gap-3 cursor-pointer no-underline"
-            onClick={() => setView('home')}
+            href="/"
+            onClick={(e) => { e.preventDefault(); setView('home'); }}
           >
             <img 
               src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
@@ -216,7 +216,6 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
           </div>
         </div>
       </div>
-      <AdSenseMobile />
     </>
   );
 }

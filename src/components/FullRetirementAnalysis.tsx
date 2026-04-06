@@ -5,7 +5,6 @@ import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
 import { SEO } from './SEO';
-import { RelatedCalculators } from './RelatedCalculators';
 
 type AnalysisStep =
   | 'background'
@@ -454,12 +453,24 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
 
   const systemLabel = formData.bCSRS === 'Y' ? (formData.bCSRSTransfer === 'Y' ? 'CSRS Offset / CSRS-to-FERS Transfer' : 'CSRS') : 'FERS';
 
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Full Retirement Analysis",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "provider": {
+      "@type": "Organization",
+      "name": "FedCalc"
+    }
+  };
+
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Full Retirement Analysis | Federal Pension & TSP Calculator | FedCalc"
-        description="The complete suite — all calculators with future time projections. Save your data locally or upload a saved scenario to pick up where you left off."
-        canonicalUrl="/full-analysis"
+        title="Comprehensive Federal Retirement Analysis | FERS, CSRS, TSP | FedCalc"
+        description="Run a complete federal retirement analysis. Combine FERS/CSRS pension estimates, TSP projections, and Social Security for a full financial picture."
+        schema={schema}
       />
       <main className="max-w-[1120px] mx-auto px-6 pb-20 pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
@@ -469,9 +480,7 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
 
         <div className="flex flex-col gap-3 mb-8">
           <h1 className="font-serif text-4xl font-normal text-text">Full Retirement Analysis</h1>
-          <p className="text-text-2 text-sm max-w-4xl">
-            The complete suite — all calculators with future time projections. Save your data locally or upload a saved scenario to pick up where you left off.
-          </p>
+          <p className="text-text-2 text-sm max-w-4xl">A comprehensive guided scenario builder that collects foundational retirement, income, benefits, TSP, military deposit, and reporting preferences to generate a detailed retirement analysis.</p>
         </div>
 
         {(linkedData.tsp || linkedData.socialSecurity) && (
@@ -927,17 +936,6 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
           debugInfo={reportData?.debugInfo} 
           parsedData={formData.bCSRS === 'Y' ? reportData?.csrs : reportData?.fers} 
           rawResponse={reportData?.rawResponse}
-        />
-
-        <RelatedCalculators
-          links={[
-            { id: 'fers', title: 'FERS Calculator', description: 'Calculate your FERS retirement annuity based on your High-3 salary and years of service.', url: '/fers-calculator' },
-            { id: 'tsp', title: 'TSP Calculator', description: 'Project your Thrift Savings Plan balance based on your contributions and expected returns.', url: '/tsp-calculator' },
-            { id: 'gap', title: 'Retirement Gap Analysis', description: 'Determine if your projected retirement income will cover your expected expenses.', url: '/retirement-gap-analysis' }
-          ]}
-          onNavigate={(id) => {
-            window.location.href = ['fers', 'tsp', 'gap'].includes(id) ? `/${id === 'fers' ? 'fers-calculator' : id === 'tsp' ? 'tsp-calculator' : 'retirement-gap-analysis'}` : '/';
-          }}
         />
       </main>
     </div>

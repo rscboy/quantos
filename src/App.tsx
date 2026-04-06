@@ -31,7 +31,10 @@ const CALCULATOR_VIEWS = new Set([
 ]);
 
 export default function App() {
-  const [view, setView] = useState('home');
+  const [view, setView] = useState(() => {
+    const path = window.location.pathname.replace(/^\/+/, '');
+    return CALCULATOR_VIEWS.has(path) || path === 'openapi' ? path : 'home';
+  });
   const [showModal, setShowModal] = useState(false);
   const [pendingView, setPendingView] = useState<string | null>(null);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -43,8 +46,21 @@ export default function App() {
     setLinkedCalculatorData((current) => mergeLinkedData(current, update));
   }, []);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.replace(/^\/+/, '');
+      setView(CALCULATOR_VIEWS.has(path) || path === 'openapi' ? path : 'home');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const navigateToView = useCallback((nextView: string) => {
     setView(nextView);
+    const path = nextView === 'home' ? '/' : `/${nextView}`;
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });

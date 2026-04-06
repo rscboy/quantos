@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
-import { AdSenseDesktop } from './AdSenseDesktop';
-import { AdSenseMobile } from './AdSenseMobile';
 import { useSharedProfile } from '../hooks/useSharedProfile';
+import { SEO } from './SEO';
 
 type RetirementSystem = 'FERS' | 'CSRS';
 type FundKey = 'G Fund' | 'F Fund' | 'C Fund' | 'S Fund' | 'I Fund';
@@ -367,8 +366,25 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
   const lastRow = rows[rows.length - 1];
   const currentAge = contributionForm.dateOfBirth ? getAgeOnDate(contributionForm.dateOfBirth, new Date()) : 0;
 
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "TSP Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "provider": {
+      "@type": "Organization",
+      "name": "FedCalc"
+    }
+  };
+
   return (
     <div className="animate-in fade-in duration-300">
+      <SEO 
+        title="Thrift Savings Plan (TSP) Calculator | Free Federal Retirement Estimates | FedCalc"
+        description="FedCalc retirement calculators help federal employees, planners, and agencies estimate TSP benefits with precision. Run High-3, pension, and GAP analysis instantly."
+        schema={schema}
+      />
       <main className="max-w-[1200px] mx-auto px-6 pb-20 pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -376,7 +392,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
         </button>
 
         <h1 className="font-serif text-4xl font-normal text-text mb-3">Thrift Savings Plan Calculator</h1>
-        <p className="text-text-2 text-sm mb-8">Focused four-step TSP projection flow with required annual contribution inputs, fund allocation math, year-by-year analysis, and legacy report delivery actions.</p>
+        <p className="text-text-2 text-sm mb-8">Estimate your Thrift Savings Plan (TSP) growth. Calculate future balances, explore L Fund allocations, and project your retirement savings.</p>
 
         <div className="flex items-center justify-between gap-2 mb-8 overflow-x-auto pb-2">
           {STEP_TITLES.map((label, index) => {
@@ -391,10 +407,6 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               </div>
             );
           })}
-        </div>
-
-        <div className="md:hidden">
-          <AdSenseMobile />
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
@@ -614,9 +626,6 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           </div>
 
           <div className="hidden xl:block">
-            <div className="sticky top-24">
-              <AdSenseDesktop />
-            </div>
           </div>
         </div>
       </main>
