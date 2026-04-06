@@ -161,7 +161,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
             <div ref={shareRef} className="relative">
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 text-white/40 text-[11px] transition-colors duration-150 hover:text-white/80"
+                className="cursor-pointer inline-flex items-center gap-1.5 text-white/40 text-[11px] transition-colors duration-150 hover:text-white/80"
                 onClick={() => setIsShareOpen((current) => !current)}
                 aria-expanded={isShareOpen}
                 aria-haspopup="dialog"

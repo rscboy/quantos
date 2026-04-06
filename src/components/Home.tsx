@@ -1,6 +1,4 @@
 import React from 'react';
-import { SponsorBanner } from './SponsorBanner';
-import { AdPlaceholder } from './AdPlaceholder';
 
 const CALCULATORS = [
   {
@@ -76,7 +74,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             </p>
             <a href="mailto:api@fedcalc.com" className="text-[#93B4F4] text-[13px] font-medium no-underline hover:underline">api@fedcalc.com →</a>
             <div className="mt-5 pt-4 border-t border-white/10 text-xs text-white/35">
-              Technical spec: <a href={`${import.meta.env.BASE_URL}openapi.yaml`} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
+              Technical spec: <a href="#" onClick={(e) => { e.preventDefault(); onSelectCalc('openapi'); }} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
             </div>
           </div>
         </div>
@@ -101,21 +99,8 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
       </div>
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
-        <div className="mb-12">
-          <AdPlaceholder
-            className="w-full max-w-4xl mx-auto"
-            slot="Landing top banner"
-            detail="Quick-impression placement directly below the header for low-intent, high-bounce visits."
-            compact
-          />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
           <div>
-            <div className="mb-12">
-              <SponsorBanner className="w-full max-w-2xl mx-auto" />
-            </div>
-
             {CALCULATORS.map((section, idx) => {
               const count = section.items.length;
               return (
@@ -154,33 +139,12 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                       })}
                     </div>
                   </div>
-                  {idx === 0 && (
-                    <div className="mb-14">
-                      <AdPlaceholder
-                        className="w-full max-w-3xl mx-auto"
-                        slot="Landing mid-page banner"
-                        detail="Inline inventory between calculator sections to capture continued browsing without blocking utility."
-                        compact
-                      />
-                    </div>
-                  )}
-                  {idx === 2 && (
-                    <div className="mb-14">
-                      <SponsorBanner className="w-full max-w-3xl mx-auto" />
-                    </div>
-                  )}
                 </React.Fragment>
               );
             })}
           </div>
 
           <div className="hidden lg:block">
-            <AdPlaceholder
-              stickyDesktop
-              className="min-h-[360px]"
-              slot="Landing sticky sidebar"
-              detail="Persistent desktop inventory that stays visible while users scan the calculator catalog."
-            />
           </div>
         </div>
       </main>

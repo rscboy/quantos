@@ -50,7 +50,7 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Sick Leave Chart</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">FEGLI Rates</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Methodology</a></li>
-              <li><a href={`${import.meta.env.BASE_URL}openapi.yaml`} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">API Spec</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); setView('openapi'); }} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">OpenAPI specification</a></li>
             </ul>
           </div>
           <div>
@@ -65,8 +65,8 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
           <span>© 2026 Quantos Software LLC. All rights reserved.</span>
           <div className="flex gap-6">
-            <button onClick={() => onOpenTerms('terms')} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</button>
-            <button onClick={() => onOpenTerms('privacy')} className="text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</button>
+            <button onClick={() => onOpenTerms('terms')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</button>
+            <button onClick={() => onOpenTerms('privacy')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</button>
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ import { NewMemberModal } from './components/NewMemberModal';
 import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { SocialSecurityEstimator } from './components/SocialSecurityEstimator';
 import { TermsModal } from './components/TermsModal';
+import { OpenApiViewer } from './components/OpenApiViewer';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -105,6 +106,7 @@ export default function App() {
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
         {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
+        {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
       </div>
 
       <Footer setView={handleNavigate} onOpenTerms={openTermsModal} />

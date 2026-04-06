@@ -2,6 +2,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToGapForm } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { useSharedProfile } from '../hooks/useSharedProfile';
+import { SEO } from './SEO';
+import { RelatedCalculators } from './RelatedCalculators';
 
 type GapForm = {
   plannedRetirementDate: string;
@@ -281,6 +283,11 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
 
   return (
     <div className="animate-in fade-in duration-300">
+      <SEO 
+        title="Retirement GAP Analysis | Federal Employee Savings Calculator | FedCalc"
+        description="Are you saving enough for retirement? Run this calculator and find out if you're on track to meet your goals. Perform detailed retirement gap analysis in seconds."
+        canonicalUrl="/retirement-gap-analysis"
+      />
       <main className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -288,7 +295,9 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
         </button>
 
         <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">Retirement Savings GAP Calculator</h1>
-        <p className="text-text-2 max-w-3xl mb-8">Estimate whether your retirement income sources will cover your target retirement lifestyle, then quantify the additional savings needed to close any projected shortfall.</p>
+        <p className="text-text-2 max-w-3xl mb-8">
+          Estimate whether your retirement income sources will cover your target retirement lifestyle, then quantify the additional savings needed to close any projected shortfall.
+        </p>
 
         {(linkedData.tsp || linkedData.socialSecurity) && (
           <div className="mb-8 rounded-lg border border-blue/20 bg-blue-50 px-5 py-4 text-sm text-text-2">
@@ -488,6 +497,18 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
             </div>
           </div>
         </div>
+
+        <RelatedCalculators
+          links={[
+            { id: 'fers', title: 'FERS Calculator', description: 'Calculate your FERS retirement annuity based on your High-3 salary and years of service.', url: '/fers-calculator' },
+            { id: 'tsp', title: 'TSP Calculator', description: 'Project your Thrift Savings Plan balance based on your contributions and expected returns.', url: '/tsp-calculator' },
+            { id: 'ss', title: 'Social Security Estimator', description: 'Estimate your Social Security benefits at various retirement ages.', url: '/social-security' },
+            { id: 'full', title: 'Full Retirement Analysis', description: 'A comprehensive guided scenario builder that collects all your retirement inputs.', url: '/full-analysis' }
+          ]}
+          onNavigate={(id) => {
+            window.location.href = ['fers', 'tsp', 'ss', 'full'].includes(id) ? `/${id === 'fers' ? 'fers-calculator' : id === 'tsp' ? 'tsp-calculator' : id === 'ss' ? 'social-security' : 'full-analysis'}` : '/';
+          }}
+        />
       </main>
     </div>
   );

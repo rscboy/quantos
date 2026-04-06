@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
-import { AdPlaceholder } from './AdPlaceholder';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
 
@@ -447,15 +446,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
         {step <= 7 && renderStepIndicator()}
 
-        <div className="mb-6 md:hidden">
-          <AdPlaceholder
-            slot={step >= 8 ? 'Mobile results banner' : 'Mobile inline input banner'}
-            detail={step >= 8 ? 'Mobile placement shown after the annuity summary and before follow-up actions.' : 'Inline mobile placement between the annuity input steps without obstructing form completion.'}
-            refreshKey={adRefreshCount}
-            compact
-          />
-        </div>
-
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
           <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {blockingMessages.length > 0 && (
@@ -491,13 +481,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   {validationErrors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{validationErrors.dateOfBirth}</p>}
                 </div>
               </div>
-
-              <AdPlaceholder
-                slot="Required information inline placement"
-                detail="Displayed after the first cluster of required fields while users pause to review age and service calculations."
-                refreshKey={adRefreshCount}
-                compact
-              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-border">
                 {ELIGIBILITY_QUESTIONS.map((question) => (
@@ -556,13 +539,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                 <h2 className="text-xl font-semibold mb-2">Salary History</h2>
                 <p className="text-text-2 text-sm">Enter your salary at retirement first. Then either provide a known High-3 salary or at least 3 full years of salary history.</p>
               </div>
-
-              <AdPlaceholder
-                slot="Salary step inline placement"
-                detail="Inserted before the salary history table so the ad sits in a natural review pause during data entry."
-                refreshKey={adRefreshCount}
-                compact
-              />
 
               <div>
                 <label className="block text-sm font-semibold text-text-2 mb-2">Salary at time of retirement <span className="text-red-500">*</span></label>
@@ -763,12 +739,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                     </div>
                   )}
                 </div>
-                <AdPlaceholder
-                  slot="Results banner after summary"
-                  detail="Primary high-value placement directly below the annuity result cards."
-                  refreshKey={adRefreshCount}
-                  compact
-                />
 
                 <div className="mt-8">
                   <h3 className="font-semibold text-text mb-3">Salary history breakdown</h3>
@@ -803,13 +773,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                     />
                   </div>
                 )}
-
-                <AdPlaceholder
-                  slot="Results follow-up banner"
-                  detail="Secondary results placement before recommendations, print actions, and the next-step CTA cluster."
-                  refreshKey={adRefreshCount}
-                  compact
-                />
 
                 <div className="text-sm text-text-2 space-y-2 border-t pt-6 mt-8">
                   <p><strong>Additional notes:</strong> Figures are estimates based on the inputs above and current calculator logic.</p>
@@ -871,13 +834,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         </div>
 
           <div className="hidden xl:block">
-            <AdPlaceholder
-              stickyDesktop
-              className="min-h-[320px]"
-              slot={step >= 8 ? 'Results sticky sidebar' : 'Input phase sticky sidebar'}
-              detail={step >= 8 ? 'Desktop sticky inventory shown while users review annuity results and iterate on scenarios.' : 'Desktop sticky rail anchored beside the multi-step annuity input flow.'}
-              refreshKey={adRefreshCount}
-            />
           </div>
         </div>
 
