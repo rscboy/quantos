@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, LinkedTspData } from '../utils/calculatorLinking';
 import { openBrandedPrintReport } from '../utils/reportPrint';
+import { AdSenseDesktop } from './AdSenseDesktop';
+import { AdSenseMobile } from './AdSenseMobile';
 import { useSharedProfile } from '../hooks/useSharedProfile';
 
 type RetirementSystem = 'FERS' | 'CSRS';
@@ -391,6 +393,10 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           })}
         </div>
 
+        <div className="md:hidden">
+          <AdSenseMobile />
+        </div>
+
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
           <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {step === 1 && (
@@ -608,6 +614,9 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           </div>
 
           <div className="hidden xl:block">
+            <div className="sticky top-24">
+              <AdSenseDesktop />
+            </div>
           </div>
         </div>
       </main>

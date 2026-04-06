@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Copy, Facebook, Mail, Share2, X } from 'lucide-react';
+import { AdSenseMobile } from './AdSenseMobile';
 
 export function Nav({ setView }: { setView: (view: string) => void }) {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -215,6 +216,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
           </div>
         </div>
       </div>
+      <AdSenseMobile />
     </>
   );
 }

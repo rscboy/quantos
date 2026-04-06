@@ -1,4 +1,7 @@
 import React from 'react';
+import { SponsorBanner } from './SponsorBanner';
+import { AdSenseDesktop } from './AdSenseDesktop';
+import { AdSenseMobile } from './AdSenseMobile';
 
 const CALCULATORS = [
   {
@@ -99,8 +102,12 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
       </div>
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
+        <AdSenseDesktop />
+
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
           <div>
+            <SponsorBanner className="w-full max-w-2xl mx-auto" />
+
             {CALCULATORS.map((section, idx) => {
               const count = section.items.length;
               return (
@@ -139,12 +146,21 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                       })}
                     </div>
                   </div>
+                  {idx === 0 && (
+                    <AdSenseDesktop />
+                  )}
+                  {idx === 2 && (
+                    <SponsorBanner className="w-full max-w-3xl mx-auto" />
+                  )}
                 </React.Fragment>
               );
             })}
           </div>
 
           <div className="hidden lg:block">
+            <div className="sticky top-24">
+              <AdSenseDesktop />
+            </div>
           </div>
         </div>
       </main>
