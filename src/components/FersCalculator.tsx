@@ -188,6 +188,27 @@ function formatDelta(value: number, kind: 'currency' | 'percent' | 'years' = 'cu
 function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: CalculatorType; onBack: () => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
+  const title = calculatorType === 'fers' ? 'FERS Retirement Calculator' : 'CSRS Retirement Calculator';
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": title,
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "provider": {
+      "@type": "Organization",
+      "name": "FedCalc"
+    }
+  };
+
+  const seoTitle = calculatorType === 'fers' 
+    ? "FERS & CSRS Calculator – High-3, TSP & Pension Estimates | FedCalc"
+    : "CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | FedCalc";
+    
+  const seoDescription = calculatorType === 'fers'
+    ? "FedCalc retirement calculators help federal employees, planners, and agencies estimate FERS benefits with precision. Run High-3, pension, and GAP analysis instantly."
+    : "FedCalc retirement calculators help federal employees, planners, and agencies estimate CSRS benefits with precision. Run High-3, pension, and GAP analysis instantly.";
   const [isCalculating, setIsCalculating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
@@ -228,7 +249,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
   }, [profile]);
   const [savedScenarios, setSavedScenarios] = useState<ScenarioSnapshot[]>([]);
 
-  const title = calculatorType === 'csrs' ? 'CSRS Annuity Calculator' : 'FERS Annuity Calculator';
   const ageAtRetirement = useMemo(() => calculateYears(formData.dateOfBirth, formData.dateRetire), [formData.dateOfBirth, formData.dateRetire]);
   const currentAge = useMemo(() => calculateYears(formData.dateOfBirth, new Date().toISOString().slice(0, 10)), [formData.dateOfBirth]);
   const serviceYears = useMemo(() => calculateYears(formData.dateServiceComp, formData.dateRetire), [formData.dateServiceComp, formData.dateRetire]);
@@ -436,6 +456,11 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
   return (
     <div className="animate-in fade-in duration-300">
+      <SEO 
+        title={seoTitle}
+        description={seoDescription}
+        schema={schema}
+      />
       <main className="w-full max-w-[980px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
@@ -443,7 +468,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         </button>
 
         <h1 className="font-serif text-3xl sm:text-4xl font-normal text-text mb-3">{title}</h1>
-        <p className="text-text-2 text-sm mb-8">{introText}</p>
+        <p className="text-text-2 text-sm mb-8">{seoDescription}</p>
 
         {step <= 7 && renderStepIndicator()}
 

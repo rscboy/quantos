@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LinkedCalculatorData, loadLinkedCalculatorData, mergeLinkedData } from './utils/calculatorLinking';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
