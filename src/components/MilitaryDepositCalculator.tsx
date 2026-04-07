@@ -188,9 +188,50 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
     }, 500);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!validateEmail()) return;
-    alert(`Report sent to ${emailData.email}`);
+    
+    try {
+      const { generateReportHtml } = await import('../utils/reportPrint');
+      const { sendEmailReport } = await import('../utils/emailReport');
+      
+      const htmlBody = generateReportHtml({
+        title: 'Military Deposits Calculator',
+        subtitle: 'Your military deposit report.',
+        sections: [
+          {
+            title: 'Input Summary',
+            lines: [
+              { label: 'Calculation Mode', value: reportData?.mode === 'simplified' ? 'Simplified interest check' : 'Full military deposit calculation' },
+              { label: 'Retirement System', value: formData.retirementSystem },
+              { label: 'Civilian Employment Date', value: formData.civilianEmploymentDate || 'N/A' },
+              { label: 'Anniversary Date', value: formData.anniversaryDate || 'N/A' },
+              { label: 'Current Balance', value: formatCurrency(parseAmount(formData.simplifiedBalance)) },
+              { label: 'Total Military Earnings', value: formatCurrency(parseAmount(formData.totalMilitaryEarnings)) },
+              { label: '1999 Earnings', value: formatCurrency(parseAmount(formData.earnings1999)) },
+              { label: '2000 Earnings', value: formatCurrency(parseAmount(formData.earnings2000)) },
+              { label: 'USERRA Deduction Equivalent', value: formatCurrency(parseAmount(formData.userraDeductionEquivalent)) },
+            ],
+          },
+          {
+            title: 'Deposit Summary',
+            lines: [
+              { label: 'Total Principal', value: formatCurrency(reportData?.principal || 0) },
+              { label: 'Total Interest', value: formatCurrency(reportData?.interest || 0) },
+              { label: 'Total Balance', value: formatCurrency(reportData?.balance || 0) },
+              { label: 'Prior Balance Due', value: formatCurrency(reportData?.priorBalanceDue || 0) },
+            ],
+          },
+        ],
+        isEmail: true
+      });
+      
+      await sendEmailReport(emailData.email, 'Your Military Deposit Estimate', htmlBody);
+      alert(`Report sent successfully to ${emailData.email}`);
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      alert('Failed to send email. Please try again.');
+    }
   };
 
   const handlePrint = () => openBrandedPrintReport({

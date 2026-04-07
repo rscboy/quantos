@@ -627,9 +627,58 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
                 <button onClick={() => setStep(2)} className="rounded-md border border-border px-5 py-3 text-sm font-semibold text-text hover:bg-bg">Back</button>
                 <div className="flex flex-wrap justify-end gap-3">
                   <button onClick={handlePrint} className="rounded-md border border-border px-5 py-3 text-sm font-semibold text-text hover:bg-bg">Friendly Printer Version</button>
-                  <button onClick={() => {
+                  <button onClick={async () => {
                     if (!validateStep(3)) return;
-                    alert(`Report sent to ${email.primary}`);
+                    try {
+                      const { generateReportHtml } = await import('../utils/reportPrint');
+                      const { sendEmailReport } = await import('../utils/emailReport');
+                      
+                      const htmlBody = generateReportHtml({
+                        title: 'Social Security Estimator',
+                        subtitle: 'Your Social Security benefit estimate report.',
+                        sections: [
+                          {
+                            title: 'Basic Information',
+                            lines: [
+                              { label: 'Date of Birth', value: birthDate ? toIsoDate(birthDate) || 'N/A' : 'N/A' },
+                              { label: 'Retirement Date', value: retirementDate ? toIsoDate(retirementDate) || 'N/A' : 'N/A' },
+                              { label: 'Current Year Earnings', value: formatCurrency(Number(form.currentYearEarnings || 0)) },
+                              { label: 'Future Annual Earnings', value: formatCurrency(Number(form.futureYearEarnings || 0)) },
+                            ],
+                          },
+                          {
+                            title: 'Eligibility Summary',
+                            lines: [
+                              { label: 'Retirement Age', value: results.retirementAgeText },
+                              { label: 'Retirement Insured', value: results.retirementInsured ? 'Yes' : 'No' },
+                              { label: 'Disability Insured', value: results.disabilityInsured ? 'Yes' : 'No' },
+                              { label: 'Survivor Insured', value: results.survivorInsured ? 'Yes' : 'No' },
+                              { label: 'Quarters Earned', value: String(results.quartersEarned) },
+                              { label: 'Required Quarters', value: String(results.requiredQuartersRetirement) },
+                              { label: 'Recent Quarters for Disability', value: String(results.recentQuartersDisability) },
+                            ],
+                          },
+                          {
+                            title: 'Benefit Estimates',
+                            lines: [
+                              { label: 'Retirement Benefit', value: formatCurrency(results.retirementBenefit) },
+                              { label: 'Disability Benefit', value: formatCurrency(results.disabilityBenefit) },
+                              { label: 'Child Benefit', value: formatCurrency(results.childBenefit) },
+                              { label: 'Spouse Benefit', value: formatCurrency(results.spouseBenefit) },
+                              { label: 'Surviving Spouse Benefit', value: formatCurrency(results.survivingSpouseBenefit) },
+                              { label: 'Family Maximum', value: formatCurrency(results.familyMaximum) },
+                            ],
+                          },
+                        ],
+                        isEmail: true
+                      });
+                      
+                      await sendEmailReport(email.primary, 'Your Social Security Estimate', htmlBody);
+                      alert(`Report sent successfully to ${email.primary}`);
+                    } catch (error) {
+                      console.error('Failed to send email:', error);
+                      alert('Failed to send email. Please try again.');
+                    }
                   }} className="rounded-md bg-blue px-5 py-3 text-sm font-semibold text-white hover:opacity-95">Send it!</button>
                 </div>
               </div>

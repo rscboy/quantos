@@ -367,10 +367,58 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
 
               <div className="flex flex-col gap-3">
                 <button 
-                  onClick={() => {
+                  onClick={async () => {
                     if (emailData.email && emailData.email === emailData.confirmEmail) {
-                      alert('Report sent to ' + emailData.email);
-                      setStep(2);
+                      setIsCalculating(true);
+                      try {
+                        const { generateReportHtml } = await import('../utils/reportPrint');
+                        const { sendEmailReport } = await import('../utils/emailReport');
+                        
+                        const ageAtRetirement = formData.dateOfBirth && reportData?.howSoon?.fullRetire
+                          ? Math.floor((new Date(reportData.howSoon.fullRetire).getTime() - new Date(formData.dateOfBirth).getTime()) / 31557600000)
+                          : null;
+                        const serviceTime = formData.dateServiceComp && reportData?.howSoon?.fullRetire
+                          ? Math.floor((new Date(reportData.howSoon.fullRetire).getTime() - new Date(formData.dateServiceComp).getTime()) / 31557600000)
+                          : null;
+
+                        const htmlBody = generateReportHtml({
+                          title: 'How Soon Can I Retire?',
+                          subtitle: 'Your retirement eligibility report.',
+                          sections: [
+                            {
+                              title: 'Eligibility Summary',
+                              lines: [
+                                { label: 'Retirement System', value: formData.bCSRS === 'Y' ? 'CSRS' : 'FERS' },
+                                { label: 'Date of Birth', value: formData.dateOfBirth || 'N/A' },
+                                { label: 'Age at Eligibility', value: ageAtRetirement === null ? 'N/A' : `${ageAtRetirement} years` },
+                                { label: 'Service Computation Date', value: formData.dateServiceComp || 'N/A' },
+                                { label: 'Service at Eligibility', value: serviceTime === null ? 'N/A' : `${serviceTime} years` },
+                                { label: 'Air Traffic Controller', value: formData.bAirTraffic === 'Y' ? 'Yes' : 'No' },
+                                { label: 'Customs / Border Patrol', value: formData.bCustomsBorderPatrol === 'Y' ? 'Yes' : 'No' },
+                                { label: 'Law Enforcement / Firefighter', value: formData.bLawEnforce === 'Y' ? 'Yes' : 'No' },
+                                { label: 'Phased Retirement', value: formData.bPhasedRetire === 'Y' ? 'Yes' : 'No' },
+                              ],
+                            },
+                            {
+                              title: 'Report Result',
+                              lines: [
+                                { label: 'Earliest Unreduced Retirement Date', value: reportData?.howSoon?.fullRetire || 'N/A' },
+                                { label: 'Earliest Reduced (Partial) Retirement Date', value: reportData?.howSoon?.partialRetire || 'N/A' },
+                              ],
+                            },
+                          ],
+                          isEmail: true
+                        });
+                        
+                        await sendEmailReport(emailData.email, 'Your Retirement Eligibility Estimate', htmlBody);
+                        alert('Report sent successfully to ' + emailData.email);
+                        setStep(2);
+                      } catch (error) {
+                        console.error('Failed to send email:', error);
+                        alert('Failed to send email. Please try again.');
+                      } finally {
+                        setIsCalculating(false);
+                      }
                     } else {
                       alert('Please enter matching email addresses.');
                     }

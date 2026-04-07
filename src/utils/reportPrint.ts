@@ -46,13 +46,10 @@ function renderSections(sections: ReportSection[]) {
     .join('');
 }
 
-export function openBrandedPrintReport({ title, subtitle, sections, disclaimer }: PrintReportOptions) {
-  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-  if (!printWindow) return;
-
+export function generateReportHtml({ title, subtitle, sections, disclaimer, isEmail = false }: PrintReportOptions & { isEmail?: boolean }) {
   const generatedAt = new Date().toLocaleString();
   const sectionMarkup = renderSections(sections);
-  const content = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -193,7 +190,7 @@ export function openBrandedPrintReport({ title, subtitle, sections, disclaimer }
             <div class="brand-title">FedCalc</div>
             <div class="brand-subtitle">by Quantos</div>
           </div>
-          <div class="badge">Friendly Printer Version</div>
+          ${!isEmail ? `<div class="badge">Friendly Printer Version</div>` : ''}
         </div>
       </header>
       <div class="hero">
@@ -205,16 +202,25 @@ export function openBrandedPrintReport({ title, subtitle, sections, disclaimer }
         ${sectionMarkup}
       </main>
       <footer class="footer">
-        <strong>FedCalc by Quantos.</strong> ${escapeHtml(disclaimer || 'This printer-friendly version is intended for review, printing, or saving as a PDF from your browser print dialog. Calculator outputs are estimates based on the information provided.')}
+        <strong>FedCalc by Quantos.</strong> ${escapeHtml(disclaimer || 'Calculator outputs are estimates based on the information provided.')}
       </footer>
     </div>
+    ${!isEmail ? `
     <script>
       window.addEventListener('load', () => {
         setTimeout(() => window.print(), 250);
       });
     </script>
+    ` : ''}
   </body>
 </html>`;
+}
+
+export function openBrandedPrintReport(options: PrintReportOptions) {
+  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
+  if (!printWindow) return;
+
+  const content = generateReportHtml({ ...options, isEmail: false });
 
   printWindow.document.open();
   printWindow.document.write(content);

@@ -273,9 +273,60 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
     });
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!validateStep(3)) return;
-    alert(`Report sent to ${emailData.email}`);
+    
+    try {
+      const { generateReportHtml } = await import('../utils/reportPrint');
+      const { sendEmailReport } = await import('../utils/emailReport');
+      
+      const htmlBody = generateReportHtml({
+        title: 'Retirement Savings GAP Calculator',
+        subtitle: 'Your retirement income gap analysis.',
+        sections: [
+          {
+            title: 'Assumptions',
+            lines: [
+              { label: 'Planned Retirement Date', value: form.plannedRetirementDate || 'N/A' },
+              { label: 'Current Annual Salary', value: currency(form.currentAnnualSalary) },
+              { label: 'Income Needed in Retirement', value: percent(form.percentIncomeNeeded) },
+              { label: 'Future Salary Increase', value: percent(form.futureSalaryIncrease) },
+              { label: 'Current Savings', value: currency(form.currentSavings) },
+              { label: 'Savings Return', value: percent(form.savingsReturn) },
+              { label: 'Years in Retirement', value: String(form.yearsInRetirement) },
+            ],
+          },
+          {
+            title: 'Projected Income Sources',
+            lines: [
+              { label: 'Federal Retirement at Retirement', value: currency(metrics.federalAtRetirement) },
+              { label: 'Social Security at Retirement', value: currency(metrics.socialSecurityAtRetirement) },
+              { label: 'Other Pensions at Retirement', value: currency(metrics.otherPensionsAtRetirement) },
+              { label: 'Guaranteed Income at Retirement', value: currency(metrics.guaranteedIncomeAtRetirement) },
+            ],
+          },
+          {
+            title: 'Gap Summary',
+            lines: [
+              { label: 'Target Income at Retirement', value: currency(metrics.targetIncomeAtRetirement) },
+              { label: 'Projected Shortfall at Retirement', value: currency(metrics.shortfallAtRetirement) },
+              { label: 'Total Projected Shortfall', value: currency(metrics.totalProjectedShortfall) },
+              { label: 'Future Value of Current Savings', value: currency(metrics.futureValueCurrentSavings) },
+              { label: 'Additional Savings Needed', value: currency(metrics.additionalSavingsNeeded) },
+              { label: 'Annual Savings Needed', value: currency(metrics.annualSavingsNeeded) },
+              { label: 'Annual Savings Rate', value: percent(metrics.annualSavingsRate) },
+            ],
+          },
+        ],
+        isEmail: true
+      });
+      
+      await sendEmailReport(emailData.email, 'Your Retirement Savings GAP Estimate', htmlBody);
+      alert(`Report sent successfully to ${emailData.email}`);
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      alert('Failed to send email. Please try again.');
+    }
   };
 
   const fieldClass = (key: string) => `w-full rounded-md border px-3 py-2.5 text-sm ${errors[key] ? 'border-red-500' : 'border-border'}`;

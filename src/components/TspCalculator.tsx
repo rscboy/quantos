@@ -321,10 +321,59 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
     setStep((current) => Math.min(current + 1, 4));
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!validateStep(4)) return;
-    setAdRefreshCount((current) => current + 1);
-    alert(`Report sent to ${emailData.email}`);
+    
+    try {
+      const { generateReportHtml } = await import('../utils/reportPrint');
+      const { sendEmailReport } = await import('../utils/emailReport');
+      
+      const htmlBody = generateReportHtml({
+        title: 'Thrift Savings Plan Calculator',
+        subtitle: 'Your TSP analysis and projection.',
+        sections: [
+          {
+            title: 'Contribution Inputs',
+            lines: [
+              { label: 'Retirement System', value: contributionForm.retirementSystem },
+              { label: 'Planned Retirement Date', value: contributionForm.plannedRetirementDate || 'N/A' },
+              { label: 'Date of Birth', value: contributionForm.dateOfBirth || 'N/A' },
+              { label: 'Current Annual Salary', value: currency(Number(contributionForm.currentAnnualSalary || 0)) },
+              { label: 'Employee Contribution Rate', value: percent(Number(contributionForm.annualPercentContribution || 0)) },
+              { label: 'Catch-Up Contribution', value: currency(Number(contributionForm.annualCatchUpContribution || 0)) },
+              { label: 'Annual COLA', value: percent(Number(contributionForm.annualCOLA || 0)) },
+              { label: 'Primary Allocation Strategy', value: primaryFund },
+            ],
+          },
+          {
+            title: 'Projection Summary',
+            lines: [
+              { label: 'Current Balance', value: currency(FUND_ORDER.reduce((sum, fund) => sum + Number(funds[fund].balance || 0), 0)) },
+              { label: 'Projected Balance at Retirement', value: currency(metrics.projectedBalanceAtRetirement) },
+              { label: 'Total Employee Contributions', value: currency(metrics.totalEmployeeContributions) },
+              { label: 'Total Agency Contributions', value: currency(metrics.totalAgencyContributions) },
+              { label: 'Total Investment Earnings', value: currency(metrics.totalInvestmentEarnings) },
+            ],
+          },
+          {
+            title: 'Withdrawal Options',
+            lines: [
+              { label: 'Annual Withdrawal (4% Rule)', value: currency(metrics.annualWithdrawal4Percent) },
+              { label: 'Monthly Withdrawal (4% Rule)', value: currency(metrics.monthlyWithdrawal4Percent) },
+              { label: 'Estimated Monthly Life Annuity', value: currency(metrics.estimatedMonthlyLifeAnnuity) },
+            ],
+          },
+        ],
+        isEmail: true
+      });
+      
+      await sendEmailReport(emailData.email, 'Your TSP Projection Estimate', htmlBody);
+      setAdRefreshCount((current) => current + 1);
+      alert(`Report sent successfully to ${emailData.email}`);
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      alert('Failed to send email. Please try again.');
+    }
   };
 
   const handlePrint = () => openBrandedPrintReport({

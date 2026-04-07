@@ -422,7 +422,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     setSavedScenarios((prev) => prev.filter((scenario) => scenario.id !== id));
   };
 
-  const handleEmailSubmit = () => {
+  const handleEmailSubmit = async () => {
     const errors: Record<string, string> = {};
     if (!emailData.email) errors.email = 'Email is required';
     if (!emailData.confirmEmail) errors.confirmEmail = 'Confirm email is required';
@@ -431,9 +431,54 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     }
     setEmailErrors(errors);
     if (Object.keys(errors).length === 0) {
-      setAdRefreshCount((current) => current + 1);
-      alert(`Report sent to ${emailData.email}`);
-      setStep(8);
+      setIsCalculating(true);
+      try {
+        const { generateReportHtml } = await import('../utils/reportPrint');
+        const { sendEmailReport } = await import('../utils/emailReport');
+        
+        const htmlBody = generateReportHtml({
+          title,
+          subtitle: 'Your annuity estimate report.',
+          sections: [
+            {
+              title: 'Retirement Inputs',
+              lines: [
+                { label: 'Retirement System', value: calculatorType === 'csrs' ? 'CSRS' : 'FERS' },
+                { label: 'Retirement Date', value: formData.dateRetire || 'N/A' },
+                { label: 'Date of Birth', value: formData.dateOfBirth || 'N/A' },
+                { label: 'Service Computation Date', value: formData.dateServiceComp || 'N/A' },
+                { label: 'Age at Retirement', value: ageAtRetirement === null ? 'N/A' : formatYears(ageAtRetirement) },
+                { label: 'Creditable Service', value: serviceYears === null ? 'N/A' : formatYears(serviceYears) },
+                { label: 'Final Salary', value: `$${currency(Number(formData.fLastSalary || 0))}` },
+                { label: 'High-3 Salary', value: `$${currency(Number(formData.fManualHigh3 || 0) || Number(formData.fLastSalary || 0))}` },
+              ],
+            },
+            {
+              title: 'Annuity Summary',
+              lines: [
+                { label: 'Monthly Annuity', value: `$${currency(results.monthlyAnnuity)}` },
+                { label: 'Annual Annuity', value: `$${currency(results.annualAnnuity)}` },
+                { label: 'Replacement Rate', value: `${results.replacementRate.toFixed(1)}%` },
+                { label: 'Basic Annuity', value: `$${currency(results.basicAnnuity)}` },
+                { label: 'Monthly Deductions', value: `$${currency(results.monthlyDeductions)}` },
+                { label: 'Full Monthly Annuity', value: `$${currency(results.fullAnnuity)}` },
+                { label: 'Net Monthly Annuity', value: `$${currency(results.netMonthlyAnnuity)}` },
+              ],
+            },
+          ],
+          isEmail: true
+        });
+        
+        await sendEmailReport(emailData.email, `Your ${title} Estimate`, htmlBody);
+        setAdRefreshCount((current) => current + 1);
+        alert(`Report sent successfully to ${emailData.email}`);
+        setStep(8);
+      } catch (error) {
+        console.error('Failed to send email:', error);
+        alert('Failed to send email. Please try again.');
+      } finally {
+        setIsCalculating(false);
+      }
     }
   };
 
