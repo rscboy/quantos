@@ -217,10 +217,29 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
 }
 
 export function openBrandedPrintReport(options: PrintReportOptions) {
-  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-  if (!printWindow) return;
-
   const content = generateReportHtml({ ...options, isEmail: false });
+
+  // Try the Blob approach first as it is more reliable in sandboxed iframes
+  try {
+    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const printWindow = window.open(url, '_blank');
+    if (printWindow) {
+      printWindow.focus();
+      // Clean up the URL after a short delay
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      return;
+    }
+  } catch (e) {
+    console.error('Blob approach failed, falling back to document.write', e);
+  }
+
+  // Fallback to document.write if Blob fails or window.open returns null
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert("Please allow popups to view the print report.");
+    return;
+  }
 
   printWindow.document.open();
   printWindow.document.write(content);
