@@ -149,8 +149,9 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
       }
       .grid { padding: 6px 18px 12px; }
       .row {
-        display: grid;
-        grid-template-columns: minmax(220px, 1fr) minmax(180px, 1fr);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         gap: 20px;
         padding: 12px 0;
         border-bottom: 1px solid #edf1f7;
@@ -163,12 +164,14 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
         font-size: 13px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        flex: 1;
       }
       .value {
         text-align: right;
         font-size: 15px;
         font-weight: 600;
         white-space: pre-wrap;
+        flex: 1;
       }
       .footer {
         padding: 0 40px 32px;
@@ -178,23 +181,23 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
       }
       @media print {
         @page { margin: 0; }
-        body { background: white; margin: 1cm; font-size: 0.95em; }
+        body { background: white; margin: 1cm; font-size: 0.85em; zoom: 0.92; }
         .page { max-width: none; }
-        .header { padding: 20px 30px; }
-        .hero { padding: 20px 30px 12px; }
-        .content { padding: 16px 30px 20px; }
-        .section { margin-bottom: 16px; }
-        .section h2 { padding: 10px 14px; font-size: 15px; }
-        .grid { padding: 4px 14px 8px; }
-        .row { padding: 8px 0; gap: 12px; }
-        .label { font-size: 12px; }
-        .value { font-size: 14px; }
-        .footer { padding: 0 30px 20px; }
+        .header { padding: 16px 24px; }
+        .hero { padding: 16px 24px 8px; }
+        .content { padding: 12px 24px 16px; }
+        .section { margin-bottom: 12px; page-break-inside: avoid; break-inside: avoid; }
+        .section h2 { padding: 8px 12px; font-size: 13px; }
+        .grid { padding: 2px 12px 6px; display: block; }
+        .row { padding: 6px 0; gap: 8px; page-break-inside: avoid; break-inside: avoid; }
+        .label { font-size: 11px; }
+        .value { font-size: 12px; }
+        .footer { padding: 0 24px 16px; }
       }
       @media (max-width: 640px) {
         .header, .hero, .content, .footer { padding-left: 20px; padding-right: 20px; }
         .brand { flex-direction: column; align-items: flex-start; }
-        .row { grid-template-columns: 1fr; gap: 6px; }
+        .row { flex-direction: column; gap: 4px; }
         .value { text-align: left; }
       }
     </style>

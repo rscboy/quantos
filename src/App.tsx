@@ -55,6 +55,10 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [view]);
+
   const navigateToView = useCallback((nextView: string) => {
     setView(nextView);
     const path = nextView === 'home' ? '/' : `/${nextView}`;
