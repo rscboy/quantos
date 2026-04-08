@@ -207,7 +207,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
     }, {} as Record<FundKey, FundInput>);
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: '' });
   const [adRefreshCount, setAdRefreshCount] = useState(1);
   const totalAllocation = useMemo(() => normalizeAllocations(funds), [funds]);
   const { rows, totalContributions } = useMemo(() => projectAnalysisRows(contributionForm, primaryFund, funds), [contributionForm, primaryFund, funds]);
@@ -221,7 +221,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
       dateOfBirth: profile.dateOfBirth || prev.dateOfBirth,
     }));
     if (profile.email) {
-      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email }));
     }
   }, [profile]);
 

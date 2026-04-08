@@ -171,7 +171,8 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
         line-height: 1.6;
       }
       @media print {
-        body { background: white; }
+        @page { margin: 0; }
+        body { background: white; margin: 1.5cm; }
         .page { max-width: none; }
       }
       @media (max-width: 640px) {

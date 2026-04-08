@@ -282,7 +282,7 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
     futureYearEarnings: linkedData.socialSecurity?.futureYearEarnings ? String(linkedData.socialSecurity.futureYearEarnings) : linkedData.tsp?.currentAnnualSalary ? String(linkedData.tsp.currentAnnualSalary) : '',
   }));
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [email, setEmail] = useState({ primary: profile.email || '', confirm: profile.email || '' });
+  const [email, setEmail] = useState({ primary: profile.email || '', confirm: '' });
   const results = useMemo(() => computeResults(form), [form]);
 
   // Sync profile updates if they happen externally
@@ -293,7 +293,7 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
       retirementDate: profile.dateRetire ? toDateParts(profile.dateRetire) : prev.retirementDate,
     }));
     if (profile.email) {
-      setEmail(prev => ({ ...prev, primary: profile.email || prev.primary, confirm: profile.email || prev.confirm }));
+      setEmail(prev => ({ ...prev, primary: profile.email || prev.primary }));
     }
   }, [profile]);
 

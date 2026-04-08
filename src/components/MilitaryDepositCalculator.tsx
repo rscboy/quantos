@@ -114,7 +114,7 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
   const [apiError, setApiError] = useState<string | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [reportData, setReportData] = useState<ReportData | null>(null);
-  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: '' });
   const [emailErrors, setEmailErrors] = useState<Record<string, string>>({});
 
   // Sync profile updates if they happen externally
@@ -125,7 +125,7 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
       civilianEmploymentDate: profile.dateServiceComp || prev.civilianEmploymentDate,
     }));
     if (profile.email) {
-      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email }));
     }
   }, [profile]);
 

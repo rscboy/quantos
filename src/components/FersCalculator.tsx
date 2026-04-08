@@ -214,7 +214,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
   const [reportData, setReportData] = useState<any>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [blockingMessages, setBlockingMessages] = useState<string[]>([]);
-  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: '' });
   const [adRefreshCount, setAdRefreshCount] = useState(1);
   const [emailErrors, setEmailErrors] = useState<Record<string, string>>({});
   
@@ -244,7 +244,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
       bPhasedRetire: profile.bPhasedRetire || prev.bPhasedRetire,
     }));
     if (profile.email) {
-      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email }));
     }
   }, [profile]);
   const [savedScenarios, setSavedScenarios] = useState<ScenarioSnapshot[]>([]);

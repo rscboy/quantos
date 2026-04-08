@@ -23,7 +23,7 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
     dateServiceComp: profile.dateServiceComp || '',
   });
 
-  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: '' });
 
   // Sync profile updates if they happen externally
   useEffect(() => {
@@ -38,7 +38,7 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
       dateServiceComp: profile.dateServiceComp || prev.dateServiceComp,
     }));
     if (profile.email) {
-      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email }));
     }
   }, [profile]);
 

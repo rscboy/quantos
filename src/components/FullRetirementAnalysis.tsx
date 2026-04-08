@@ -161,7 +161,7 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
     bLawEnforce: profile.bLawEnforce || '',
   }));
   const [email, setEmail] = useState(profile.email || '');
-  const [confirmEmail, setConfirmEmail] = useState(profile.email || '');
+  const [confirmEmail, setConfirmEmail] = useState('');
 
   // Sync profile updates if they happen externally
   useEffect(() => {
@@ -177,7 +177,6 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
     }));
     if (profile.email) {
       setEmail(prev => profile.email || prev);
-      setConfirmEmail(prev => profile.email || prev);
     }
   }, [profile]);
   const [errors, setErrors] = useState<Record<string, string>>({});

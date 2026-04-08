@@ -172,7 +172,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
               </button>
 
               {isShareOpen && (
-                <div className="absolute right-0 top-full mt-3 w-[320px] rounded-2xl border border-white/10 bg-[#0E2244] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-sm z-50">
+                <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-3 w-[320px] max-w-[calc(100vw-2rem)] rounded-2xl border border-white/10 bg-[#0E2244] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-sm z-50">
                   <div className="mb-2 px-2">
                     <p className="text-sm font-semibold text-white">Share FedCalc</p>
                     <p className="mt-1 text-xs leading-5 text-white/60">Send this page with one tap using the options below.</p>

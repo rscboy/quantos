@@ -172,7 +172,7 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
     plannedRetirementDate: profile.dateRetire || '',
   }));
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: profile.email || '' });
+  const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: '' });
   const metrics = useMemo(() => calculateProjection(form), [form]);
 
   // Sync profile updates if they happen externally
@@ -182,7 +182,7 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
       plannedRetirementDate: profile.dateRetire || prev.plannedRetirementDate,
     }));
     if (profile.email) {
-      setEmailData(prev => ({ ...prev, email: profile.email || prev.email, confirmEmail: profile.email || prev.confirmEmail }));
+      setEmailData(prev => ({ ...prev, email: profile.email || prev.email }));
     }
   }, [profile]);
 
