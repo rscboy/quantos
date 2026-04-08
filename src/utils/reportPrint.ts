@@ -70,6 +70,8 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
         font-family: Inter, Arial, sans-serif;
         color: var(--text);
         background: #f4f7fb;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
       .page {
         max-width: 960px;
@@ -135,6 +137,8 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
         border: 1px solid var(--border);
         border-radius: 16px;
         overflow: hidden;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
       .section h2 {
         margin: 0;
@@ -150,6 +154,8 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
         gap: 20px;
         padding: 12px 0;
         border-bottom: 1px solid #edf1f7;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
       .row:last-child { border-bottom: none; }
       .label {
@@ -172,8 +178,18 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
       }
       @media print {
         @page { margin: 0; }
-        body { background: white; margin: 1.5cm; }
+        body { background: white; margin: 1cm; font-size: 0.95em; }
         .page { max-width: none; }
+        .header { padding: 20px 30px; }
+        .hero { padding: 20px 30px 12px; }
+        .content { padding: 16px 30px 20px; }
+        .section { margin-bottom: 16px; }
+        .section h2 { padding: 10px 14px; font-size: 15px; }
+        .grid { padding: 4px 14px 8px; }
+        .row { padding: 8px 0; gap: 12px; }
+        .label { font-size: 12px; }
+        .value { font-size: 14px; }
+        .footer { padding: 0 30px 20px; }
       }
       @media (max-width: 640px) {
         .header, .hero, .content, .footer { padding-left: 20px; padding-right: 20px; }

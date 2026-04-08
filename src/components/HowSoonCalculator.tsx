@@ -412,7 +412,6 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
                         
                         await sendEmailReport(emailData.email, 'Your Retirement Eligibility Estimate', htmlBody);
                         alert('Report sent successfully to ' + emailData.email);
-                        setStep(2);
                       } catch (error) {
                         console.error('Failed to send email:', error);
                         alert('Failed to send email. Please try again.');

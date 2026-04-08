@@ -472,7 +472,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         await sendEmailReport(emailData.email, `Your ${title} Estimate`, htmlBody);
         setAdRefreshCount((current) => current + 1);
         alert(`Report sent successfully to ${emailData.email}`);
-        setStep(8);
       } catch (error) {
         console.error('Failed to send email:', error);
         alert('Failed to send email. Please try again.');
