@@ -106,7 +106,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         </div>
       </div>
 
-      <div className="bg-white border-y border-border p-6 m-0">
+      <div className="hidden md:block bg-white border-y border-border p-6 m-0">
         <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-between gap-4 md:gap-6">
           <div className="flex items-center gap-3 text-[13px] text-text-2">
             <div className="w-8 h-8 bg-bg border border-border rounded-md flex items-center justify-center text-sm shrink-0">📋</div>
@@ -125,7 +125,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
       </div>
 
       <main className="max-w-[1200px] mx-auto pt-14 px-6 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 items-start">
+        <div className="grid grid-cols-1 gap-8 items-start">
           <div>
             {CALCULATORS.map((section, idx) => {
               const count = section.items.length;
@@ -169,9 +169,6 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                 </React.Fragment>
               );
             })}
-          </div>
-
-          <div className="hidden lg:block">
           </div>
         </div>
       </main>
