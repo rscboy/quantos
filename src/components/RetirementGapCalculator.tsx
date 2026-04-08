@@ -166,6 +166,9 @@ function ResultCell({ label, now, retirement, emphasize = false }: { label: stri
 export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
   const [form, setForm] = useState<GapForm>(() => ({ 
     ...DEFAULT_FORM, 
     ...applyLinkedDataToGapForm(linkedData),

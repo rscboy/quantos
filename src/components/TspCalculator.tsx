@@ -183,6 +183,9 @@ function projectAnalysisRows(contributionForm: ContributionForm, primaryFund: Pr
 export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBack: () => void; linkedData: LinkedCalculatorData; onLinkedDataChange: (update: Partial<LinkedCalculatorData>) => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
   const [contributionForm, setContributionForm] = useState<ContributionForm>(() => ({
     ...DEFAULT_CONTRIBUTION_FORM,
     retirementSystem: profile.bCSRS ? 'CSRS' : 'FERS',

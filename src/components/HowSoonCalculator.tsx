@@ -8,6 +8,9 @@ import { SEO } from './SEO';
 export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => void, onNavigateToFers: () => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
   const [isCalculating, setIsCalculating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);

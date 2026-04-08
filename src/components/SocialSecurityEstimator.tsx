@@ -274,6 +274,9 @@ function DateSelectors({ label, value, onChange, error, years }: { label: string
 export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange }: { onBack: () => void; linkedData: LinkedCalculatorData; onLinkedDataChange: (update: Partial<LinkedCalculatorData>) => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState<Step>(1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
   const [form, setForm] = useState<FormState>(() => ({
     ...INITIAL_FORM,
     birthDate: profile.dateOfBirth ? toDateParts(profile.dateOfBirth) : linkedData.socialSecurity?.birthDate ? toDateParts(linkedData.socialSecurity.birthDate) : linkedData.tsp?.dateOfBirth ? toDateParts(linkedData.tsp.dateOfBirth) : INITIAL_FORM.birthDate,

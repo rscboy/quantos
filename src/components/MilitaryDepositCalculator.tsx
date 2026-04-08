@@ -105,6 +105,9 @@ function ResultCard({ label, value }: { label: string; value: string }) {
 export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
   const [formData, setFormData] = useState<FormData>({
     ...INITIAL_FORM,
     retirementSystem: profile.bCSRS === 'Y' ? 'CSRS' : 'FERS',

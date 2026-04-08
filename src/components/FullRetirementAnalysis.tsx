@@ -149,6 +149,9 @@ function formatYears(value: number) {
 export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
   const { profile, updateProfile } = useSharedProfile();
   const [stepIndex, setStepIndex] = useState(0);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [stepIndex]);
   const [formData, setFormData] = useState<Partial<FedEmployee>>(() => ({ 
     ...defaultData, 
     ...applyLinkedDataToFullAnalysis(linkedData),

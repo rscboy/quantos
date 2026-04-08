@@ -188,6 +188,9 @@ function formatDelta(value: number, kind: 'currency' | 'percent' | 'years' = 'cu
 function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: CalculatorType; onBack: () => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
   const title = calculatorType === 'fers' ? 'FERS Retirement Calculator' : 'CSRS Retirement Calculator';
 
   const schema = {
