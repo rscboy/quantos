@@ -4,7 +4,7 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
   return (
     <footer className="bg-navy text-white pt-14 px-6 pb-8 mt-0">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-14 pb-10 border-b border-white/10 mb-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] gap-14 pb-10 border-b border-white/10 mb-7">
           <div>
             <div className="flex items-center gap-3 mb-3.5">
               <img 
@@ -41,16 +41,6 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">TSP Modeler</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Retirement Gap</a></li>
               <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Full Analysis</a></li>
-            </ul>
-          </div>
-          <div>
-            <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Resources</div>
-            <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Pay Scales</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Sick Leave Chart</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">FEGLI Rates</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Methodology</a></li>
-              <li><a href="#" onClick={(e) => { e.preventDefault(); setView('openapi'); }} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">OpenAPI specification</a></li>
             </ul>
           </div>
           <div>
