@@ -15,8 +15,9 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
               />
               <div className="flex flex-col justify-center items-start">
                 <div className="font-serif leading-none tracking-[-0.3px]">
+                  <span className="text-white text-[26px]">M</span><span className="text-white text-[22px]">y</span>
                   <span className="text-white text-[26px]">F</span><span className="text-white text-[22px]">ed</span>
-                  <span className="text-[#93B4F4] text-[26px]">C</span><span className="text-[#93B4F4] text-[22px]">alc</span>
+                  <span className="text-[#93B4F4] text-[26px]">P</span><span className="text-[#93B4F4] text-[22px]">lan</span>
                 </div>
                 <span className="text-[10px] font-sans font-medium text-white/50 tracking-[0.2em] uppercase mt-1">by Quantos</span>
               </div>
