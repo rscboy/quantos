@@ -426,15 +426,15 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Thrift Savings Plan (TSP) Calculator | Free Federal Retirement Estimates | FedCalc"
-        description="FedCalc retirement calculators help federal employees, planners, and agencies estimate TSP benefits with precision. Run High-3, pension, and GAP analysis instantly."
+        title="Thrift Savings Plan (TSP) Calculator | Free Federal Retirement Estimates | MyFedPlan"
+        description="MyFedPlan retirement calculators help federal employees, planners, and agencies estimate TSP benefits with precision. Run High-3, pension, and GAP analysis instantly."
         schema={schema}
       />
       <main className="max-w-[1200px] mx-auto px-6 pb-20 pt-12">
@@ -461,7 +461,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           })}
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
+        <div className="grid grid-cols-1 gap-6 items-start">
           <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {step === 1 && (
             <div className="p-8 space-y-8">
@@ -675,9 +675,6 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
               )}
             </div>
           )}
-          </div>
-
-          <div className="hidden xl:block">
           </div>
         </div>
       </main>

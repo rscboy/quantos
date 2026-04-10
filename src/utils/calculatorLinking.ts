@@ -1,4 +1,4 @@
-import { FedEmployee } from '../services/fedcalcApi';
+import { FedEmployee } from '../services/myfedplanApi';
 
 export const CALCULATOR_LINKS_STORAGE_KEY = 'calculator-links';
 

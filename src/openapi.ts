@@ -1,16 +1,16 @@
 export const openApiYaml = `openapi: 3.0.1
 info:
-  title: Fedcalc API
+  title: MyFedPlan API
   description: "Federal retirement calculators that accurately compute <b>FERS</b>, CSRS, military deposits, TSP, and social security. <br/><br/>Also includes savings gap calculator."
   version: '2022.1'
-  termsOfService: "https://fedcalc.com/termsandconditions.htm"
+  termsOfService: "https://myfedplan.com/termsandconditions.htm"
   contact:
-    name: "Fedcalc API"
-    url: "https://fedcalc.com/api"
-    email: "fedcalc@quantos.com"
+    name: "MyFedPlan API"
+    url: "https://myfedplan.com/api"
+    email: "myfedplan@quantos.com"
   license:
-    name: "License to use Fedcalc"
-    url: "https://fedcalc.com/price"
+    name: "License to use MyFedPlan"
+    url: "https://myfedplan.com/price"
 security:
   - jwt: []
 paths:
@@ -24,7 +24,7 @@ paths:
       security: []
       externalDocs:
         description: API Documentation
-        url: https://www.fedcalc.com
+        url: https://www.myfedplan.com
       requestBody:
         required: true
         content:
@@ -52,7 +52,7 @@ paths:
       operationId: HowSoon
       externalDocs:
         description: API Documentation
-        url: https://www.fedcalc.com
+        url: https://www.myfedplan.com
       parameters:
         - $ref: '#/components/parameters/FedEmployee'
       responses:
@@ -72,11 +72,11 @@ paths:
       tags:
         - Federal Employee - FERS Annuity Calculation
       summary: "FERS annuity calculation for one employee"
-      description: "Calculates an estimate of a federal employee's monthly FERS annuity based on inputs sent in a full data packet such as their date of birth, planned retirement date, employee job classification, service time, pay history data, and other optional historical data. See the fedcalc.com website for guided walkthrough of collecting this data."
+      description: "Calculates an estimate of a federal employee's monthly FERS annuity based on inputs sent in a full data packet such as their date of birth, planned retirement date, employee job classification, service time, pay history data, and other optional historical data. See the myfedplan.com website for guided walkthrough of collecting this data."
       operationId: FERSAnnuity
       externalDocs:
         description: API Documentation
-        url: https://www.fedcalc.com
+        url: https://www.myfedplan.com
       parameters:
         - $ref: '#/components/parameters/FedEmployee'
       responses:
@@ -98,11 +98,11 @@ paths:
       tags:
         - Federal Employee - CSRS Annuity Calculation
       summary: "CSRS annuity calculation for one employee"
-      description: "Calculates an estimate of a federal employee's monthly CSRS annuity based on inputs sent in a full data packet such as their date of birth, planned retirement date, employee job classification, service time, pay history data, and other optional historical data. See the fedcalc.com website for guided walkthrough of collecting this data."
+      description: "Calculates an estimate of a federal employee's monthly CSRS annuity based on inputs sent in a full data packet such as their date of birth, planned retirement date, employee job classification, service time, pay history data, and other optional historical data. See the myfedplan.com website for guided walkthrough of collecting this data."
       operationId: CSRSAnnuity
       externalDocs:
         description: API Documentation
-        url: https://www.fedcalc.com
+        url: https://www.myfedplan.com
       parameters:
         - $ref: '#/components/parameters/FedEmployee'
       responses:
@@ -540,10 +540,10 @@ components:
             $ref: '#/components/schemas/Error'
 
 servers:
-  - url: https://www.fedcalc.com/api/
+  - url: https://www.myfedplan.com/api/
     description: Production API server
-  - url: https://www.fedcalc.com/apitest/
+  - url: https://www.myfedplan.com/apitest/
     description: Beta API server
-  - url: https://www.fedcalc.com/
+  - url: https://www.myfedplan.com/
     description: Interactive retirement planning web portal
 `;

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { fedcalcApi, FedEmployee } from '../services/fedcalcApi';
+import { myfedplanApi, FedEmployee } from '../services/myfedplanApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
 import { SEO } from './SEO';
 
-export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => void, onNavigateToFers: () => void }) {
+export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
   useEffect(() => {
@@ -15,6 +15,33 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
   const [apiError, setApiError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  const handleHtmlClick = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'A') {
+      e.preventDefault();
+      const href = target.getAttribute('href') || '';
+      const text = target.textContent?.toLowerCase() || '';
+      
+      if (href.includes('fullanalysis') || text.includes('full retirement')) {
+        onNavigate('full');
+      } else if (href.includes('tsp') || text.includes('tsp') || text.includes('thrift')) {
+        onNavigate('tsp');
+      } else if (href.includes('fers') || text.includes('fers')) {
+        onNavigate('fers');
+      } else if (href.includes('csrs') || text.includes('csrs')) {
+        onNavigate('csrs');
+      } else if (href.includes('military') || text.includes('military')) {
+        onNavigate('military');
+      } else if (href.includes('gap') || text.includes('gap')) {
+        onNavigate('gap');
+      } else if (href.includes('howsoon') || text.includes('how soon') || text.includes('eligibility')) {
+        onNavigate('eligibility');
+      } else if (href.includes('ss') || text.includes('social security')) {
+        onNavigate('ss');
+      }
+    }
+  }, [onNavigate]);
 
   const [formData, setFormData] = useState<Partial<FedEmployee>>({
     bCSRS: profile.bCSRS || 'N',
@@ -86,11 +113,11 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
     setApiError(null);
     
     try {
-      const payload = fedcalcApi.mapToFedEmployee(formData);
+      const payload = myfedplanApi.mapToFedEmployee(formData);
       if (import.meta.env.DEV) {
-        console.log('Submitting HowSoon payload to /api/fedcalc/calculate?type=howsoon:', JSON.stringify(payload, null, 2));
+        console.log('Submitting HowSoon payload to /api/myfedplan/calculate?type=howsoon:', JSON.stringify(payload, null, 2));
       }
-      const apiResults = await fedcalcApi.calculateRetirement(formData, 'howsoon');
+      const apiResults = await myfedplanApi.calculateRetirement(formData, 'howsoon');
       setReportData(apiResults);
       setStep(2); // Go to results step
     } catch (error) {
@@ -173,20 +200,20 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Federal Retirement Eligibility Calculator | When Can I Retire? | FedCalc"
-        description="Find out exactly when you are eligible to retire under FERS or CSRS rules. Calculate your earliest retirement date instantly with FedCalc."
+        title="Federal Retirement Eligibility Calculator | When Can I Retire? | MyFedPlan"
+        description="Find out exactly when you are eligible to retire under FERS or CSRS rules. Calculate your earliest retirement date instantly with MyFedPlan."
         schema={schema}
       />
       <main className="w-full max-w-[900px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
         <button
-          onClick={onBack}
+          onClick={() => onNavigate('home')}
           className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]"
         >
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5">
@@ -313,7 +340,8 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
                   <div className="mb-8">
                     <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
                     <div 
-                      className="fedcalc-report"
+                      className="myfedplan-report"
+                      onClick={handleHtmlClick}
                       dangerouslySetInnerHTML={{ __html: reportData.howSoon.html }}
                     />
                   </div>
@@ -323,7 +351,7 @@ export function HowSoonCalculator({ onBack, onNavigateToFers }: { onBack: () => 
                   <div className="bg-gray-50 p-4 rounded-md border border-border">
                     <p className="font-semibold mb-2">Want to estimate your annuity amount?</p>
                     <p className="mb-4">Run the Free FERS Annuity Calculator to get a detailed projection of your retirement scenario.</p>
-                    <button onClick={onNavigateToFers} className="px-4 py-2 bg-white border border-border text-blue rounded-md font-semibold hover:bg-gray-50 transition-colors">
+                    <button onClick={() => onNavigate('fers')} className="px-4 py-2 bg-white border border-border text-blue rounded-md font-semibold hover:bg-gray-50 transition-colors">
                       Run FERS Annuity Calculator
                     </button>
                   </div>

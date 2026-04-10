@@ -6,9 +6,9 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
   const shareRef = useRef<HTMLDivElement | null>(null);
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.fedcalc.com';
-  const shareTitle = 'FedCalc by Quantos';
-  const shareText = 'Explore federal retirement calculators and planning tools with FedCalc.';
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.myfedplan.com';
+  const shareTitle = 'MyFedPlan by Quantos';
+  const shareText = 'Explore federal retirement calculators and planning tools with MyFedPlan.';
 
   const shareOptions = useMemo(() => {
     const encodedUrl = encodeURIComponent(shareUrl);
@@ -105,7 +105,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
           >
             <img 
               src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
-              alt="FedCalc by Quantos" 
+              alt="MyFedPlan by Quantos" 
               className="h-10 w-auto object-contain" 
               referrerPolicy="no-referrer" 
             />
@@ -124,7 +124,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
                 className="text-white/65 text-[13px] font-medium no-underline transition-colors duration-150 hover:text-white hover:no-underline active:text-white border border-white/20 rounded-md px-3 py-1.5"
                 onClick={() => {
                   try {
-                    localStorage.removeItem('fedcalc_shared_profile');
+                    localStorage.removeItem('myfedplan_shared_profile');
                     alert('Saved calculator data has been cleared.');
                     window.location.reload();
                   } catch (e) {
@@ -176,7 +176,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
                   <div className="fixed inset-0 z-40 sm:hidden bg-black/20 backdrop-blur-sm" onClick={() => setIsShareOpen(false)} />
                   <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-50 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:translate-y-0 sm:w-[320px] rounded-2xl border border-white/10 bg-[#0E2244] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-sm">
                     <div className="mb-2 px-2">
-                    <p className="text-sm font-semibold text-white">Share FedCalc</p>
+                    <p className="text-sm font-semibold text-white">Share MyFedPlan</p>
                     <p className="mt-1 text-xs leading-5 text-white/60">Send this page with one tap using the options below.</p>
                   </div>
                   <div className="grid gap-2">

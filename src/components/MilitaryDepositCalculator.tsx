@@ -276,14 +276,14 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Military Deposit Calculator | Federal Retirement Estimates | FedCalc"
+        title="Military Deposit Calculator | Federal Retirement Estimates | MyFedPlan"
         description="Calculate your military deposit to increase your federal retirement annuity. Estimate repayment amounts for FERS and CSRS service credit."
         schema={schema}
       />

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
+import { FedEmployee, myfedplanApi } from '../services/myfedplanApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
@@ -185,7 +185,7 @@ function formatDelta(value: number, kind: 'currency' | 'percent' | 'years' = 'cu
   return `${prefix}$${currency(value)}`;
 }
 
-function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: CalculatorType; onBack: () => void }) {
+function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: CalculatorType; onNavigate: (view: string) => void }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
   useEffect(() => {
@@ -201,17 +201,17 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   const seoTitle = calculatorType === 'fers' 
-    ? "FERS & CSRS Calculator – High-3, TSP & Pension Estimates | FedCalc"
-    : "CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | FedCalc";
+    ? "FERS & CSRS Calculator – High-3, TSP & Pension Estimates | MyFedPlan"
+    : "CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | MyFedPlan";
     
   const seoDescription = calculatorType === 'fers'
-    ? "FedCalc retirement calculators help federal employees, planners, and agencies estimate FERS benefits with precision. Run High-3, pension, and GAP analysis instantly."
-    : "FedCalc retirement calculators help federal employees, planners, and agencies estimate CSRS benefits with precision. Run High-3, pension, and GAP analysis instantly.";
+    ? "MyFedPlan retirement calculators help federal employees, planners, and agencies estimate FERS benefits with precision. Run High-3, pension, and GAP analysis instantly."
+    : "MyFedPlan retirement calculators help federal employees, planners, and agencies estimate CSRS benefits with precision. Run High-3, pension, and GAP analysis instantly.";
   const [isCalculating, setIsCalculating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
@@ -367,7 +367,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     setBlockingMessages([]);
 
     try {
-      const apiResults = await fedcalcApi.calculateRetirement(formData, calculatorType);
+      const apiResults = await myfedplanApi.calculateRetirement(formData, calculatorType);
       setReportData(apiResults);
       setAdRefreshCount((current) => current + 1);
       setStep(8);
@@ -501,6 +501,33 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
     </div>
   );
 
+  const handleHtmlClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'A') {
+      e.preventDefault();
+      const href = target.getAttribute('href') || '';
+      const text = target.textContent?.toLowerCase() || '';
+      
+      if (href.includes('fullanalysis') || text.includes('full retirement')) {
+        onNavigate('full');
+      } else if (href.includes('tsp') || text.includes('tsp') || text.includes('thrift')) {
+        onNavigate('tsp');
+      } else if (href.includes('fers') || text.includes('fers')) {
+        onNavigate('fers');
+      } else if (href.includes('csrs') || text.includes('csrs')) {
+        onNavigate('csrs');
+      } else if (href.includes('military') || text.includes('military')) {
+        onNavigate('military');
+      } else if (href.includes('gap') || text.includes('gap')) {
+        onNavigate('gap');
+      } else if (href.includes('howsoon') || text.includes('how soon') || text.includes('eligibility')) {
+        onNavigate('eligibility');
+      } else if (href.includes('ss') || text.includes('social security')) {
+        onNavigate('ss');
+      }
+    }
+  }, [onNavigate]);
+
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
@@ -508,8 +535,8 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
         description={seoDescription}
         schema={schema}
       />
-      <main className="w-full max-w-[980px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
+      <main className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
+        <button onClick={() => onNavigate('home')} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
         </button>
@@ -519,7 +546,7 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
 
         {step <= 7 && renderStepIndicator()}
 
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start">
+        <div className="grid grid-cols-1 gap-6 items-start">
           <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {blockingMessages.length > 0 && (
             <div className="m-6 mb-0 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm space-y-1">
@@ -841,7 +868,8 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
                   <div className="mt-8">
                     <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
                     <div 
-                      className="fedcalc-report"
+                      className="myfedplan-report"
+                      onClick={handleHtmlClick}
                       dangerouslySetInnerHTML={{ __html: results.html }}
                     />
                   </div>
@@ -905,9 +933,6 @@ function AnnuityCalculator({ calculatorType, onBack }: { calculatorType: Calcula
             </div>
           )}
         </div>
-
-          <div className="hidden xl:block">
-          </div>
         </div>
 
         {apiError && <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md border border-red-200 text-sm">{apiError}</div>}
@@ -976,10 +1001,10 @@ function ComparisonMetric({ label, value, delta, highlight = false }: { label: s
   );
 }
 
-export function FersCalculator({ onBack }: { onBack: () => void }) {
-  return <AnnuityCalculator calculatorType="fers" onBack={onBack} />;
+export function FersCalculator({ onNavigate }: { onNavigate: (view: string) => void }) {
+  return <AnnuityCalculator calculatorType="fers" onNavigate={onNavigate} />;
 }
 
-export function CsrsCalculator({ onBack }: { onBack: () => void }) {
-  return <AnnuityCalculator calculatorType="csrs" onBack={onBack} />;
+export function CsrsCalculator({ onNavigate }: { onNavigate: (view: string) => void }) {
+  return <AnnuityCalculator calculatorType="csrs" onNavigate={onNavigate} />;
 }

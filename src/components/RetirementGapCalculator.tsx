@@ -163,7 +163,7 @@ function ResultCell({ label, now, retirement, emphasize = false }: { label: stri
   );
 }
 
-export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
+export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate: (view: string) => void; linkedData: LinkedCalculatorData }) {
   const { profile, updateProfile } = useSharedProfile();
   const [step, setStep] = useState(1);
   useEffect(() => {
@@ -342,15 +342,15 @@ export function RetirementGapCalculator({ onBack, linkedData }: { onBack: () => 
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Retirement GAP Analysis Calculator | Free Federal Estimates | FedCalc"
-        description="FedCalc retirement calculators help federal employees, planners, and agencies estimate retirement readiness with precision. Run High-3, pension, and GAP analysis instantly."
+        title="Retirement GAP Analysis Calculator | Free Federal Estimates | MyFedPlan"
+        description="MyFedPlan retirement calculators help federal employees, planners, and agencies estimate retirement readiness with precision. Run High-3, pension, and GAP analysis instantly."
         schema={schema}
       />
       <main className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">

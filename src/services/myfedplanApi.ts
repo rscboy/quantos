@@ -114,7 +114,7 @@ export interface CalculatorResults {
   };
 }
 
-class FedcalcApiService {
+class MyFedPlanApiService {
   /**
    * Map UI inputs to the FedEmployee schema for HowSoon calculator
    */
@@ -329,7 +329,7 @@ class FedcalcApiService {
     const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL || '';
     
     // --- TEMPORARY DEBUGGING ---
-    console.log('--- FEDCALC SUBMISSION DEBUG ---');
+    console.log('--- MYFEDPLAN SUBMISSION DEBUG ---');
     console.log('1. Exact JSON payload being sent:', JSON.stringify(payload, null, 2));
     console.log('2. Calculator type:', calculatorType);
     console.log('3. Mock mode being used:', !backendBaseUrl);
@@ -424,7 +424,7 @@ class FedcalcApiService {
           debugInfo
         };
       } catch (error) {
-        console.error('Fedcalc API Calculation Error:', error);
+        console.error('MyFedPlan API Calculation Error:', error);
         throw error;
       }
     }
@@ -432,4 +432,4 @@ class FedcalcApiService {
 }
 
 // Export a singleton instance
-export const fedcalcApi = new FedcalcApiService();
+export const myfedplanApi = new MyFedPlanApiService();

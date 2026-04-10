@@ -9,7 +9,7 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
             <div className="flex items-center gap-3 mb-3.5">
               <img 
                 src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
-                alt="FedCalc by Quantos" 
+                alt="MyFedPlan by Quantos" 
                 className="h-10 w-auto object-contain" 
                 referrerPolicy="no-referrer" 
               />
@@ -47,7 +47,7 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
             <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Contact</div>
             <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
               <li><a href="mailto:support@quantos.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">support@quantos.com</a></li>
-              <li><a href="mailto:api@fedcalc.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">api@fedcalc.com</a></li>
+              <li><a href="mailto:api@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">api@myfedplan.com</a></li>
               <li><a href="mailto:ideas@quantos.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Submit an idea</a></li>
             </ul>
           </div>

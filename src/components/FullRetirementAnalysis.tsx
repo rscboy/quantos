@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
-import { FedEmployee, fedcalcApi } from '../services/fedcalcApi';
+import { FedEmployee, myfedplanApi } from '../services/myfedplanApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
 import { DebugPanel } from './DebugPanel';
 import { useSharedProfile } from '../hooks/useSharedProfile';
@@ -146,12 +146,39 @@ function formatYears(value: number) {
   return `${years} years, ${months} months`;
 }
 
-export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => void; linkedData: LinkedCalculatorData }) {
+export function FullRetirementAnalysis({ onNavigate, linkedData }: { onNavigate: (view: string) => void; linkedData: LinkedCalculatorData }) {
   const { profile, updateProfile } = useSharedProfile();
   const [stepIndex, setStepIndex] = useState(0);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [stepIndex]);
+
+  const handleHtmlClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'A') {
+      e.preventDefault();
+      const href = target.getAttribute('href') || '';
+      const text = target.textContent?.toLowerCase() || '';
+      
+      if (href.includes('fullanalysis') || text.includes('full retirement')) {
+        onNavigate('full');
+      } else if (href.includes('tsp') || text.includes('tsp') || text.includes('thrift')) {
+        onNavigate('tsp');
+      } else if (href.includes('fers') || text.includes('fers')) {
+        onNavigate('fers');
+      } else if (href.includes('csrs') || text.includes('csrs')) {
+        onNavigate('csrs');
+      } else if (href.includes('military') || text.includes('military')) {
+        onNavigate('military');
+      } else if (href.includes('gap') || text.includes('gap')) {
+        onNavigate('gap');
+      } else if (href.includes('howsoon') || text.includes('how soon') || text.includes('eligibility')) {
+        onNavigate('eligibility');
+      } else if (href.includes('ss') || text.includes('social security')) {
+        onNavigate('ss');
+      }
+    }
+  }, [onNavigate]);
   const [formData, setFormData] = useState<Partial<FedEmployee>>(() => ({ 
     ...defaultData, 
     ...applyLinkedDataToFullAnalysis(linkedData),
@@ -400,7 +427,7 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
       setIsCalculating(true);
       setApiError(null);
       try {
-        const data = await fedcalcApi.calculateRetirement(formData, formData.bCSRS === 'Y' ? 'csrs' : 'fers');
+        const data = await myfedplanApi.calculateRetirement(formData, formData.bCSRS === 'Y' ? 'csrs' : 'fers');
         setReportData(data);
       } catch (error) {
         if (import.meta.env.DEV) {
@@ -463,19 +490,19 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Comprehensive Federal Retirement Analysis | FERS, CSRS, TSP | FedCalc"
+        title="Comprehensive Federal Retirement Analysis | FERS, CSRS, TSP | MyFedPlan"
         description="Run a complete federal retirement analysis. Combine FERS/CSRS pension estimates, TSP projections, and Social Security for a full financial picture."
         schema={schema}
       />
       <main className="max-w-[1120px] mx-auto px-6 pb-20 pt-12">
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
+        <button onClick={() => onNavigate('home')} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
         </button>
@@ -876,7 +903,8 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     <div className="mt-8">
                       <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
                       <div 
-                        className="fedcalc-report"
+                        className="myfedplan-report"
+                        onClick={handleHtmlClick}
                         dangerouslySetInnerHTML={{ __html: reportData.fers.html }}
                       />
                     </div>
@@ -885,7 +913,8 @@ export function FullRetirementAnalysis({ onBack, linkedData }: { onBack: () => v
                     <div className="mt-8">
                       <h3 className="font-semibold text-lg mb-4 border-b pb-2">Detailed Report</h3>
                       <div 
-                        className="fedcalc-report"
+                        className="myfedplan-report"
+                        onClick={handleHtmlClick}
                         dangerouslySetInnerHTML={{ __html: reportData.csrs.html }}
                       />
                     </div>

@@ -54,7 +54,7 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${escapeHtml(title)} | FedCalc by Quantos</title>
+    <title>${escapeHtml(title)} | MyFedPlan by Quantos</title>
     <style>
       :root {
         --navy: #0d2346;
@@ -207,7 +207,7 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
       <header class="header">
         <div class="brand">
           <div>
-            <div class="brand-title">FedCalc</div>
+            <div class="brand-title">MyFedPlan</div>
             <div class="brand-subtitle">by Quantos</div>
           </div>
           ${!isEmail ? `<div class="badge">Friendly Printer Version</div>` : ''}
@@ -222,7 +222,7 @@ export function generateReportHtml({ title, subtitle, sections, disclaimer, isEm
         ${sectionMarkup}
       </main>
       <footer class="footer">
-        <strong>FedCalc by Quantos.</strong> ${escapeHtml(disclaimer || 'Calculator outputs are estimates based on the information provided.')}
+        <strong>MyFedPlan by Quantos.</strong> ${escapeHtml(disclaimer || 'Calculator outputs are estimates based on the information provided.')}
       </footer>
     </div>
     ${!isEmail ? `

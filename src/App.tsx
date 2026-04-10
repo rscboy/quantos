@@ -118,13 +118,13 @@ export default function App() {
 
       <div className="flex-1">
         {view === 'home' && <Home onSelectCalc={handleNavigate} />}
-        {view === 'fers' && <FersCalculator onBack={() => handleNavigate('home')} />}
-        {view === 'csrs' && <CsrsCalculator onBack={() => handleNavigate('home')} />}
-        {view === 'eligibility' && <HowSoonCalculator onBack={() => handleNavigate('home')} onNavigateToFers={() => handleNavigate('fers')} />}
+        {view === 'fers' && <FersCalculator onNavigate={handleNavigate} />}
+        {view === 'csrs' && <CsrsCalculator onNavigate={handleNavigate} />}
+        {view === 'eligibility' && <HowSoonCalculator onNavigate={handleNavigate} />}
         {view === 'tsp' && <TspCalculator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
         {view === 'gap' && <RetirementGapCalculator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
-        {view === 'full' && <FullRetirementAnalysis onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
+        {view === 'full' && <FullRetirementAnalysis onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
         {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
       </div>

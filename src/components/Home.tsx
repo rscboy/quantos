@@ -31,11 +31,11 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "FedCalc",
-    "url": "https://www.fedcalc.com",
+    "name": "MyFedPlan",
+    "url": "https://www.myfedplan.com",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://www.fedcalc.com/search?q={search_term_string}",
+      "target": "https://www.myfedplan.com/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
@@ -43,16 +43,16 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "FedCalc",
-    "url": "https://www.fedcalc.com",
-    "logo": "https://www.fedcalc.com/logo.png"
+    "name": "MyFedPlan",
+    "url": "https://www.myfedplan.com",
+    "logo": "https://www.myfedplan.com/logo.png"
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | FedCalc"
-        description="FedCalc provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds."
+        title="CSRS & FERS Retirement Calculators | Free Federal Pension & TSP Estimates | MyFedPlan"
+        description="MyFedPlan provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds."
         schema={[schema, orgSchema]}
       />
       <div className="hero-section bg-navy text-white pt-[72px] px-6 pb-20 border-b border-white/5 overflow-hidden isolate">
@@ -73,7 +73,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               Federal Retirement<br /><em className="italic text-[#93B4F4]">Simplified.</em>
             </h1>
             <p className="text-base text-white/60 max-w-[520px] leading-[1.7] mb-8">
-              FedCalc provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds.
+              MyFedPlan provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds.
             </p>
             <div className="flex gap-10 pt-8 border-t border-white/10">
               <div>
@@ -96,9 +96,9 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             </div>
             <h3 className="font-serif text-xl text-white mb-2.5 font-normal">API Access Now Available</h3>
             <p className="text-[13px] text-white/50 leading-[1.6] mb-5">
-              Fast retirement estimates for large groups of employees. Integrate FedCalc directly into your HR or benefits platform.
+              Fast retirement estimates for large groups of employees. Integrate MyFedPlan directly into your HR or benefits platform.
             </p>
-            <a href="mailto:api@fedcalc.com" className="text-[#93B4F4] text-[13px] font-medium no-underline hover:underline">api@fedcalc.com →</a>
+            <a href="mailto:api@myfedplan.com" className="text-[#93B4F4] text-[13px] font-medium no-underline hover:underline">api@myfedplan.com →</a>
             <div className="mt-5 pt-4 border-t border-white/10 text-xs text-white/35">
               Technical spec: <a href="#" onClick={(e) => { e.preventDefault(); onSelectCalc('openapi'); }} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
             </div>

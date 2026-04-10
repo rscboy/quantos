@@ -125,7 +125,7 @@ export function TermsModal({ isOpen, onClose, initialTab = 'terms' }: Props) {
                   <p><strong>Our Commitment To Privacy</strong><br />
                   Your privacy is important to us. To better protect your privacy we provide this notice explaining our online information practices and the choices you can make about the way your information is collected and used. To make this notice easy to find, we make it available on our home page and at every point where personally identifiable information may be requested.</p>
                   
-                  <p>This notice applies to all information collected from or submitted to the following Quantos Software Web sites, but to make this notice easier to read we will use the term "our Web site", which means fedcalc.com, a Quantos Software LLC created private label website for a financial advisor, or fedbens.com.</p>
+                  <p>This notice applies to all information collected from or submitted to the following Quantos Software Web sites, but to make this notice easier to read we will use the term "our Web site", which means myfedplan.com, a Quantos Software LLC created private label website for a financial advisor, or fedbens.com.</p>
                   
                   <p>Our Web site contains links to other Web sites operated by third parties. Quantos is not responsible for the privacy practices or policies of such third party web sites and this Notice does not apply to those Web sites.</p>
                   
@@ -141,8 +141,8 @@ export function TermsModal({ isOpen, onClose, initialTab = 'terms' }: Props) {
                   
                   <p>For example, we request information from you when you:</p>
                   <ul className="list-disc pl-6 space-y-2 my-4">
-                    <li>Log on to certain areas of our Web site, such as the fedcalc.com® Federal Benefit Annuity Calculator, where you may be prompted to provide us with your login ID (usually your email address) and password as a condition to gaining access to certain information, materials or services</li>
-                    <li>Register or sign up to use a service such as fedcalc.com</li>
+                    <li>Log on to certain areas of our Web site, such as the myfedplan.com® Federal Benefit Annuity Calculator, where you may be prompted to provide us with your login ID (usually your email address) and password as a condition to gaining access to certain information, materials or services</li>
+                    <li>Register or sign up to use a service such as myfedplan.com</li>
                     <li>Subscribe to a newsletter or desire to be added to our mailing lists for other products or services</li>
                     <li>Place an order</li>
                     <li>Participate in a sweepstakes or other promotional offer</li>

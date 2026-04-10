@@ -135,46 +135,46 @@
   }
 }
 
-/* FedCalc HTML Report Scoping */
-.fedcalc-report {
+/* MyFedPlan HTML Report Scoping */
+.myfedplan-report {
   @apply text-sm text-text bg-white p-4 sm:p-6 md:p-8 rounded-md border border-border overflow-x-auto max-w-full;
 }
 
-.fedcalc-report h1, .fedcalc-report h2, .fedcalc-report h3, .fedcalc-report h4 {
+.myfedplan-report h1, .myfedplan-report h2, .myfedplan-report h3, .myfedplan-report h4 {
   @apply font-semibold text-text mt-6 mb-3;
 }
 
-.fedcalc-report h1 { @apply text-2xl border-b pb-2; }
-.fedcalc-report h2 { @apply text-xl; }
-.fedcalc-report h3 { @apply text-lg; }
+.myfedplan-report h1 { @apply text-2xl border-b pb-2; }
+.myfedplan-report h2 { @apply text-xl; }
+.myfedplan-report h3 { @apply text-lg; }
 
-.fedcalc-report p {
+.myfedplan-report p {
   @apply mb-4 leading-relaxed;
 }
 
-.fedcalc-report table {
+.myfedplan-report table {
   @apply w-full text-left border-collapse my-6 text-sm;
 }
 
-.fedcalc-report th {
+.myfedplan-report th {
   @apply bg-gray-50 text-text-2 font-semibold p-3 border border-border;
 }
 
-.fedcalc-report td {
+.myfedplan-report td {
   @apply p-3 border border-border;
 }
 
-.fedcalc-report tr:nth-child(even) {
+.myfedplan-report tr:nth-child(even) {
   @apply bg-gray-50/50;
 }
 
-.fedcalc-report ul, .fedcalc-report ol {
+.myfedplan-report ul, .myfedplan-report ol {
   @apply pl-6 mb-4 space-y-1;
 }
 
-.fedcalc-report ul { @apply list-disc; }
-.fedcalc-report ol { @apply list-decimal; }
+.myfedplan-report ul { @apply list-disc; }
+.myfedplan-report ol { @apply list-decimal; }
 
-.fedcalc-report b, .fedcalc-report strong {
+.myfedplan-report b, .myfedplan-report strong {
   @apply font-semibold;
 }

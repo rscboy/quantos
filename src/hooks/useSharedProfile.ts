@@ -12,7 +12,7 @@ export interface SharedProfile {
   email?: string;
 }
 
-const STORAGE_KEY = 'fedcalc_shared_profile';
+const STORAGE_KEY = 'myfedplan_shared_profile';
 
 export function useSharedProfile() {
   const [profile, setProfile] = useState<SharedProfile>({});

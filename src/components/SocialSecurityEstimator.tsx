@@ -410,14 +410,14 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
     "operatingSystem": "Web",
     "provider": {
       "@type": "Organization",
-      "name": "FedCalc"
+      "name": "MyFedPlan"
     }
   };
 
   return (
     <div className="animate-in fade-in duration-300">
       <SEO 
-        title="Social Security Estimator | Federal Retirement Benefits | FedCalc"
+        title="Social Security Estimator | Federal Retirement Benefits | MyFedPlan"
         description="Estimate your Social Security benefits alongside your federal retirement. Calculate your retirement age, required quarters, and projected monthly income."
         schema={schema}
       />
