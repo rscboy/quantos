@@ -9,7 +9,7 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
             <div className="flex items-center gap-3 mb-3.5">
               <img 
                 src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
-                alt="MyFedPlan by Quantos" 
+                alt="MyFedPlan" 
                 className="h-10 w-auto object-contain" 
                 referrerPolicy="no-referrer" 
               />
@@ -19,11 +19,10 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
                   <span className="text-white text-[26px]">F</span><span className="text-white text-[22px]">ed</span>
                   <span className="text-[#93B4F4] text-[26px]">P</span><span className="text-[#93B4F4] text-[22px]">lan</span>
                 </div>
-                <span className="text-[10px] font-sans font-medium text-white/50 tracking-[0.2em] uppercase mt-1">by Quantos</span>
               </div>
             </div>
             <p className="text-[13px] text-white/40 leading-[1.7]">
-              The leading independent resource for Federal Retirement planning since 2004. Proprietary analysis engines based on federal retirement logic. A product of Quantos Software LLC.
+              The leading independent resource for Federal Retirement planning since 2004. Proprietary analysis engines based on federal retirement logic.
             </p>
           </div>
           <div>
@@ -47,14 +46,14 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
           <div>
             <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Contact</div>
             <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
-              <li><a href="mailto:support@quantos.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">support@quantos.com</a></li>
+              <li><a href="mailto:support@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">support@myfedplan.com</a></li>
               <li><a href="mailto:api@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">api@myfedplan.com</a></li>
-              <li><a href="mailto:ideas@quantos.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Submit an idea</a></li>
+              <li><a href="mailto:ideas@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Submit an idea</a></li>
             </ul>
           </div>
         </div>
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
-          <span>© 2026 Quantos Software LLC. All rights reserved.</span>
+          <span>© 2026 MyFedPlan. All rights reserved.</span>
           <div className="flex gap-6">
             <button onClick={() => onOpenTerms('terms')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</button>
             <button onClick={() => onOpenTerms('privacy')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</button>

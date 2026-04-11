@@ -119,7 +119,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
           </div>
           <div className="hidden md:block w-px h-7 bg-border"></div>
           <div className="text-[13px] text-[#4A4A4A]">
-            Questions? <a href="mailto:support@quantos.com" className="ml-1 text-blue no-underline hover:underline">support@quantos.com</a>
+            Questions? <a href="mailto:support@myfedplan.com" className="ml-1 text-blue no-underline hover:underline">support@myfedplan.com</a>
           </div>
         </div>
       </div>

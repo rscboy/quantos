@@ -7,7 +7,7 @@ info:
   contact:
     name: "MyFedPlan API"
     url: "https://myfedplan.com/api"
-    email: "myfedplan@quantos.com"
+    email: "support@myfedplan.com"
   license:
     name: "License to use MyFedPlan"
     url: "https://myfedplan.com/price"

@@ -7,7 +7,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
   const shareRef = useRef<HTMLDivElement | null>(null);
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.myfedplan.com';
-  const shareTitle = 'MyFedPlan by Quantos';
+  const shareTitle = 'MyFedPlan';
   const shareText = 'Explore federal retirement calculators and planning tools with MyFedPlan.';
 
   const shareOptions = useMemo(() => {
@@ -105,7 +105,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
           >
             <img 
               src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 
-              alt="MyFedPlan by Quantos" 
+              alt="MyFedPlan" 
               className="h-10 w-auto object-contain" 
               referrerPolicy="no-referrer" 
             />
@@ -115,7 +115,6 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
                 <span className="text-white text-[26px]">F</span><span className="text-white text-[22px]">ed</span>
                 <span className="text-[#93B4F4] text-[26px]">P</span><span className="text-[#93B4F4] text-[22px]">lan</span>
               </div>
-              <span className="text-[10px] font-sans font-medium text-white/50 tracking-[0.2em] uppercase mt-1">by Quantos</span>
             </div>
           </a>
           <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
