@@ -199,7 +199,7 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
     }
   };
 
-  const validateStep = (stepToValidate: number) => {
+  const validateStep = (stepToValidate: number, showErrors = false) => {
     const nextErrors: Record<string, string> = {};
 
     if (stepToValidate === 1) {
@@ -225,12 +225,14 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
       }
     }
 
-    setErrors(nextErrors);
+    if (showErrors) {
+      setErrors(nextErrors);
+    }
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleNext = () => {
-    if (!validateStep(step)) return;
+    if (!validateStep(step, true)) return;
     setStep((current) => Math.min(3, current + 1));
   };
 

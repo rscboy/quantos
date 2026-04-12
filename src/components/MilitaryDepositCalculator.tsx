@@ -144,13 +144,13 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
     }
   };
 
-  const validateForm = () => {
+  const validateForm = (showErrors = false) => {
     const nextErrors: Record<string, string> = {};
 
     if (isSimplifiedPath) {
       if (!isPositive(formData.simplifiedBalance)) nextErrors.simplifiedBalance = 'Current Balance is required for the simplified interest check.';
       if (!formData.anniversaryDate) nextErrors.anniversaryDate = 'Anniversary Date is required for the simplified interest check.';
-      setErrors(nextErrors);
+      if (showErrors) setErrors(nextErrors);
       return Object.keys(nextErrors).length === 0;
     }
 
@@ -161,23 +161,23 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
     if (formData.earnings2000 && Number(formData.earnings2000) < 0) nextErrors.earnings2000 = '2000 earnings cannot be negative.';
     if (formData.userraDeductionEquivalent && Number(formData.userraDeductionEquivalent) < 0) nextErrors.userraDeductionEquivalent = 'USERRA amount cannot be negative.';
 
-    setErrors(nextErrors);
+    if (showErrors) setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const validateEmail = () => {
+  const validateEmail = (showErrors = false) => {
     const nextErrors: Record<string, string> = {};
     if (!emailData.email) nextErrors.email = 'Email is required.';
     if (!emailData.confirmEmail) nextErrors.confirmEmail = 'Please confirm your email address.';
     if (emailData.email && emailData.confirmEmail && emailData.email !== emailData.confirmEmail) {
       nextErrors.confirmEmail = 'Email addresses must match.';
     }
-    setEmailErrors(nextErrors);
+    if (showErrors) setEmailErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleCalculate = async () => {
-    if (!validateForm()) return;
+    if (!validateForm(true)) return;
 
     setIsCalculating(true);
     setApiError(null);
@@ -192,7 +192,7 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
   };
 
   const handleSend = async () => {
-    if (!validateEmail()) return;
+    if (!validateEmail(true)) return;
     
     try {
       const { generateReportHtml } = await import('../utils/reportPrint');

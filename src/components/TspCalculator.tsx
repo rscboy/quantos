@@ -282,7 +282,7 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
     }
   };
 
-  const validateStep = (stepToValidate: number) => {
+  const validateStep = (stepToValidate: number, showErrors = false) => {
     const nextErrors: Record<string, string> = {};
 
     if (stepToValidate === 1) {
@@ -314,18 +314,20 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
       }
     }
 
-    setErrors(nextErrors);
+    if (showErrors) {
+      setErrors(nextErrors);
+    }
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleContinue = () => {
-    if (!validateStep(step)) return;
+    if (!validateStep(step, true)) return;
     if (step >= 2) setAdRefreshCount((current) => current + 1);
     setStep((current) => Math.min(current + 1, 4));
   };
 
   const handleSend = async () => {
-    if (!validateStep(4)) return;
+    if (!validateStep(4, true)) return;
     
     try {
       const { generateReportHtml } = await import('../utils/reportPrint');

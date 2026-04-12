@@ -343,7 +343,7 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
     setForm((prev) => ({ ...prev, earningsHistory: { ...prev.earningsHistory, [year]: value } }));
   };
 
-  const validateStep = (targetStep: Step) => {
+  const validateStep = (targetStep: Step, showErrors = false) => {
     const nextErrors: Record<string, string> = {};
     if (targetStep === 1) {
       if (!birthDate) nextErrors.birthDate = 'Date of Birth is required.';
@@ -357,12 +357,12 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
       if (!email.confirm) nextErrors.confirm = 'Re-enter Email Address is required.';
       if (email.primary && email.confirm && email.primary !== email.confirm) nextErrors.confirm = 'Email addresses must match.';
     }
-    setErrors(nextErrors);
+    if (showErrors) setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleNext = () => {
-    if (!validateStep(step)) return;
+    if (!validateStep(step, true)) return;
     setStep((s) => Math.min(3, s + 1) as Step);
   };
 

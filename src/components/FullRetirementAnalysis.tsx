@@ -383,7 +383,7 @@ export function FullRetirementAnalysis({ onNavigate, linkedData }: { onNavigate:
   const addArrayRow = (name: keyof FedEmployee, row: any) => setFormData((prev) => ({ ...prev, [name]: [...((prev[name] as any[]) || []), row] }));
   const removeArrayRow = (name: keyof FedEmployee, index: number) => setFormData((prev) => ({ ...prev, [name]: ((prev[name] as any[]) || []).filter((_, i) => i !== index) }));
 
-  const validateCurrentStep = () => {
+  const validateCurrentStep = (showErrors = false) => {
     const nextErrors: Record<string, string> = {};
 
     if (currentStep.id === 'background') {
@@ -417,12 +417,12 @@ export function FullRetirementAnalysis({ onNavigate, linkedData }: { onNavigate:
       if (email && confirmEmail && email !== confirmEmail) nextErrors.confirmEmail = 'Email addresses must match.';
     }
 
-    setErrors(nextErrors);
+    if (showErrors) setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
   const goNext = async () => {
-    if (!validateCurrentStep()) return;
+    if (!validateCurrentStep(true)) return;
     if (currentStep.id === 'reports') {
       setIsCalculating(true);
       setApiError(null);
