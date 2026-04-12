@@ -53,7 +53,7 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
           </div>
         </div>
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
-          <span>© 2026 MyFedPlan. All rights reserved.</span>
+          <span>© 2026 MyFedPlan by Quantos.com. All rights reserved.</span>
           <div className="flex gap-6">
             <button onClick={() => onOpenTerms('terms')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</button>
             <button onClick={() => onOpenTerms('privacy')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</button>

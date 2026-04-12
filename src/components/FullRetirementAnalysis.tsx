@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { LinkedCalculatorData, applyLinkedDataToFullAnalysis } from '../utils/calculatorLinking';
 import { FedEmployee, myfedplanApi } from '../services/myfedplanApi';
 import { openBrandedPrintReport } from '../utils/reportPrint';
@@ -523,18 +523,45 @@ export function FullRetirementAnalysis({ onNavigate, linkedData }: { onNavigate:
           <aside className="bg-white border border-border rounded-lg p-5 h-fit">
             <div className="text-xs uppercase tracking-[0.08em] text-text-3 mb-4">Scenario Builder</div>
             <div className="space-y-3">
-              {STEPS.map((step, index) => (
-                <div key={step.id} className={`rounded-md border px-3 py-3 ${index === stepIndex ? 'border-blue bg-blue-50' : index < stepIndex ? 'border-green-200 bg-green-50' : 'border-border bg-white'}`}>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-text-3">{step.label}</div>
-                  <div className="font-semibold text-sm text-text">{step.description}</div>
-                </div>
-              ))}
+              {STEPS.map((step, index) => {
+                const isClickable = index < stepIndex || (index > stepIndex && validateCurrentStep());
+                return (
+                  <button 
+                    key={step.id} 
+                    onClick={() => isClickable && setStepIndex(index)}
+                    disabled={!isClickable}
+                    className={`w-full text-left rounded-md border px-3 py-3 transition-colors ${index === stepIndex ? 'border-blue bg-blue-50' : index < stepIndex ? 'border-green-200 bg-green-50 cursor-pointer hover:bg-green-100' : isClickable ? 'border-border bg-white cursor-pointer hover:bg-gray-50' : 'border-border bg-gray-50 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <div className="text-xs font-semibold uppercase tracking-wide text-text-3">{step.label}</div>
+                    <div className="font-semibold text-sm text-text">{step.description}</div>
+                  </button>
+                );
+              })}
             </div>
           </aside>
 
           <section className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
             <div className="px-8 py-6 border-b border-border bg-gray-50">
-              <h2 className="font-serif text-2xl text-text">{currentStep.description}</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-serif text-2xl text-text">{currentStep.description}</h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={goPrevious}
+                    disabled={stepIndex === 0}
+                    className="px-3 py-1.5 text-xs font-medium text-text-2 bg-white border border-border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+                  {stepIndex < STEPS.length - 1 && (
+                    <button
+                      onClick={goNext}
+                      className="px-3 py-1.5 text-xs font-medium text-white bg-blue rounded-md hover:bg-blue/90 transition-colors"
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
+              </div>
               <p className="text-sm text-text-2 mt-2">{currentStep.id === 'background' && 'Collect the dates, retirement system, and eligibility factors that drive downstream age, service, and annuity logic.'}
                 {currentStep.id === 'salary' && 'Capture salary-at-retirement, High-3 inputs, salary history, Social Security earnings, and part-time adjustments.'}
                 {currentStep.id === 'deposits' && 'Add non-deduction service and refunded service details that affect service credit and redeposit assumptions.'}

@@ -229,7 +229,7 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleContinue = () => {
+  const handleNext = () => {
     if (!validateStep(step)) return;
     setStep((current) => Math.min(3, current + 1));
   };
@@ -354,7 +354,7 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
         schema={schema}
       />
       <main className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 pb-20 pt-8 sm:pt-12">
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
+        <button onClick={() => onNavigate('home')} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-2 mb-6 sm:mb-8 cursor-pointer bg-none border-none p-0 font-sans transition-colors duration-120 hover:text-blue min-h-[44px]">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5"><path d="M10 3L5 8l5 5" /></svg>
           All Calculators
         </button>
@@ -374,11 +374,16 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
             const stepNumber = index + 1;
             const isCurrent = step === stepNumber;
             const isComplete = step > stepNumber;
+            const isClickable = stepNumber < step || (stepNumber > step && validateStep(step));
             return (
               <div key={title} className="flex items-center min-w-fit flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${isCurrent ? 'bg-blue text-white' : isComplete ? 'bg-green text-white' : 'bg-gray-200 text-gray-500'}`}>
+                <button 
+                  onClick={() => isClickable && setStep(stepNumber)}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 transition-colors ${isCurrent ? 'bg-blue text-white' : isComplete ? 'bg-green text-white cursor-pointer hover:bg-green/90' : isClickable ? 'bg-gray-200 text-gray-500 cursor-pointer hover:bg-gray-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                  disabled={!isClickable}
+                >
                   {isComplete ? '✓' : stepNumber}
-                </div>
+                </button>
                 <div className="ml-3 min-w-0">
                   <div className="text-[11px] uppercase tracking-[0.08em] text-text-3">Step {stepNumber}</div>
                   <div className="text-sm font-medium text-text truncate">{title}</div>
@@ -387,6 +392,24 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
               </div>
             );
           })}
+        </div>
+
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => setStep(step - 1)}
+            disabled={step === 1}
+            className="px-4 py-2 text-sm font-medium text-text-2 bg-white border border-border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous Step
+          </button>
+          {step < 3 && (
+            <button
+              onClick={() => handleNext()}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue rounded-md hover:bg-blue/90 transition-colors"
+            >
+              Next Step
+            </button>
+          )}
         </div>
 
         <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
@@ -549,7 +572,7 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
             </button>
             <div className="flex items-center gap-3">
               {step < 3 ? (
-                <button onClick={handleContinue} className="inline-flex items-center justify-center rounded-md bg-blue px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95">
+                <button onClick={handleNext} className="inline-flex items-center justify-center rounded-md bg-blue px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95">
                   {step === 1 ? 'Run calculation' : 'Continue'}
                 </button>
               ) : (

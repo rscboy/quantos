@@ -101,7 +101,6 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
           <a
             className="flex items-center gap-3 cursor-pointer no-underline"
             href="/"
-            onClick={(e) => { e.preventDefault(); setView('home'); }}
           >
             <img 
               src="https://i.postimg.cc/1zXG4pSx/0B1F3A.png" 

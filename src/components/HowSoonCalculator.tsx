@@ -84,6 +84,21 @@ export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) =
     }
   };
 
+  const validateStep = (stepToValidate: number) => {
+    if (stepToValidate === 1) {
+      const errors: Record<string, string> = {};
+      if (!formData.bCSRS) errors.bCSRS = 'Retirement system is required';
+      if (!formData.bAirTraffic) errors.bAirTraffic = 'This field is required';
+      if (!formData.bCustomsBorderPatrol) errors.bCustomsBorderPatrol = 'This field is required';
+      if (!formData.bLawEnforce) errors.bLawEnforce = 'This field is required';
+      if (!formData.bPhasedRetire) errors.bPhasedRetire = 'This field is required';
+      if (!formData.dateOfBirth) errors.dateOfBirth = 'Date of birth is required';
+      if (!formData.dateServiceComp) errors.dateServiceComp = 'Start date is required';
+      return Object.keys(errors).length === 0;
+    }
+    return true;
+  };
+
   const handleNext = async () => {
     if (step === 1) {
       const errors: Record<string, string> = {};
@@ -169,14 +184,21 @@ export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) =
 
   const renderStepIndicator = () => (
     <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2">
-      {[1, 2, 3].map(s => (
-        <div key={s} className="flex items-center shrink-0">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step === s ? 'bg-blue text-white' : step > s ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
-            {step > s ? '✓' : s}
+      {[1, 2, 3].map(s => {
+        const isClickable = s < step || (s > step && validateStep(step));
+        return (
+          <div key={s} className="flex items-center shrink-0">
+            <button 
+              onClick={() => isClickable && setStep(s)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${step === s ? 'bg-blue text-white' : step > s ? 'bg-green-500 text-white cursor-pointer hover:bg-green-600' : isClickable ? 'bg-gray-200 text-gray-500 cursor-pointer hover:bg-gray-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+              disabled={!isClickable}
+            >
+              {step > s ? '✓' : s}
+            </button>
+            {s < 3 && <div className={`w-4 sm:w-16 md:w-24 h-1 mx-1 sm:mx-2 rounded ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
           </div>
-          {s < 3 && <div className={`w-4 sm:w-16 md:w-24 h-1 mx-1 sm:mx-2 rounded ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
@@ -226,6 +248,24 @@ export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) =
         <p className="text-text-2 text-sm mb-8">Find out the soonest possible date you can retire from Federal service and still receive a retirement annuity.</p>
 
         {renderStepIndicator()}
+
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => setStep(step - 1)}
+            disabled={step === 1}
+            className="px-4 py-2 text-sm font-medium text-text-2 bg-white border border-border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous Step
+          </button>
+          {step < 3 && (
+            <button
+              onClick={() => handleNext()}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue rounded-md hover:bg-blue/90 transition-colors"
+            >
+              Next Step
+            </button>
+          )}
+        </div>
 
         <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
           {step === 1 && (

@@ -361,6 +361,11 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
     return Object.keys(nextErrors).length === 0;
   };
 
+  const handleNext = () => {
+    if (!validateStep(step)) return;
+    setStep((s) => Math.min(3, s + 1) as Step);
+  };
+
   const handlePrint = () => openBrandedPrintReport({
     title: 'Social Security Estimator',
     subtitle: 'Friendly printer version of your Social Security estimate.',
@@ -435,11 +440,16 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
             const stepNumber = (index + 1) as Step;
             const isCurrent = step === stepNumber;
             const isComplete = step > stepNumber;
+            const isClickable = stepNumber < step || (stepNumber > step && validateStep(step));
             return (
               <div key={title} className="flex items-center min-w-fit flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${isCurrent ? 'bg-blue text-white' : isComplete ? 'bg-green text-white' : 'bg-gray-200 text-gray-500'}`}>
+                <button 
+                  onClick={() => isClickable && setStep(stepNumber)}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 transition-colors ${isCurrent ? 'bg-blue text-white' : isComplete ? 'bg-green text-white cursor-pointer hover:bg-green/90' : isClickable ? 'bg-gray-200 text-gray-500 cursor-pointer hover:bg-gray-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                  disabled={!isClickable}
+                >
                   {isComplete ? '✓' : stepNumber}
-                </div>
+                </button>
                 <div className="ml-3 min-w-0">
                   <div className="text-[11px] uppercase tracking-[0.08em] text-text-3">Step {stepNumber}</div>
                   <div className="text-sm font-medium text-text truncate">{title}</div>
@@ -448,6 +458,24 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
               </div>
             );
           })}
+        </div>
+
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => setStep((step - 1) as Step)}
+            disabled={step === 1}
+            className="px-4 py-2 text-sm font-medium text-text-2 bg-white border border-border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous Step
+          </button>
+          {step < 3 && (
+            <button
+              onClick={() => handleNext()}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue rounded-md hover:bg-blue/90 transition-colors"
+            >
+              Next Step
+            </button>
+          )}
         </div>
 
         <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">
@@ -643,8 +671,8 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
                           {
                             title: 'Basic Information',
                             lines: [
-                              { label: 'Date of Birth', value: birthDate ? toIsoDate(birthDate) || 'N/A' : 'N/A' },
-                              { label: 'Retirement Date', value: retirementDate ? toIsoDate(retirementDate) || 'N/A' : 'N/A' },
+                              { label: 'Date of Birth', value: birthDate ? toIsoDate(form.birthDate) || 'N/A' : 'N/A' },
+                              { label: 'Retirement Date', value: retirementDate ? toIsoDate(form.retirementDate) || 'N/A' : 'N/A' },
                               { label: 'Current Year Earnings', value: formatCurrency(Number(form.currentYearEarnings || 0)) },
                               { label: 'Future Annual Earnings', value: formatCurrency(Number(form.futureYearEarnings || 0)) },
                             ],

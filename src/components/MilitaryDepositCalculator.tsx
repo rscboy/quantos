@@ -299,16 +299,39 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
         <div className="flex items-center justify-between gap-2 mb-8 overflow-x-auto pb-2">
           {STEP_TITLES.map((label, index) => {
             const stepNumber = index + 1;
+            const isClickable = stepNumber < step || (stepNumber > step && validateForm());
             return (
               <div key={label} className="flex items-center min-w-fit">
-                <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold ${step === stepNumber ? 'bg-blue text-white' : step > stepNumber ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                <button 
+                  onClick={() => isClickable && setStep(stepNumber)}
+                  className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${step === stepNumber ? 'bg-blue text-white' : step > stepNumber ? 'bg-green-500 text-white cursor-pointer hover:bg-green-600' : isClickable ? 'bg-gray-200 text-gray-500 cursor-pointer hover:bg-gray-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                  disabled={!isClickable}
+                >
                   {step > stepNumber ? '✓' : stepNumber}
-                </div>
-                <span className="ml-2 mr-3 text-xs text-text-2 whitespace-nowrap">{label}</span>
+                </button>
+                <span className={`ml-2 mr-3 text-xs whitespace-nowrap ${step === stepNumber ? 'text-blue font-semibold' : 'text-text-2'}`}>{label}</span>
                 {stepNumber < STEP_TITLES.length && <div className={`w-4 sm:w-10 h-1 rounded ${step > stepNumber ? 'bg-green-500' : 'bg-gray-200'}`} />}
               </div>
             );
           })}
+        </div>
+
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => setStep(step - 1)}
+            disabled={step === 1}
+            className="px-4 py-2 text-sm font-medium text-text-2 bg-white border border-border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous Step
+          </button>
+          {step < 3 && (
+            <button
+              onClick={() => handleCalculate()}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue rounded-md hover:bg-blue/90 transition-colors"
+            >
+              Next Step
+            </button>
+          )}
         </div>
 
         <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden">

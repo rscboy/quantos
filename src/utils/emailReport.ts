@@ -2,7 +2,7 @@ export async function sendEmailReport(email: string, subject: string, htmlBody: 
   // Replace this URL with your deployed Google Apps Script Web App URL
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby994qQiGeiQPJzu1ZAfRCsMhJ4X-hJwwoZlg-iWP4_HaLFx75LULPCW96-ioqQC3nc9w/exec';
 
-  if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+  if ((SCRIPT_URL as string) === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
     console.warn('Email sending is not configured. Please set the SCRIPT_URL in src/utils/emailReport.ts');
     // Fallback for development
     return new Promise((resolve) => setTimeout(resolve, 1000));

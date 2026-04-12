@@ -122,7 +122,7 @@ export default function App() {
         {view === 'csrs' && <CsrsCalculator onNavigate={handleNavigate} />}
         {view === 'eligibility' && <HowSoonCalculator onNavigate={handleNavigate} />}
         {view === 'tsp' && <TspCalculator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
-        {view === 'gap' && <RetirementGapCalculator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} />}
+        {view === 'gap' && <RetirementGapCalculator onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
         {view === 'full' && <FullRetirementAnalysis onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
