@@ -77,9 +77,23 @@ export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, d
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
-            <div className="bg-navy p-6 text-white shrink-0">
-              <h2 className="font-serif text-2xl mb-1">New Member Registration</h2>
-              <p className="text-white/60 text-sm">{description ?? 'Please fill this out the first time you use the calculators.'}</p>
+            <div className="bg-navy p-6 text-white shrink-0 relative">
+              <div className="flex justify-between items-start pr-8">
+                <div>
+                  <h2 className="font-serif text-2xl mb-1">New Member Registration</h2>
+                  <p className="text-white/60 text-sm">{description ?? 'Please fill this out the first time you use the calculators.'}</p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors p-1"
+                aria-label="Close modal"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
 
             <div className="overflow-y-auto p-6 flex-1">
