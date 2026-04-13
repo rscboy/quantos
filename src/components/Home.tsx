@@ -66,7 +66,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
 
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_380px] gap-16 items-start relative z-10">
           <div>
-            <div className="inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5 backdrop-blur-sm">
+            <div className="hidden sm:inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5 backdrop-blur-sm">
               New — Phased Retirement Estimates
             </div>
             <h1 className="font-serif text-[clamp(30px,4vw,46px)] leading-[1.15] text-white mb-5 font-normal">
