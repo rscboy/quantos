@@ -268,7 +268,7 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
     const monthly = results.netMonthlyAnnuity || Math.max(results.monthlyAnnuity - Number(formData.fHealthInsDeduct || 0), 0);
     const ageYears = ageAtRetirement === null ? null : Number(ageAtRetirement.toFixed(1));
     const service = serviceYears === null ? null : Number(serviceYears.toFixed(1));
-    const high3 = Number(formData.fManualHigh3 || formData.fLastSalary || 0);
+    const high3 = Number(formData.fManualHigh3) || Number(formData.fLastSalary) || 0;
 
     return {
       id: Date.now(),
@@ -412,7 +412,7 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
           { label: 'Age at Retirement', value: ageAtRetirement === null ? 'N/A' : formatYears(ageAtRetirement) },
           { label: 'Creditable Service', value: serviceYears === null ? 'N/A' : formatYears(serviceYears) },
           { label: 'Final Salary', value: `$${currency(Number(formData.fLastSalary || 0))}` },
-          { label: 'High-3 Salary', value: `$${currency(Number(formData.fManualHigh3 || 0) || Number(formData.fLastSalary || 0))}` },
+          { label: 'High-3 Salary', value: `$${currency(Number(formData.fManualHigh3) || Number(formData.fLastSalary) || 0)}` },
         ],
       },
       {
@@ -470,7 +470,7 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
                 { label: 'Age at Retirement', value: ageAtRetirement === null ? 'N/A' : formatYears(ageAtRetirement) },
                 { label: 'Creditable Service', value: serviceYears === null ? 'N/A' : formatYears(serviceYears) },
                 { label: 'Final Salary', value: `$${currency(Number(formData.fLastSalary || 0))}` },
-                { label: 'High-3 Salary', value: `$${currency(Number(formData.fManualHigh3 || 0) || Number(formData.fLastSalary || 0))}` },
+                { label: 'High-3 Salary', value: `$${currency(Number(formData.fManualHigh3) || Number(formData.fLastSalary) || 0)}` },
               ],
             },
             {
@@ -799,7 +799,7 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
                   <div><span className="font-semibold">Retirement date:</span> {formData.dateRetire || 'N/A'}</div>
                   <div><span className="font-semibold">Date of birth:</span> {formData.dateOfBirth || 'N/A'}</div>
                   <div><span className="font-semibold">Service time:</span> {formatYears(serviceYears)}</div>
-                  <div><span className="font-semibold">High-3 salary:</span> ${currency(Number(formData.fManualHigh3 || formData.fLastSalary || 0))}</div>
+                  <div><span className="font-semibold">High-3 salary:</span> ${currency(Number(formData.fManualHigh3) || Number(formData.fLastSalary) || 0)}</div>
                   <div><span className="font-semibold">Salary history rows:</span> {(formData.salaryHistory || []).length}</div>
                   <div><span className="font-semibold">Unused sick leave:</span> {Number(formData.nSickLeaveHrs || 0)} hours</div>
                 </div>

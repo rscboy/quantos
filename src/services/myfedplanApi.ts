@@ -397,12 +397,31 @@ class MyFedPlanApiService {
 
         const data = await response.json();
         
+        // Helper to get the first positive number from a list of possible values
+        const getValidNumber = (...values: any[]) => {
+          for (const val of values) {
+            const num = Number(val);
+            if (!isNaN(num) && num > 0) return num;
+          }
+          return 0;
+        };
+
         // Parse and structure the results based on the real API response
         let monthlyAnnuity = Number(data.MonthlyAnnuity || data.BasicAnnuityMo || 0);
         let basicAnnuity = Number(data.BasicAnnuity || data.BasicAnnuityMo || monthlyAnnuity);
-        const high3 = Number(data.High3 || data.fCalcHigh3 || data.fManualHigh3 || payload.fManualHigh3 || payload.fLastSalary || 0);
+        const high3 = getValidNumber(data.High3, data.fCalcHigh3, data.fManualHigh3, payload.fManualHigh3, payload.fLastSalary);
         const pctHigh3 = Number(data.PctHigh3 || 0);
         
+        console.log('--- API DEBUG ---', {
+          dataBasicAnnuity: data.BasicAnnuity,
+          monthlyAnnuity,
+          basicAnnuity,
+          high3,
+          pctHigh3,
+          payloadFManualHigh3: payload.fManualHigh3,
+          payloadFLastSalary: payload.fLastSalary
+        });
+
         // Fallback for API returning -1 or 0 for annuities when it still provides PctHigh3
         if (basicAnnuity <= 0 && pctHigh3 > 0 && high3 > 0) {
           basicAnnuity = high3 * (pctHigh3 / 100);
@@ -414,6 +433,11 @@ class MyFedPlanApiService {
         // Ensure we don't return negative values
         monthlyAnnuity = Math.max(0, monthlyAnnuity);
         basicAnnuity = Math.max(0, basicAnnuity);
+        
+        console.log('--- AFTER FALLBACK ---', {
+          monthlyAnnuity,
+          basicAnnuity
+        });
         
         const annuityPayload = {
           monthlyAnnuity: monthlyAnnuity,
