@@ -44,17 +44,20 @@ type ProjectionMetrics = {
 const STEP_TITLES = ['Savings and Rate Assumptions', 'Retirement Savings GAP Results', 'Email Report'];
 const ASSUMED_INFLATION = 0.025;
 
+const today = new Date();
+const todayStr = today.toISOString().split('T')[0];
+
 const DEFAULT_FORM: GapForm = {
-  plannedRetirementDate: '',
-  currentAnnualSalary: 95000,
+  plannedRetirementDate: todayStr,
+  currentAnnualSalary: 0,
   percentIncomeNeeded: 80,
-  futureSalaryIncrease: 2.5,
-  currentSavings: 175000,
-  savingsReturn: 6,
-  federalRetirement: 28000,
-  socialSecurity: 24000,
+  futureSalaryIncrease: 0,
+  currentSavings: 0,
+  savingsReturn: 0,
+  federalRetirement: 0,
+  socialSecurity: 0,
   otherPensions: 0,
-  pensionCola: 2,
+  pensionCola: 0,
   yearsInRetirement: 25,
 };
 

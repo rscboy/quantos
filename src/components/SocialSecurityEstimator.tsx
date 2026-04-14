@@ -90,12 +90,19 @@ const AWI: Record<number, number> = {
   2023: 66621.8, 2024: 66621.8, 2025: 66621.8, 2026: 66621.8,
 };
 
+const today = new Date();
+const todayYear = String(today.getFullYear());
+const todayMonth = String(today.getMonth() + 1);
+const todayDay = String(today.getDate());
+
+const dobYear = String(today.getFullYear() - 50);
+
 const INITIAL_FORM: FormState = {
-  birthDate: { month: '', day: '', year: '' },
-  retirementDate: { month: '', day: '', year: '' },
-  currentYearEarnings: '',
-  futureYearEarnings: '',
-  earningsHistory: Object.fromEntries(YEARS.map((year) => [year, ''])),
+  birthDate: { month: todayMonth, day: todayDay, year: dobYear },
+  retirementDate: { month: todayMonth, day: todayDay, year: todayYear },
+  currentYearEarnings: '0',
+  futureYearEarnings: '0',
+  earningsHistory: Object.fromEntries(YEARS.map((year) => [year, '0'])),
 };
 
 function parseDate(parts: DateParts) {

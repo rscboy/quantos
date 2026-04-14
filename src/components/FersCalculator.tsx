@@ -67,15 +67,20 @@ function currency(value?: number) {
 }
 
 function defaultFormData(calculatorType: CalculatorType): Partial<FedEmployee> {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const dob = new Date(today.getFullYear() - 50, today.getMonth(), today.getDate());
+  const dobStr = dob.toISOString().split('T')[0];
+
   return {
-    dateRetire: '',
-    dateServiceComp: '',
-    dateOfBirth: '',
-    bAirTraffic: '',
-    bCustomsBorderPatrol: '',
-    bLawEnforce: '',
-    bEarlyOut: '',
-    bPhasedRetire: '',
+    dateRetire: todayStr,
+    dateServiceComp: todayStr,
+    dateOfBirth: dobStr,
+    bAirTraffic: 'N',
+    bCustomsBorderPatrol: 'N',
+    bLawEnforce: 'N',
+    bEarlyOut: 'N',
+    bPhasedRetire: 'N',
     bCSRS: calculatorType === 'csrs' ? 'Y' : 'N',
     dateCSRSTransfer: '',
     nXFerSickLeave: 0,
@@ -809,71 +814,6 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
                     <strong>Note:</strong> The calculated annuity is $0. Additional inputs (such as salary history or creditable service) may improve the accuracy of this estimate.
                   </div>
                 )}
-                <div className="mt-6 rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 to-white p-5">
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue">Scenario Comparison Mode</p>
-                      <h3 className="mt-2 text-xl font-semibold text-text">Compare up to 3 retirement dates side-by-side.</h3>
-                      <p className="mt-2 text-sm text-text-2">Run the report, save this version, change your retirement date or assumptions, and run it again. We automatically spotlight the strongest monthly income and lifetime value outcome.</p>
-                    </div>
-                    <button onClick={saveCurrentScenario} className="inline-flex items-center justify-center rounded-md bg-blue px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-hover">
-                      Save current scenario
-                    </button>
-                  </div>
-
-                  {comparisonScenarios.length > 0 && (
-                    <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
-                      {comparisonScenarios.map((scenario, index) => {
-                        const baseline = comparisonScenarios[0];
-                        const monthlyDelta = scenario.netMonthlyAnnuity - baseline.netMonthlyAnnuity;
-                        const lifetimeDelta = scenario.lifetimeValue - baseline.lifetimeValue;
-                        return (
-                          <div key={scenario.id} className="rounded-lg border border-border bg-white p-5 shadow-sm">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <div className="text-xs font-semibold uppercase tracking-wide text-text-3">Scenario {index + 1}</div>
-                                <div className="mt-1 text-lg font-semibold text-text">{scenario.label}</div>
-                                <div className="mt-1 text-sm text-text-2">Age {scenario.ageAtRetirement?.toFixed(1) || '—'} • Service {scenario.serviceYears?.toFixed(1) || '—'} yrs</div>
-                              </div>
-                              {savedScenarios.some((saved) => saved.id === scenario.id) && (
-                                <button onClick={() => removeScenario(scenario.id)} className="text-xs font-medium text-text-3 transition-colors hover:text-red-600">
-                                  Remove
-                                </button>
-                              )}
-                            </div>
-
-                            <div className="mt-4 space-y-3">
-                              <ComparisonMetric
-                                label="Net monthly income"
-                                value={formatCurrency(scenario.netMonthlyAnnuity)}
-                                delta={index === 0 ? 'Baseline' : formatDelta(monthlyDelta)}
-                                highlight={scenario.netMonthlyAnnuity === comparisonLeaders.monthly}
-                              />
-                              <ComparisonMetric
-                                label="Lifetime value (25 yrs)"
-                                value={formatCurrency(scenario.lifetimeValue)}
-                                delta={index === 0 ? 'Baseline' : formatDelta(lifetimeDelta)}
-                                highlight={scenario.lifetimeValue === comparisonLeaders.lifetime}
-                              />
-                              <ComparisonMetric
-                                label="Replacement rate"
-                                value={`${scenario.replacementRate.toFixed(1)}%`}
-                                delta={index === 0 ? 'Baseline' : formatDelta(scenario.replacementRate - baseline.replacementRate, 'percent')}
-                                highlight={scenario.replacementRate === comparisonLeaders.replacement}
-                              />
-                            </div>
-
-                            <div className="mt-4 rounded-md bg-gray-50 p-3 text-sm text-text-2">
-                              <div><span className="font-semibold text-text">Retirement date:</span> {scenario.retirementDate}</div>
-                              <div><span className="font-semibold text-text">High-3 salary:</span> {formatCurrency(scenario.high3Salary)}</div>
-                              <div><span className="font-semibold text-text">Annual annuity:</span> {formatCurrency(scenario.annualAnnuity)}</div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
 
                 <div className="mt-8">
                   <h3 className="font-semibold text-text mb-3">Salary history breakdown</h3>
@@ -916,6 +856,7 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onClick={() => setStep(7)} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Back to Inputs</button>
                 <button onClick={() => setStep(9)} className="px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">Email Report</button>
                 <button onClick={handlePrint} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">Friendly Printer Version</button>
               </div>

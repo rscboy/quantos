@@ -43,14 +43,19 @@ export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) =
     }
   }, [onNavigate]);
 
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const dob = new Date(today.getFullYear() - 50, today.getMonth(), today.getDate());
+  const dobStr = dob.toISOString().split('T')[0];
+
   const [formData, setFormData] = useState<Partial<FedEmployee>>({
     bCSRS: profile.bCSRS || 'N',
     bAirTraffic: profile.bAirTraffic || 'N',
     bCustomsBorderPatrol: profile.bCustomsBorderPatrol || 'N',
     bLawEnforce: profile.bLawEnforce || 'N',
     bPhasedRetire: profile.bPhasedRetire || 'N',
-    dateOfBirth: profile.dateOfBirth || '',
-    dateServiceComp: profile.dateServiceComp || '',
+    dateOfBirth: profile.dateOfBirth || dobStr,
+    dateServiceComp: profile.dateServiceComp || todayStr,
   });
 
   const [emailData, setEmailData] = useState({ email: profile.email || '', confirmEmail: '' });
@@ -398,7 +403,10 @@ export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) =
                 </div>
               </div>
 
-              <div className="flex justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onClick={() => setStep(1)} className="px-6 py-3 bg-white border border-border text-text rounded-md font-semibold hover:bg-gray-50 transition-colors">
+                  Back to Inputs
+                </button>
                 <button onClick={() => setStep(3)} className="px-6 py-3 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover transition-colors">
                   Continue to Email Report
                 </button>

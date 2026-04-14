@@ -69,16 +69,21 @@ const ELIGIBILITY_FIELDS: { key: YesNoField; label: string; required?: boolean }
 
 const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
 
+const today = new Date();
+const todayStr = today.toISOString().split('T')[0];
+const dob = new Date(today.getFullYear() - 50, today.getMonth(), today.getDate());
+const dobStr = dob.toISOString().split('T')[0];
+
 const defaultData: Partial<FedEmployee> = {
-  dateOfBirth: '',
-  dateServiceComp: '',
-  dateRetire: '',
+  dateOfBirth: dobStr,
+  dateServiceComp: todayStr,
+  dateRetire: todayStr,
   bCSRS: 'N',
   bCSRSTransfer: 'N',
-  bAirTraffic: '',
-  bCustomsBorderPatrol: '',
-  bLawEnforce: '',
-  bEarlyOut: '',
+  bAirTraffic: 'N',
+  bCustomsBorderPatrol: 'N',
+  bLawEnforce: 'N',
+  bEarlyOut: 'N',
   bLifeIns: 'N',
   bLifeInsA: 'N',
   bLifeInsB: 'N',

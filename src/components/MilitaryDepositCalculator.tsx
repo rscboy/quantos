@@ -28,15 +28,18 @@ const STEP_TITLES = ['Collect Information', 'Military Deposits Calculator', 'Ema
 const RETIREMENT_SYSTEMS: RetirementSystem[] = ['FERS', 'CSRS', 'CSRS Offset', 'Other'];
 const CURRENCY = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
+const today = new Date();
+const todayStr = today.toISOString().split('T')[0];
+
 const INITIAL_FORM: FormData = {
-  simplifiedBalance: '',
-  anniversaryDate: '',
+  simplifiedBalance: '0',
+  anniversaryDate: todayStr,
   retirementSystem: 'FERS',
-  civilianEmploymentDate: '',
-  totalMilitaryEarnings: '',
-  earnings1999: '',
-  earnings2000: '',
-  userraDeductionEquivalent: '',
+  civilianEmploymentDate: todayStr,
+  totalMilitaryEarnings: '0',
+  earnings1999: '0',
+  earnings2000: '0',
+  userraDeductionEquivalent: '0',
 };
 
 function formatCurrency(value: number) {

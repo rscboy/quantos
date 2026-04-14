@@ -61,14 +61,19 @@ const L_FUND_TARGETS: Record<PrimaryFundOption, Record<FundKey, number>> = {
 };
 const CONSERVATIVE_TARGET: Record<FundKey, number> = { 'G Fund': 74, 'F Fund': 6, 'C Fund': 11, 'S Fund': 3, 'I Fund': 6 };
 
+const today = new Date();
+const todayStr = today.toISOString().split('T')[0];
+const dob = new Date(today.getFullYear() - 50, today.getMonth(), today.getDate());
+const dobStr = dob.toISOString().split('T')[0];
+
 const DEFAULT_CONTRIBUTION_FORM: ContributionForm = {
   retirementSystem: 'FERS',
-  plannedRetirementDate: '',
-  dateOfBirth: '',
-  currentAnnualSalary: 90000,
+  plannedRetirementDate: todayStr,
+  dateOfBirth: dobStr,
+  currentAnnualSalary: 0,
   annualPercentContribution: 5,
   annualCatchUpContribution: 0,
-  annualCOLA: 2,
+  annualCOLA: 0,
 };
 
 const DEFAULT_FUNDS: Record<FundKey, FundInput> = FUND_ORDER.reduce((acc, fund) => {
