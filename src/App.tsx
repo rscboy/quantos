@@ -18,6 +18,8 @@ import { FullRetirementAnalysis } from './components/FullRetirementAnalysis';
 import { SocialSecurityEstimator } from './components/SocialSecurityEstimator';
 import { TermsModal } from './components/TermsModal';
 import { OpenApiViewer } from './components/OpenApiViewer';
+import { TermsOfService } from './components/TermsOfService';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -30,15 +32,15 @@ const CALCULATOR_VIEWS = new Set([
   'ss',
 ]);
 
+const STATIC_VIEWS = new Set(['home', 'openapi', 'terms', 'privacy']);
+
 export default function App() {
   const [view, setView] = useState(() => {
     const path = window.location.pathname.replace(/^\/+/, '');
-    return CALCULATOR_VIEWS.has(path) || path === 'openapi' ? path : 'home';
+    return CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home';
   });
   const [showModal, setShowModal] = useState(false);
   const [pendingView, setPendingView] = useState<string | null>(null);
-  const [showTermsModal, setShowTermsModal] = useState(false);
-  const [termsTab, setTermsTab] = useState<'terms' | 'privacy'>('terms');
   const [hasCompletedProfile, setHasCompletedProfile] = useState(() => localStorage.getItem('hasCompletedProfile') === 'true');
   const [linkedCalculatorData, setLinkedCalculatorData] = useState<LinkedCalculatorData>(() => loadLinkedCalculatorData());
 
@@ -49,14 +51,22 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.replace(/^\/+/, '');
-      setView(CALCULATOR_VIEWS.has(path) || path === 'openapi' ? path : 'home');
+      setView(CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home');
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Attempt instant scroll immediately after DOM paints
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    
+    // Fallback: sometimes browsers drop the scroll if content is still laying out
+    const timeoutId = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
   }, [view]);
 
   const navigateToView = useCallback((nextView: string) => {
@@ -65,16 +75,15 @@ export default function App() {
     if (window.location.pathname !== path) {
       window.history.pushState({}, '', path);
     }
+    
+    // Also try immediately
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    });
   }, []);
 
   const openRegistrationGate = useCallback((nextView: string) => {
     setPendingView(nextView);
     setShowModal(true);
-    navigateToView('home');
+    navigateToView(nextView);
   }, [navigateToView]);
 
   const handleNavigate = useCallback((nextView: string) => {
@@ -107,11 +116,6 @@ export default function App() {
       : 'Please fill this out the first time you use the calculators.'
   ), [pendingView]);
 
-  const openTermsModal = useCallback((tab: 'terms' | 'privacy') => {
-    setTermsTab(tab);
-    setShowTermsModal(true);
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col font-sans text-text bg-bg">
       <Nav setView={handleNavigate} />
@@ -127,27 +131,25 @@ export default function App() {
         {view === 'full' && <FullRetirementAnalysis onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
         {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
+        {view === 'terms' && <TermsOfService />}
+        {view === 'privacy' && <PrivacyPolicy />}
       </div>
 
-      <Footer setView={handleNavigate} onOpenTerms={openTermsModal} />
+      <Footer setView={handleNavigate} />
 
       <NewMemberModal
         isOpen={showModal}
         onClose={() => {
           setShowModal(false);
           setPendingView(null);
-          navigateToView('home');
         }}
         onComplete={handleCompleteRegistration}
-        canClose={hasCompletedProfile}
+        canClose={true}
         description={modalMessage}
-        onOpenTerms={openTermsModal}
-      />
-
-      <TermsModal 
-        isOpen={showTermsModal} 
-        onClose={() => setShowTermsModal(false)} 
-        initialTab={termsTab} 
+        onOpenTerms={(tab) => {
+          setShowModal(false);
+          handleNavigate(tab);
+        }}
       />
     </div>
   );

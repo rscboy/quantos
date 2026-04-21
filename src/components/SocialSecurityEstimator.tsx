@@ -723,6 +723,44 @@ export function SocialSecurityEstimator({ onBack, linkedData, onLinkedDataChange
             </div>
           )}
         </div>
+        
+        {step < 3 && (
+          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
+            <h2 className="font-serif text-2xl text-navy mb-6">How Your Social Security Benefit is Calculated</h2>
+            
+            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
+              <p>
+                Social Security is a critical component of the federal employee retirement package (under FERS). Unlike the legacy CSRS system, FERS employees pay Social Security taxes and earn full Social Security credits just like employees in the private sector. The formula used by the Social Security Administration (SSA) to calculate your benefit is complex, but understanding the core components can help you maximize your income.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The "Top 35 Years" Rule (AIME)</h3>
+              <p>
+                The foundational number for your Social Security benefit is your Average Indexed Monthly Earnings (AIME). To find your AIME, the SSA reviews your entire lifetime earnings history. They first adjust, or "index," your past earnings to account for wage inflation, ensuring your earnings from 1990 are brought up to current value.
+              </p>
+              <p>
+                Next, they select the <strong>35 years</strong> in which you earned the most (indexed) money. If you have fewer than 35 years of substantial earnings, the missing years are counted as zeros, which will drag down your average. These top 35 years are totaled and divided by 420 (the number of months in 35 years) to determine your AIME.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The PIA Formula and Bend Points</h3>
+              <p>
+                Your AIME is then run through a formula to determine your Primary Insurance Amount (PIA)—the exact amount you will receive if you claim benefits at your Full Retirement Age (FRA). The formula is highly progressive, meaning it replaces a much higher percentage of pre-retirement income for lower-wage earners.
+              </p>
+              <p>
+                The formula uses "bend points" that are updated annually. For example, the SSA might give you 90% of your first $1,174 of average monthly earnings, 32% of earnings between $1,174 and $7,078, and exactly 15% of any earnings over $7,078. The sum of these three tiers is your PIA.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Age and Your Benefit</h3>
+              <p>
+                Your age when you choose to start collecting benefits will permanently alter your monthly check:
+              </p>
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Claiming Early:</strong> You can start claiming reduced benefits at age 62. However, your benefit may be permanently reduced by up to 30% compared to your PIA.</li>
+                <li><strong>Full Retirement Age (FRA):</strong> Depending on your birth year, your FRA is between 66 and 67. Claiming here gives you 100% of your PIA.</li>
+                <li><strong>Delayed Retirement Credits:</strong> For every year you delay claiming past your FRA (up to age 70), your benefit increases by a guaranteed 8%. This makes waiting until 70 a highly lucrative strategy for those in good health.</li>
+              </ul>
+            </div>
+          </article>
+        )}
       </main>
     </div>
   );

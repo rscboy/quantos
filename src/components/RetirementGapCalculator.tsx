@@ -588,6 +588,39 @@ export function RetirementGapCalculator({ onNavigate, linkedData }: { onNavigate
             </div>
           </div>
         </div>
+
+        {step < 3 && (
+          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
+            <h2 className="font-serif text-2xl text-navy mb-6">Determining Your Retirement Savings Gap</h2>
+            
+            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
+              <p>
+                A "Retirement Gap" is the difference between your projected living expenses in retirement and the guaranteed income you will receive from sources like a federal pension (FERS or CSRS) and Social Security. If your expenses exceed your guaranteed income, you have a gap that must be filled by drawing down your personal savings and investments, such as your Thrift Savings Plan (TSP) or IRAs.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The Impact of Inflation</h3>
+              <p>
+                One of the most dangerous, yet often overlooked, factors in retirement planning is inflation. A dollar today will not have the same purchasing power in 10, 20, or 30 years. When calculating your retirement gap, it is crucial to project your current living expenses into the future using an estimated inflation rate (historically averaging between 2% and 3%).
+              </p>
+              <p>
+                For example, if you require $80,000 per year to live comfortably today, applying a 3% annual inflation rate means you will need approximately $107,000 in 10 years to maintain that exact same standard of living. Federal pensions and Social Security typically offer Cost-of-Living Adjustments (COLAs), but these adjustments may not perfectly align with the actual rate of inflation, potentially widening your gap over time.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Defining the Pre-Retirement Earnings Target</h3>
+              <p>
+                Financial planners commonly advise aiming to replace 70% to 80% of your pre-retirement earnings to maintain your standard of living in retirement. Why not 100%? In retirement, you generally no longer pay payroll taxes (like FICA), you are no longer contributing to your TSP or 401(k), and certain work-related expenses (commuting, professional wardrobes) often decrease or disappear entirely. Additionally, if your mortgage is paid off before you retire, your required income drops significantly.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Bridging the Gap: The 4% Rule</h3>
+              <p>
+                Once you know your annual gap, you need to know how large your portfolio (TSP, IRAs, mutual funds) must be to sustain those withdrawals. A common heuristic used in financial planning is the "4% Rule." This rule suggests that you can safely withdraw 4% of a balanced portfolio's value in your first year of retirement, and then adjust that amount for inflation each subsequent year, with a high probability that the funds will last for at least 30 years.
+              </p>
+              <p>
+                To reverse-engineer this, take your annual retirement gap and multiply it by 25. If you have an annual gap of $20,000, you will likely need a portfolio of at least $500,000 ($20,000 × 25) producing income to safely bridge that gap without prematurely depleting your principal.
+              </p>
+            </div>
+          </article>
+        )}
       </main>
     </div>
   );

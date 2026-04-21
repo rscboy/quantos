@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Footer({ setView, onOpenTerms }: { setView: (view: string) => void, onOpenTerms: (tab: 'terms' | 'privacy') => void }) {
+export function Footer({ setView }: { setView: (view: string) => void }) {
   return (
     <footer className="bg-navy text-white pt-14 px-6 pb-8 mt-0">
       <div className="max-w-[1200px] mx-auto">
@@ -55,8 +55,8 @@ export function Footer({ setView, onOpenTerms }: { setView: (view: string) => vo
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
           <span>© 2026 MyFedPlan by Quantos.com. All rights reserved.</span>
           <div className="flex gap-6">
-            <button onClick={() => onOpenTerms('terms')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Terms of Use</button>
-            <button onClick={() => onOpenTerms('privacy')} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60">Privacy Statement</button>
+            <a href="/terms" onClick={(e) => { e.preventDefault(); setView('terms'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Terms of Use</a>
+            <a href="/privacy" onClick={(e) => { e.preventDefault(); setView('privacy'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Privacy Statement</a>
           </div>
         </div>
       </div>
