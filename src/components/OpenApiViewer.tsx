@@ -1,5 +1,6 @@
 import React from 'react';
 import { openApiYaml } from '../openapi';
+import { SEO } from './SEO';
 
 interface OpenApiViewerProps {
   onBack: () => void;
@@ -8,6 +9,10 @@ interface OpenApiViewerProps {
 export function OpenApiViewer({ onBack }: OpenApiViewerProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <SEO 
+        title="OpenAPI API Specification | MyFedPlan"
+        description="View the OpenAPI specification for the MyFedPlan API, detailing federal retirement calculation endpoints."
+      />
       <div className="mb-6">
         <button
           onClick={onBack}

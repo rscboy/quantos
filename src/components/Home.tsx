@@ -32,10 +32,10 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "MyFedPlan",
-    "url": "https://www.myfedplan.com",
+    "url": "https://www.myfedplan.us",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://www.myfedplan.com/search?q={search_term_string}",
+      "target": "https://www.myfedplan.us/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
@@ -44,8 +44,8 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MyFedPlan",
-    "url": "https://www.myfedplan.com",
-    "logo": "https://www.myfedplan.com/logo.png"
+    "url": "https://www.myfedplan.us",
+    "logo": "https://i.postimg.cc/kXVHSmXz/Screenshot-2026-03-13-at-4-57-08-PM.png"
   };
 
   return (
