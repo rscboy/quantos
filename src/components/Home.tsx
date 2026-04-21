@@ -172,6 +172,68 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
           </div>
         </div>
       </main>
+
+      <article className="max-w-[900px] mx-auto px-6 pb-32">
+        <div className="bg-blue/5 rounded-2xl p-8 md:p-12 border border-blue/10">
+          <h2 className="font-serif text-3xl text-navy mb-8 leading-tight">The Ultimate Guide to Federal Retirement Planning</h2>
+          
+          <div className="prose prose-blue max-w-none text-text-2 space-y-6">
+            <p className="text-lg leading-relaxed text-text">
+              Navigating the complexities of federal retirement can be overwhelming. Whether you are covered under the <strong>Federal Employees Retirement System (FERS)</strong> or the legacy <strong>Civil Service Retirement System (CSRS)</strong>, understanding the nuances of your benefits is crucial to ensuring a secure and comfortable retirement. Our suite of proprietary calculators is designed to give you precise estimates, but a foundational understanding of the underlying principles is equally important.
+            </p>
+
+            <h3 className="font-serif text-2xl text-navy mt-10 mb-4">Understanding FERS vs. CSRS</h3>
+            <p>
+              The federal government operates two primary retirement systems. <strong>CSRS</strong> is the legacy system, generally applicable to employees hired before January 1, 1984. It is a standalone pension system that does not include Social Security as part of the core retirement package. Employees under CSRS contribute a larger percentage of their salary to the Civil Service Retirement and Disability Fund and, in return, receive a larger guaranteed annuity.
+            </p>
+            <p>
+              <strong>FERS</strong>, on the other hand, is a three-tiered retirement plan covering the vast majority of current federal employees. It consists of:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li><strong>The Basic Benefit Plan:</strong> A guaranteed monthly annuity based on a specific formula (Years of Service × High-3 Average Salary × Pension Multiplier).</li>
+              <li><strong>Social Security:</strong> Unlike CSRS employees, FERS employees pay into and receive full Social Security benefits upon retirement.</li>
+              <li><strong>Thrift Savings Plan (TSP):</strong> The government's equivalent of a 401(k), offering agency automatic (1%) and matching contributions up to 5% of your base pay.</li>
+            </ul>
+
+            <h3 className="font-serif text-2xl text-navy mt-10 mb-4">Mastering the "High-3" Average Salary</h3>
+            <p>
+              Your "High-3" average salary is the cornerstone of your basic annuity calculation under both FERS and CSRS. It represents the highest average basic pay you earned during any three consecutive years of service. It is important to note that:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>The three years do <em>not</em> need to be calendar years (e.g., January 1 to December 31).</li>
+              <li>They do <em>not</em> have to be your final three years of service, though for most employees whose salaries increase over time, they usually are.</li>
+              <li>Locality pay is included in your High-3 calculation, but overtime, bonuses, and allowances generally are not.</li>
+            </ul>
+
+            <h3 className="font-serif text-2xl text-navy mt-10 mb-4">Maximizing Your Thrift Savings Plan (TSP)</h3>
+            <p>
+              Under the FERS system, maximizing your TSP is perhaps the single most impactful action you can take to grow your retirement nest egg. Because the federal government matches the first 5% of your contributions, failing to contribute at least 5% means you are leaving free money on the table.
+            </p>
+            <p>
+              The TSP offers several investment options, ranging from the ultra-secure G Fund (Government Securities) to more aggressive index funds like the C Fund (Common Stock), S Fund (Small Cap), and I Fund (International). For those who prefer a "set it and forget it" approach, the Lifecycle (L) Funds automatically adjust your investment mix to become more conservative as you approach your target retirement date.
+            </p>
+
+            <h3 className="font-serif text-2xl text-navy mt-10 mb-4">Special Rules, Deposits, and Redeposits</h3>
+            <p>
+              Federal retirement isn't always a straight line. Many employees have unique career paths that require special considerations:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li><strong>Military Service Deposits:</strong> If you served in the military prior to entering federal civilian service, you may be able to "buy back" your military time. By making a deposit (typically 3% of your military base pay for FERS, or 7% for CSRS), that time is credited towards your civilian retirement, potentially increasing your annuity and allowing you to retire earlier.</li>
+              <li><strong>Law Enforcement & Firefighters (LEO):</strong> Special provisions exist for federal law enforcement officers, firefighters, and air traffic controllers. These positions carry mandatory retirement ages and offer enhanced pension multipliers (1.7% instead of 1.0% or 1.1% for the first 20 years of service).</li>
+              <li><strong>Unused Sick Leave:</strong> Under current rules, unused sick leave is added to your creditable service time for the purpose of calculating your annuity. For example, 2,087 hours of sick leave equates to approximately one additional year of service credit.</li>
+            </ul>
+
+            <h3 className="font-serif text-2xl text-navy mt-10 mb-4">Evaluating Your Retirement Gap</h3>
+            <p>
+              Knowing your pension amount is only half the battle. A comprehensive retirement plan requires a precise understanding of your <strong>Retirement Gap</strong>—the difference between your projected retirement expenses and your guaranteed income streams (Pension + Social Security). Our Retirement Savings Gap Calculator helps you determine exactly how much you need to draw down from your TSP and other investments to maintain your standard of living.
+            </p>
+            
+            <p className="text-sm italic mt-8 p-4 bg-white/50 rounded-lg">
+              Disclaimer: The tools and information provided on MyFedPlan are for educational and estimation purposes only. Always consult with your agency's HR department or a certified federal retirement counselor before making final retirement decisions based on OPM (Office of Personnel Management) guidelines.
+            </p>
+          </div>
+        </div>
+      </article>
     </div>
   );
 }

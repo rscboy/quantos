@@ -918,6 +918,44 @@ function AnnuityCalculator({ calculatorType, onNavigate }: { calculatorType: Cal
           parsedData={reportData?.[calculatorType]} 
           rawResponse={reportData?.rawResponse}
         />
+        
+        {step < 8 && (
+          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
+            <h2 className="font-serif text-2xl text-navy mb-6">How the {calculatorType === 'fers' ? 'FERS' : 'CSRS'} Annuity is Calculated</h2>
+            
+            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
+              <p>
+                The {calculatorType === 'fers' ? 'Federal Employees Retirement System (FERS)' : 'Civil Service Retirement System (CSRS)'} provides a guaranteed monthly pension (or basic annuity) for eligible federal employees. Our calculator mimics the logic used by the Office of Personnel Management (OPM) to estimate this benefit.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The Basic Formula</h3>
+              <p>
+                Your unreduced annual basic annuity is essentially determined by multiplying three factors:
+                <strong> High-3 Average Salary </strong> × <strong> Years of Creditable Service </strong> × <strong> Pension Multiplier</strong>.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">High-3 Average Salary</h3>
+              <p>
+                Your High-3 is the highest average basic pay earned during any three consecutive years of service. If you do not manually input a High-3 salary, this calculator can estimate it by looking at the detailed salary history you provide in Step 3. It averages the pay rates (weighted by time) to find the absolute highest 36 consecutive months of basic pay.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Creditable Service & Sick Leave</h3>
+              <p>
+                Total creditable service is the sum of your civilian service, military service (if a deposit was made), and credit for unused sick leave. OPM uses a 360-day year (or 2,087 hours) to convert unused sick leave into additional months and days of service, which are then added to your total length of service before the final multiplier is applied.
+              </p>
+              
+              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Reductions and Deductions</h3>
+              <p>
+                The <em>Gross Annuity</em> you calculate may be subject to several reductions before it becomes your <em>Net Monthly Annuity</em>:
+              </p>
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Age Reductions:</strong> Under FERS, retiring at the Minimum Retirement Age (MRA) with less than 30 years of service (or age 60 with less than 20) typically incurs a 5% reduction for every year you are under age 62.</li>
+                <li><strong>Survivor Benefits:</strong> Electing to provide a survivor benefit for a spouse reduces your annuity by a percentage (typically 10% for a full FERS survivor benefit).</li>
+                <li><strong>Health Insurance (FEHB):</strong> If you are eligible to carry FEHB into retirement, the premiums will be deducted directly from your monthly annuity check.</li>
+              </ul>
+            </div>
+          </article>
+        )}
       </main>
     </div>
   );
