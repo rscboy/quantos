@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import * as Dialog from '@radix-ui/react-dialog';
 
 interface Props {
   isOpen: boolean;
@@ -61,40 +62,49 @@ export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, d
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-navy/80 backdrop-blur-sm"
-            onClick={canClose ? onClose : undefined}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-          >
-            <div className="bg-navy p-6 text-white shrink-0 relative">
-              <div className="flex justify-between items-start pr-8">
-                <div>
-                  <h2 className="font-serif text-2xl mb-1">New Member Registration</h2>
-                  <p className="text-white/60 text-sm">{description ?? 'Please fill this out the first time you use the calculators.'}</p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors p-1"
-                aria-label="Close modal"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
+    <Dialog.Root open={isOpen} onOpenChange={(open) => {
+      if (!open && canClose) onClose();
+    }}>
+      <AnimatePresence>
+        {isOpen && (
+          <Dialog.Portal forceMount>
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+              <Dialog.Overlay asChild>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-navy/80 backdrop-blur-sm"
+                />
+              </Dialog.Overlay>
+              <Dialog.Content asChild>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                >
+                  <div className="bg-navy p-6 text-white shrink-0 relative">
+                    <div className="flex justify-between items-start pr-8">
+                      <div>
+                        <Dialog.Title className="font-serif text-2xl mb-1">New Member Registration</Dialog.Title>
+                        <Dialog.Description className="text-white/60 text-sm">{description ?? 'Please fill this out the first time you use the calculators.'}</Dialog.Description>
+                      </div>
+                    </div>
+                    {canClose && (
+                      <Dialog.Close asChild>
+                        <button
+                          className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors p-1"
+                          aria-label="Close modal"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      </Dialog.Close>
+                    )}
+                  </div>
 
             <div className="overflow-y-auto p-6 flex-1">
               <form id="new-member-form" onSubmit={handleSubmit} className="space-y-5">
@@ -226,13 +236,15 @@ export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, d
 
             <div className="p-6 border-t border-border bg-gray-50 flex justify-end gap-3 shrink-0">
               {canClose && (
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-5 py-2.5 text-sm font-semibold text-text-2 hover:bg-gray-200 rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
+                <Dialog.Close asChild>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-5 py-2.5 text-sm font-semibold text-text-2 hover:bg-gray-200 rounded-md transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </Dialog.Close>
               )}
               <button
                 type="submit"
@@ -243,8 +255,11 @@ export function NewMemberModal({ isOpen, onClose, onComplete, canClose = true, d
               </button>
             </div>
           </motion.div>
+        </Dialog.Content>
         </div>
-      )}
-    </AnimatePresence>
+        </Dialog.Portal>
+        )}
+      </AnimatePresence>
+    </Dialog.Root>
   );
 }
