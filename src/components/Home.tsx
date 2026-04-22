@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { SEO } from './SEO';
 
 const CALCULATORS = [
@@ -26,6 +27,9 @@ const CALCULATORS = [
     ]
   }
 ];
+
+// Reusable transition configuration for sweeps
+const sweepTransition = { duration: 0.9, ease: [0.16, 1, 0.3, 1] };
 
 export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
   const schema = {
@@ -66,18 +70,38 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
 
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_380px] gap-16 items-start relative z-10">
           <div>
-            <div className="hidden sm:inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...sweepTransition, delay: 0.1 }}
+              className="hidden sm:inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5 backdrop-blur-sm"
+            >
               New — Phased Retirement Estimates
-            </div>
-            <h1 className="font-serif text-[clamp(30px,4vw,46px)] leading-[1.15] text-white mb-5 font-normal">
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...sweepTransition, delay: 0.2 }}
+              className="font-serif text-[clamp(30px,4vw,46px)] leading-[1.15] text-white mb-5 font-normal"
+            >
               Federal Retirement<br /><em className="italic text-[#93B4F4]">Simplified.</em>
-            </h1>
-            <p className="text-base text-white/60 max-w-[520px] leading-[1.7] mb-8">
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...sweepTransition, delay: 0.3 }}
+              className="text-base text-white/60 max-w-[520px] leading-[1.7] mb-8"
+            >
               MyFedPlan provides powerful retirement calculators for federal employees, financial advisors, and HR professionals. Estimate your CSRS, FERS, and TSP benefits, run High-3 salary calculations, and perform detailed retirement gap analysis in seconds.
-            </p>
-            <div className="flex gap-10 pt-8 border-t border-white/10">
+            </motion.p>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...sweepTransition, delay: 0.4 }}
+              className="flex gap-10 pt-8 border-t border-white/10"
+            >
               <div>
-                <span className="font-mono text-[28px] font-medium text-white block">2025</span>
+                <span className="font-mono text-[28px] font-medium text-white block">2026</span>
                 <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">Tables Ready</span>
               </div>
               <div>
@@ -88,9 +112,14 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                 <span className="font-mono text-[28px] font-medium text-white block">20+</span>
                 <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">Years Active</span>
               </div>
-            </div>
+            </motion.div>
           </div>
-          <div className="hidden md:block bg-white/5 border border-white/10 rounded-lg p-7 backdrop-blur-md shadow-[0_20px_70px_rgba(5,12,24,0.24)]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...sweepTransition, delay: 0.35 }}
+            className="hidden md:block bg-white/5 border border-white/10 rounded-lg p-7 backdrop-blur-md shadow-[0_20px_70px_rgba(5,12,24,0.24)]"
+          >
             <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-white/30 mb-3.5 flex items-center gap-1.5 before:content-[''] before:inline-block before:w-5 before:h-0.5 before:bg-blue">
               Developer
             </div>
@@ -102,7 +131,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             <div className="mt-5 pt-4 border-t border-white/10 text-xs text-white/35">
               Technical spec: <a href="#" onClick={(e) => { e.preventDefault(); onSelectCalc('openapi'); }} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -138,13 +167,17 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                       <span className="font-mono text-[11px] text-text-3">{count} tool{count !== 1 ? 's' : ''}</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5 bg-border border border-border rounded-lg overflow-hidden">
-                      {section.items.map((item) => {
+                      {section.items.map((item, itemIdx) => {
                         const tagClass = item.tag === 'Advanced' ? 'text-blue' : item.tag === 'Comprehensive' ? 'text-green' : 'text-text-3';
                         const target = ['fers', 'csrs', 'eligibility', 'tsp', 'military', 'gap', 'full', 'ss'].includes(item.id) ? item.id : 'home';
                         return (
-                          <a
+                          <motion.a
                             key={item.id}
                             href={`/${target}`}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-40px" }}
+                            transition={{ ...sweepTransition, delay: itemIdx * 0.1 }}
                             className="bg-white p-7 pb-6 cursor-pointer transition-colors duration-150 flex flex-col relative group hover:bg-[#FAFBFF] no-underline"
                             onClick={(e) => { e.preventDefault(); onSelectCalc(target); }}
                           >
@@ -161,7 +194,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
                               <span className="text-xs font-semibold text-blue tracking-[0.02em]">Open calculator</span>
                               <span className="opacity-0 -translate-x-1 transition-all duration-150 text-blue text-base leading-none group-hover:opacity-100 group-hover:translate-x-0">→</span>
                             </div>
-                          </a>
+                          </motion.a>
                         );
                       })}
                     </div>
