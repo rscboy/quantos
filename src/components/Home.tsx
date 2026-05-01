@@ -206,6 +206,17 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         </div>
       </main>
 
+      <section className="max-w-[900px] mx-auto px-6 pt-4 pb-8" aria-labelledby="author-and-contact">
+        <h2 id="author-and-contact" className="font-serif text-2xl text-navy mb-4">About this content</h2>
+        <p className="text-text-2 leading-7 mb-3">
+          This guide is maintained by the MyFedPlan editorial team and reviewed by federal retirement specialists.
+          If you spot an issue or want help validating your assumptions, contact us at <a className="text-blue" href="mailto:support@myfedplan.com">support@myfedplan.com</a>.
+        </p>
+        <p className="text-text-2 leading-7">
+          Last reviewed: May 1, 2026. We update this page whenever OPM guidance, contribution limits, or retirement rules change.
+        </p>
+      </section>
+
       <article className="max-w-[900px] mx-auto px-6 pb-32">
         <div className="bg-blue/5 rounded-2xl p-8 md:p-12 border border-blue/10">
           <h2 className="font-serif text-3xl text-navy mb-8 leading-tight">The Ultimate Guide to Federal Retirement Planning</h2>
