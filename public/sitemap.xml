@@ -60,4 +60,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://www.myfedplan.us/privacy-policy.html</loc>
+  </url>
 </urlset>
