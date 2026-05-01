@@ -55,8 +55,11 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
           <span>© 2026 MyFedPlan by Quantos.com. All rights reserved.</span>
           <div className="flex gap-6">
+            <a href="/about" onClick={(e) => { e.preventDefault(); setView('about'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">About Us</a>
+            <a href="/contact" onClick={(e) => { e.preventDefault(); setView('contact'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Contact</a>
             <a href="/terms" onClick={(e) => { e.preventDefault(); setView('terms'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Terms of Use</a>
             <a href="/privacy" onClick={(e) => { e.preventDefault(); setView('privacy'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Privacy Statement</a>
+            <a href="/disclaimer" onClick={(e) => { e.preventDefault(); setView('disclaimer'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Disclaimer</a>
           </div>
         </div>
       </div>

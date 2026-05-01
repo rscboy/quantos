@@ -21,6 +21,9 @@ import { OpenApiViewer } from './components/OpenApiViewer';
 import { TermsOfService } from './components/TermsOfService';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { RouteMeta } from './components/RouteMeta';
+import { AboutUs } from './components/AboutUs';
+import { ContactUs } from './components/ContactUs';
+import { Disclaimer } from './components/Disclaimer';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -33,7 +36,7 @@ const CALCULATOR_VIEWS = new Set([
   'ss',
 ]);
 
-const STATIC_VIEWS = new Set(['home', 'openapi', 'terms', 'privacy']);
+const STATIC_VIEWS = new Set(['home', 'openapi', 'terms', 'privacy', 'about', 'contact', 'disclaimer']);
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -135,6 +138,9 @@ export default function App() {
         {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
         {view === 'terms' && <TermsOfService />}
         {view === 'privacy' && <PrivacyPolicy />}
+        {view === 'about' && <AboutUs />}
+        {view === 'contact' && <ContactUs />}
+        {view === 'disclaimer' && <Disclaimer />}
       </div>
 
       <Footer setView={handleNavigate} />
