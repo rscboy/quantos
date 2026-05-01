@@ -37,20 +37,31 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
                   FERS Annuity
                 </a>
               </li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">CSRS Annuity</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">TSP Modeler</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Retirement Gap</a></li>
-              <li><a href="#" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Full Analysis</a></li>
+              <li><a href="/csrs" onClick={(e) => { e.preventDefault(); setView('csrs'); }} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">CSRS Annuity</a></li>
+              <li><a href="/tsp" onClick={(e) => { e.preventDefault(); setView('tsp'); }} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">TSP Modeler</a></li>
+              <li><a href="/gap" onClick={(e) => { e.preventDefault(); setView('gap'); }} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Retirement Gap</a></li>
+              <li><a href="/full" onClick={(e) => { e.preventDefault(); setView('full'); }} className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Full Analysis</a></li>
             </ul>
           </div>
           <div>
             <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Contact</div>
+            <address className="not-italic">
+              <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
+                <li><a href="mailto:support@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">support@myfedplan.com</a></li>
+                <li><a href="mailto:api@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">api@myfedplan.com</a></li>
+                <li><a href="mailto:ideas@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">ideas@myfedplan.com</a></li>
+              </ul>
+            </address>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Social</div>
             <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
-              <li><a href="mailto:support@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">support@myfedplan.com</a></li>
-              <li><a href="mailto:api@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">api@myfedplan.com</a></li>
-              <li><a href="mailto:ideas@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Submit an idea</a></li>
+              <li><a href="https://www.linkedin.com/company/quantos" target="_blank" rel="noreferrer" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">LinkedIn</a></li>
+              <li><a href="https://x.com" target="_blank" rel="noreferrer" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">X (Twitter)</a></li>
+              <li><a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Facebook</a></li>
             </ul>
           </div>
+
         </div>
         <div className="flex items-center justify-between text-[12px] text-white/25 flex-wrap gap-4">
           <span>© 2026 MyFedPlan by Quantos.com. All rights reserved.</span>
