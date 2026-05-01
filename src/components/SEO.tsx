@@ -6,9 +6,10 @@ interface SEOProps {
   description: string;
   schema?: Record<string, any>;
   canonicalPath?: string;
+  robots?: string;
 }
 
-export function SEO({ title, description, schema, canonicalPath }: SEOProps) {
+export function SEO({ title, description, schema, canonicalPath, robots }: SEOProps) {
   const path = canonicalPath || (typeof window !== 'undefined' ? window.location.pathname : '');
   const canonicalUrl = `https://www.myfedplan.us${path}`;
 
@@ -24,6 +25,7 @@ export function SEO({ title, description, schema, canonicalPath }: SEOProps) {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
+      {robots && <meta name="robots" content={robots} />}
       {schema && (
         <script type="application/ld+json">
           {JSON.stringify(schema)}

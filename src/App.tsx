@@ -20,6 +20,7 @@ import { TermsModal } from './components/TermsModal';
 import { OpenApiViewer } from './components/OpenApiViewer';
 import { TermsOfService } from './components/TermsOfService';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { RouteMeta } from './components/RouteMeta';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -118,6 +119,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-text bg-bg">
+      <RouteMeta view={view} />
       <Nav setView={handleNavigate} />
 
       <div className="flex-1">
