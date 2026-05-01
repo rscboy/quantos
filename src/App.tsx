@@ -24,6 +24,7 @@ import { RouteMeta } from './components/RouteMeta';
 import { AboutUs } from './components/AboutUs';
 import { ContactUs } from './components/ContactUs';
 import { Disclaimer } from './components/Disclaimer';
+import { CookieConsent } from './components/CookieConsent';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -144,6 +145,7 @@ export default function App() {
       </div>
 
       <Footer setView={handleNavigate} />
+      <CookieConsent />
 
       <NewMemberModal
         isOpen={showModal}

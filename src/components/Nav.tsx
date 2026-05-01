@@ -1,9 +1,23 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Copy, Facebook, Mail, Share2, X } from 'lucide-react';
 
+const SEARCH_ROUTES = [
+  { id: 'fers', label: 'FERS Annuity Calculator' },
+  { id: 'csrs', label: 'CSRS Annuity Calculator' },
+  { id: 'eligibility', label: 'How Soon Can I Retire' },
+  { id: 'tsp', label: 'TSP Calculator' },
+  { id: 'gap', label: 'Retirement Gap Calculator' },
+  { id: 'military', label: 'Military Deposit Calculator' },
+  { id: 'full', label: 'Full Retirement Analysis' },
+  { id: 'ss', label: 'Social Security Estimator' },
+  { id: 'contact', label: 'Contact Us' },
+  { id: 'about', label: 'About Us' },
+];
+
 export function Nav({ setView }: { setView: (view: string) => void }) {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
+  const [query, setQuery] = useState('');
   const shareRef = useRef<HTMLDivElement | null>(null);
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.myfedplan.com';
@@ -86,6 +100,13 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
     return () => window.clearTimeout(timeoutId);
   }, [copyStatus]);
 
+
+  const filteredRoutes = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    if (!term) return [];
+    return SEARCH_ROUTES.filter((route) => route.label.toLowerCase().includes(term)).slice(0, 6);
+  }, [query]);
+
   const handleCopyClick = async () => {
     try {
       await shareOptions[0].action?.();
@@ -116,6 +137,30 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
               </div>
             </div>
           </a>
+          <div className="hidden md:block relative">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search calculators..."
+              className="w-60 rounded-md border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-blue"
+              aria-label="Search calculators and pages"
+            />
+            {filteredRoutes.length > 0 && (
+              <div className="absolute mt-1 w-full rounded-md border border-white/15 bg-navy-2 shadow-xl overflow-hidden">
+                {filteredRoutes.map((route) => (
+                  <button
+                    key={route.id}
+                    className="w-full text-left px-3 py-2 text-sm text-white/85 hover:bg-white/10"
+                    onClick={() => { setView(route.id); setQuery(''); }}
+                  >
+                    {route.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
             <li className="flex items-center gap-3">
               <span className="text-white/40 text-[11px] italic">Your information is saved for use across calculators</span>
