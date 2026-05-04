@@ -25,7 +25,6 @@ import { AboutUs } from './components/AboutUs';
 import { ContactUs } from './components/ContactUs';
 import { Disclaimer } from './components/Disclaimer';
 import { CookieConsent } from './components/CookieConsent';
-import { CalculatorContentGuide } from './components/CalculatorContentGuide';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -137,7 +136,6 @@ export default function App() {
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
         {view === 'full' && <FullRetirementAnalysis onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
-        {CALCULATOR_VIEWS.has(view) && <CalculatorContentGuide view={view as 'fers' | 'csrs' | 'eligibility' | 'tsp' | 'gap' | 'military' | 'full' | 'ss'} />}
         {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
         {view === 'terms' && <TermsOfService />}
         {view === 'privacy' && <PrivacyPolicy />}
