@@ -25,6 +25,9 @@ import { AboutUs } from './components/AboutUs';
 import { ContactUs } from './components/ContactUs';
 import { Disclaimer } from './components/Disclaimer';
 import { CookieConsent } from './components/CookieConsent';
+import { CalculatorContentGuide } from './components/CalculatorContentGuide';
+import { Guides } from './components/Guides';
+import { CookiePolicy } from './components/CookiePolicy';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -37,7 +40,7 @@ const CALCULATOR_VIEWS = new Set([
   'ss',
 ]);
 
-const STATIC_VIEWS = new Set(['home', 'openapi', 'terms', 'privacy', 'about', 'contact', 'disclaimer']);
+const STATIC_VIEWS = new Set(['home', 'guides', 'openapi', 'terms', 'privacy', 'cookie-policy', 'about', 'contact', 'disclaimer']);
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -136,9 +139,12 @@ export default function App() {
         {view === 'military' && <MilitaryDepositCalculator onBack={() => handleNavigate('home')} />}
         {view === 'full' && <FullRetirementAnalysis onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
+        {CALCULATOR_VIEWS.has(view) && <CalculatorContentGuide view={view as 'fers' | 'csrs' | 'eligibility' | 'tsp' | 'gap' | 'military' | 'full' | 'ss'} />}
+        {view === 'guides' && <Guides />}
         {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
         {view === 'terms' && <TermsOfService />}
         {view === 'privacy' && <PrivacyPolicy />}
+        {view === 'cookie-policy' && <CookiePolicy />}
         {view === 'about' && <AboutUs />}
         {view === 'contact' && <ContactUs />}
         {view === 'disclaimer' && <Disclaimer />}
