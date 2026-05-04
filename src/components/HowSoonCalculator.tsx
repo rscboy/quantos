@@ -549,38 +549,6 @@ export function HowSoonCalculator({ onNavigate }: { onNavigate: (view: string) =
           parsedData={reportData?.howSoon} 
           rawResponse={reportData?.rawResponse}
         />
-        
-        {step < 3 && (
-          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
-            <h2 className="font-serif text-2xl text-navy mb-6">Federal Retirement Eligibility Rules Explained</h2>
-            
-            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
-              <p>
-                One of the most common questions federal employees ask is, "When can I legally retire and collect my pension?" The answer depends on your age, your years of creditable service, and the retirement system you are under (FERS or CSRS). Determining your exact eligibility date is the crucial first step in your retirement planning process.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Unreduced Retirement Eligibility (FERS)</h3>
-              <p>
-                For employees under the Federal Employees Retirement System (FERS), you are eligible for an immediate, unreduced basic annuity if you meet one of the following age and service combinations:
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Age 62</strong> with at least <strong>5 years</strong> of creditable service.</li>
-                <li><strong>Age 60</strong> with at least <strong>20 years</strong> of creditable service.</li>
-                <li>At your <strong>Minimum Retirement Age (MRA)</strong> with at least <strong>30 years</strong> of creditable service.</li>
-              </ul>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Your Minimum Retirement Age (MRA)</h3>
-              <p>
-                Your MRA is specifically determined by the year you were born. It ranges from age 55 (for those born before 1948) up to age 57 (for those born in 1970 or later). If you reach your MRA and have at least 10 years of service (often called "MRA+10"), you are technically eligible to retire, but this comes with a severe penalty: a 5% permanent reduction in your pension for every year you are under age 62.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Special Category Employees</h3>
-              <p>
-                Certain federal professions, such as Law Enforcement Officers (LEOs), Firefighters, and Air Traffic Controllers, have different retirement rules due to the demanding nature of their work. These employees can typically retire at any age with 25 years of service, or at age 50 with 20 years of service. They also face mandatory retirement ages, underscoring the need to plan carefully and well in advance of their required separation date.
-              </p>
-            </div>
-          </article>
-        )}
       </main>
     </div>
   );

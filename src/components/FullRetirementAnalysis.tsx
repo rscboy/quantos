@@ -1000,47 +1000,6 @@ export function FullRetirementAnalysis({ onNavigate, linkedData }: { onNavigate:
           parsedData={formData.bCSRS === 'Y' ? reportData?.csrs : reportData?.fers} 
           rawResponse={reportData?.rawResponse}
         />
-        
-        {stepIndex < STEPS.length - 2 && (
-          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
-            <h2 className="font-serif text-2xl text-navy mb-6">The Importance of a Comprehensive Retirement Analysis</h2>
-            
-            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
-              <p>
-                When planning for federal retirement, it's dangerously easy to view your benefits in isolation. You might know your FERS pension estimate, or you might have a goal for your TSP balance, but evaluating them independently can lead to a false sense of security. A "Full Retirement Analysis" integrates all of these disparate parts into a single, cohesive financial projection.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The "Three-Legged Stool" Approach</h3>
-              <p>
-                Federal retirement, particularly under FERS, was fundamentally designed as a three-legged stool:
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>The Basic Benefit Plan (Pension):</strong> A guaranteed monthly annuity.</li>
-                <li><strong>Social Security:</strong> Guaranteed income tied to wage inflation and lifetime earnings.</li>
-                <li><strong>Thrift Savings Plan (TSP):</strong> The variable growth engine of your retirement.</li>
-              </ul>
-              <p>
-                A comprehensive analysis models exactly how these three legs interact over time. For instance, if you retire at your Minimum Retirement Age (MRA) before you are eligible for Social Security at age 62, the analysis can calculate the "FERS Annuity Supplement" (sometimes called the Special Retirement Supplement) to see how it bridges that specific income gap.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Factoring in Withholdings and Deductions</h3>
-              <p>
-                Gross income is not net income. A full analysis takes your gross initial pension and methodically subtracts the real-world deductions you will face:
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Survivor Benefit Elections:</strong> Providing a full survivor annuity for your spouse permanently reduces your FERS pension by 10%.</li>
-                <li><strong>Federal Employees Health Benefits (FEHB):</strong> If you carry FEHB into retirement, your premiums are deducted directly from your pension. Keep in mind that while government contributions to FEHB premiums are pre-tax for active employees, they are paid with post-tax dollars for retirees.</li>
-                <li><strong>Federal Employees' Group Life Insurance (FEGLI):</strong> Depending on the multipliers you carry into retirement, this can be a substantial deduction.</li>
-                <li><strong>Taxes:</strong> Federal and state income taxes must be estimated to find your actual take-home pay.</li>
-              </ul>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Modeling Longevity and Inflation</h3>
-              <p>
-                A proper analysis doesn't just calculate your income on day one of retirement; it models it through age 90 or beyond. This requires stress-testing your TSP drawdown strategy using inflation assumptions (e.g., 3% annually) and Cost-of-Living Adjustments (COLAs) to ensure you do not outlive your assets. Without this holistic view, a plan that looks secure at age 60 might collapse entirely by age 80.
-              </p>
-            </div>
-          </article>
-        )}
       </main>
     </div>
   );

@@ -726,43 +726,6 @@ export function TspCalculator({ onBack, linkedData, onLinkedDataChange }: { onBa
           )}
           </div>
         </div>
-        
-        {step < 4 && (
-          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
-            <h2 className="font-serif text-2xl text-navy mb-6">Mastering the Thrift Savings Plan (TSP)</h2>
-            
-            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
-              <p>
-                The <strong>Thrift Savings Plan (TSP)</strong> is a retirement savings and investment plan strictly for Federal employees and members of the uniformed services. It offers the same types of savings and tax benefits that many private corporations offer their employees under 401(k) plans. Understanding and maximizing your TSP is often considered the most critical component of a successful federal retirement strategy.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Agency Automatic and Matching Contributions</h3>
-              <p>
-                If you are a Federal Employees Retirement System (FERS) employee, your agency automatically contributes an amount equal to 1% of your basic pay each pay period, even if you do not contribute anything yourself. 
-              </p>
-              <p>
-                More importantly, your agency will match your contributions dollar-for-dollar on the first 3% of your pay, and 50 cents on the dollar for the next 2%. Therefore, to get the maximum "free money" from your agency (a total of 5%), you must contribute at least 5% of your basic pay each pay period. Failing to contribute at least 5% is widely considered the biggest mistake a federal employee can make.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Understanding the TSP Funds</h3>
-              <p>
-                The TSP offers five core individual investment funds, plus the "Lifecycle" (L) Funds which are composed of the five core funds.
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>G Fund:</strong> Government Securities Investment Fund. This is the safest fund, invested in short-term U.S. Treasury securities. It guarantees protection of principal but generally yields the lowest long-term returns.</li>
-                <li><strong>F Fund:</strong> Fixed Income Index Investment Fund. Invested in government, corporate, and mortgage-backed bonds.</li>
-                <li><strong>C Fund:</strong> Common Stock Index Investment Fund. Designed to match the performance of the S&P 500 Index (large and medium-sized U.S. companies).</li>
-                <li><strong>S Fund:</strong> Small Cap Stock Index Investment Fund. Designed to match the performance of the Dow Jones U.S. Completion Total Stock Market Index (small to medium-sized U.S. companies not in the S&P 500).</li>
-                <li><strong>I Fund:</strong> International Stock Index Investment Fund. Designed to match the performance of the MSCI EAFE Index (international equities).</li>
-              </ul>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The Lifecycle (L) Funds</h3>
-              <p>
-                The L Funds are "target date" funds. They are professionally designed mixes of the G, F, C, S, and I Funds based on a specific time horizon (when you expect to need the money). As your target retirement date approaches, the L Fund automatically shifts its allocation to become more conservative (more G and F funds, less C, S, and I funds) to protect your assets from market volatility just before you retire.
-              </p>
-            </div>
-          </article>
-        )}
       </main>
     </div>
   );

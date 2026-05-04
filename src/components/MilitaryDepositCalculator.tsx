@@ -494,44 +494,6 @@ export function MilitaryDepositCalculator({ onBack }: { onBack: () => void }) {
           <button onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1 || isCalculating} className="px-5 py-2.5 border border-border rounded-md bg-white text-text font-medium disabled:opacity-50 disabled:cursor-not-allowed">Back</button>
           {step === 1 && <button onClick={handleCalculate} disabled={isCalculating} className="px-6 py-2.5 bg-blue text-white rounded-md font-semibold hover:bg-blue-hover disabled:opacity-70">{isCalculating ? 'Calculating...' : 'Calculate'}</button>}
         </div>
-        
-        {step < 3 && (
-          <article className="mt-16 bg-white border border-border shadow-sm rounded-xl p-8 mb-12">
-            <h2 className="font-serif text-2xl text-navy mb-6">Understanding Military Service Deposits</h2>
-            
-            <div className="prose prose-blue max-w-none text-text-2 text-sm leading-relaxed space-y-4">
-              <p>
-                If you served in the U.S. military before becoming a federal civilian employee, that time does not automatically count toward your civilian retirement under FERS or CSRS. To receive credit for that time in your civilian pension calculation, you typically must make a "Military Service Deposit," colloquially known as "buying back" your military time.
-              </p>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">Why Buy Back Your Military Time?</h3>
-              <p>
-                Buying back your military time adds those years to your total creditable civilian service. This has two major benefits:
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Higher Pension:</strong> Your pension is calculated based on your total years of service. For example, under FERS, an extra 4 years of military service will permanently increase your defined benefit pension by 4% of your High-3 average salary.</li>
-                <li><strong>Earlier Retirement Eligibility:</strong> Those additional years also count toward your eligibility to retire. If you need 30 years to retire at your Minimum Retirement Age (MRA), applying 4 years of military time means you only need 26 years of civilian service to reach that milestone.</li>
-              </ul>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">How Much Does It Cost?</h3>
-              <p>
-                The cost of your deposit is based on the basic military pay you earned during your service (not including allowances or hazard pay), plus accrued interest. The baseline percentage depends on your retirement system:
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>FERS Employees:</strong> The deposit is typically 3% of your total basic military pay.</li>
-                <li><strong>CSRS Employees:</strong> The deposit is typically 7% of your total basic military pay.</li>
-              </ul>
-              
-              <h3 className="font-serif text-lg text-navy mt-6 mb-2">The Importance of Paying Early (Interest Rates)</h3>
-              <p>
-                Federal rules offer a "grace period" for military deposits. You have two years from your date of hire as a civilian federal employee to pay the deposit interest-free. After the third year (your Interest Accrual Date or IAD), the Office of Personnel Management (OPM) begins charging variable compounded interest on the unpaid balance.
-              </p>
-              <p>
-                Because interest compounds annually, waiting 10 or 20 years to buy back your time can cause the cost of the deposit to double or triple. It is highly recommended to initiate the buyback process as soon as you begin federal civilian employment to lock in the lowest possible cost.
-              </p>
-            </div>
-          </article>
-        )}
       </main>
     </div>
   );
