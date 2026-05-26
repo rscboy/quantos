@@ -28,6 +28,7 @@ import { CookieConsent } from './components/CookieConsent';
 import { CalculatorContentGuide } from './components/CalculatorContentGuide';
 import { Guides } from './components/Guides';
 import { CookiePolicy } from './components/CookiePolicy';
+import { Methodology } from './components/Methodology';
 
 const CALCULATOR_VIEWS = new Set([
   'fers',
@@ -40,7 +41,7 @@ const CALCULATOR_VIEWS = new Set([
   'ss',
 ]);
 
-const STATIC_VIEWS = new Set(['home', 'guides', 'openapi', 'terms', 'privacy', 'cookie-policy', 'about', 'contact', 'disclaimer']);
+const STATIC_VIEWS = new Set(['home', 'guides', 'openapi', 'terms', 'privacy', 'cookie-policy', 'about', 'contact', 'disclaimer', 'methodology']);
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -148,6 +149,7 @@ export default function App() {
         {view === 'about' && <AboutUs />}
         {view === 'contact' && <ContactUs />}
         {view === 'disclaimer' && <Disclaimer />}
+        {view === 'methodology' && <Methodology />}
       </div>
 
       <Footer setView={handleNavigate} />
