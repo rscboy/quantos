@@ -54,11 +54,11 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
             </address>
           </div>
           <div>
-            <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Social</div>
+            <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/30 mb-4">Company</div>
             <ul className="list-none flex flex-col gap-2.5 m-0 p-0">
               <li><a href="https://www.linkedin.com/company/quantos" target="_blank" rel="noreferrer" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">LinkedIn</a></li>
-              <li><a href="https://x.com" target="_blank" rel="noreferrer" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">X (Twitter)</a></li>
-              <li><a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Facebook</a></li>
+              <li><a href="mailto:support@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">Customer Support</a></li>
+              <li><a href="mailto:api@myfedplan.com" className="text-[13px] text-white/55 no-underline transition-colors duration-120 font-normal hover:text-white">API Partnerships</a></li>
             </ul>
           </div>
 
