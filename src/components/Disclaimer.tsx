@@ -19,6 +19,10 @@ export function Disclaimer() {
         or personal circumstances. Always verify retirement decisions using official OPM resources and, when appropriate,
         qualified professionals.
       </p>
+      <p className="text-text-2 leading-7 mb-4">
+        MyFedPlan is an independent educational publisher and is not affiliated with, endorsed by, or sponsored by OPM, TSP,
+        SSA, IRS, or any U.S. government agency.
+      </p>
       <p className="text-text-2 leading-7">
         Use of this website indicates acceptance of our Terms of Service and Privacy Policy.
       </p>

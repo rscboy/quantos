@@ -71,6 +71,8 @@ export function Footer({ setView }: { setView: (view: string) => void }) {
             <a href="/terms" onClick={(e) => { e.preventDefault(); setView('terms'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Terms & Conditions</a>
             <a href="/privacy" onClick={(e) => { e.preventDefault(); setView('privacy'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Privacy Policy</a>
             <a href="/cookie-policy" onClick={(e) => { e.preventDefault(); setView('cookie-policy'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Cookie Policy</a>
+            <a href="/disclaimer" onClick={(e) => { e.preventDefault(); setView('disclaimer'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Disclaimer</a>
+            <a href="/methodology" onClick={(e) => { e.preventDefault(); setView('methodology'); }} className="cursor-pointer text-white/25 text-[12px] transition-colors duration-120 hover:text-white/60 no-underline">Methodology</a>
           </div>
         </div>
       </div>
