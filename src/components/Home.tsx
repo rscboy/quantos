@@ -215,6 +215,9 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         <p className="text-text-2 leading-7">
           Last reviewed: May 1, 2026. We update this page whenever OPM guidance, contribution limits, or retirement rules change.
         </p>
+        <p className="text-text-2 leading-7 mt-3">
+          MyFedPlan is an independent educational resource and is not affiliated with, endorsed by, or sponsored by OPM, TSP, SSA, IRS, or any U.S. Government agency. Calculator outputs are estimates only and are not financial, legal, or tax advice.
+        </p>
       </section>
 
       <article className="max-w-[900px] mx-auto px-6 pb-32">
