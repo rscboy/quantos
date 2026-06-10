@@ -36,12 +36,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "MyFedPlan",
-    "url": "https://www.myfedplan.us",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://www.myfedplan.us/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "url": "https://www.myfedplan.us"
   };
 
   const orgSchema = {
@@ -76,7 +71,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
               transition={{ ...sweepTransition, delay: 0.1 }}
               className="hidden sm:inline-flex items-center gap-2 bg-blue/20 border border-blue/40 text-[#93B4F4] text-[11px] font-semibold tracking-[0.08em] uppercase py-1.5 px-3 rounded-[3px] mb-5 backdrop-blur-sm"
             >
-              New — Phased Retirement Estimates
+              Free Federal Retirement Calculators
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 30 }}
@@ -102,15 +97,15 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             >
               <div>
                 <span className="font-mono text-[28px] font-medium text-white block">2026</span>
-                <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">Tables Ready</span>
+                <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">OPM Tables</span>
               </div>
               <div>
-                <span className="font-mono text-[28px] font-medium text-white block">99.9%</span>
-                <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">Model Fidelity</span>
+                <span className="font-mono text-[28px] font-medium text-white block">8</span>
+                <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">Calculators</span>
               </div>
               <div>
-                <span className="font-mono text-[28px] font-medium text-white block">20+</span>
-                <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">Years Active</span>
+                <span className="font-mono text-[28px] font-medium text-white block">Free</span>
+                <span className="text-[11px] text-white/40 uppercase tracking-[0.06em] font-medium block mt-0.5">No Sign-Up</span>
               </div>
             </motion.div>
           </div>
@@ -127,9 +122,9 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
             <p className="text-[13px] text-white/50 leading-[1.6] mb-5">
               Fast retirement estimates for large groups of employees. Integrate MyFedPlan directly into your HR or benefits platform.
             </p>
-            <a href="mailto:api@myfedplan.com" className="text-[#93B4F4] text-[13px] font-medium no-underline hover:underline">api@myfedplan.com →</a>
+            <a href="mailto:api@myfedplan.us" className="text-[#93B4F4] text-[13px] font-medium no-underline hover:underline">api@myfedplan.us →</a>
             <div className="mt-5 pt-4 border-t border-white/10 text-xs text-white/35">
-              Technical spec: <a href="#" onClick={(e) => { e.preventDefault(); onSelectCalc('openapi'); }} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
+              Technical spec: <a href="/openapi" onClick={(e) => { e.preventDefault(); onSelectCalc('openapi'); }} className="text-white/50 no-underline hover:underline">OpenAPI specification ↗</a>
             </div>
           </motion.div>
         </div>
@@ -144,11 +139,11 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
           <div className="hidden md:block w-px h-7 bg-border"></div>
           <div className="flex items-center gap-3 text-[13px] text-text-2">
             <div className="w-8 h-8 bg-bg border border-border rounded-md flex items-center justify-center text-sm shrink-0">✓</div>
-            <span>Independent resource since 2004</span>
+            <span>Independent, free educational resource</span>
           </div>
           <div className="hidden md:block w-px h-7 bg-border"></div>
           <div className="text-[13px] text-[#4A4A4A]">
-            Questions? <a href="mailto:support@myfedplan.com" className="ml-1 text-blue no-underline hover:underline">support@myfedplan.com</a>
+            Questions? <a href="mailto:support@myfedplan.us" className="ml-1 text-blue no-underline hover:underline">support@myfedplan.us</a>
           </div>
         </div>
       </div>
@@ -210,7 +205,7 @@ export function Home({ onSelectCalc }: { onSelectCalc: (id: string) => void }) {
         <h2 id="author-and-contact" className="font-serif text-2xl text-navy mb-4">About this content</h2>
         <p className="text-text-2 leading-7 mb-3">
           This guide is maintained by the MyFedPlan editorial team and reviewed by federal retirement specialists.
-          If you spot an issue or want help validating your assumptions, contact us at <a className="text-blue" href="mailto:support@myfedplan.com">support@myfedplan.com</a>.
+          If you spot an issue or want help validating your assumptions, contact us at <a className="text-blue" href="mailto:support@myfedplan.us">support@myfedplan.us</a>.
         </p>
         <p className="text-text-2 leading-7">
           Last reviewed: May 1, 2026. We update this page whenever OPM guidance, contribution limits, or retirement rules change.

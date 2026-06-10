@@ -7,7 +7,7 @@ info:
   contact:
     name: "MyFedPlan API"
     url: "https://myfedplan.com/api"
-    email: "support@myfedplan.com"
+    email: "support@myfedplan.us"
   license:
     name: "License to use MyFedPlan"
     url: "https://myfedplan.com/price"

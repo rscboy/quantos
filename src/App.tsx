@@ -45,7 +45,7 @@ const STATIC_VIEWS = new Set(['home', 'guides', 'openapi', 'terms', 'privacy', '
 
 export default function App() {
   const [view, setView] = useState(() => {
-    const path = window.location.pathname.replace(/^\/+/, '');
+    const path = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\.html$/, '');
     return CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home';
   });
   const [showModal, setShowModal] = useState(false);
@@ -59,7 +59,7 @@ export default function App() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.replace(/^\/+/, '');
+      const path = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\.html$/, '');
       setView(CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home');
     };
     window.addEventListener('popstate', handlePopState);
@@ -89,22 +89,11 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, []);
 
-  const openRegistrationGate = useCallback((nextView: string) => {
-    setPendingView(nextView);
-    setShowModal(true);
+  const handleNavigate = useCallback((nextView: string) => {
+    // Calculators are open to all visitors. The optional profile modal can be
+    // opened explicitly by the user but never gates access to publisher content.
     navigateToView(nextView);
   }, [navigateToView]);
-
-  const handleNavigate = useCallback((nextView: string) => {
-    const isCalculatorView = CALCULATOR_VIEWS.has(nextView);
-
-    if (isCalculatorView && !hasCompletedProfile) {
-      openRegistrationGate(nextView);
-      return;
-    }
-
-    navigateToView(nextView);
-  }, [hasCompletedProfile, navigateToView, openRegistrationGate]);
 
   const handleCompleteRegistration = useCallback(() => {
     setHasCompletedProfile(true);

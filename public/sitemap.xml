@@ -46,6 +46,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.myfedplan.us/guides</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.myfedplan.us/methodology</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.myfedplan.us/about</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.myfedplan.us/contact</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.myfedplan.us/disclaimer</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://www.myfedplan.us/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
@@ -56,11 +81,8 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.myfedplan.us/openapi</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.myfedplan.us/privacy-policy.html</loc>
+    <loc>https://www.myfedplan.us/cookie-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

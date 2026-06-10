@@ -1,11 +1,11 @@
 import React from 'react';
 import { SEO } from './SEO';
 
-const author = 'Jordan Lee, Federal Retirement Researcher';
+const author = 'the MyFedPlan editorial team';
 const updated = 'May 4, 2026';
 
 function Byline() {
-  return <p className="text-sm text-text-3">Written by {author} · Last updated {updated}</p>;
+  return <p className="text-sm text-text-3">Reviewed by {author} · Last updated {updated}</p>;
 }
 
 export function Guides() {
@@ -29,21 +29,21 @@ export function Guides() {
       </section>
 
       <section className="mt-12">
-        <h2 className="font-serif text-3xl text-navy mb-4">Supporting Guides</h2>
-        <div className="space-y-6">
+        <h2 className="font-serif text-3xl text-navy mb-4">Put these concepts into practice</h2>
+        <p className="text-text-2 leading-7 mb-6">Each calculator below applies the rules explained in this guide to your own numbers. They are free to use and require no account.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
-            'FERS Pension Formula Explained',
-            'How the High-3 Salary Works',
-            'Minimum Retirement Age (MRA) Guide',
-            'FERS vs TSP: What’s the Difference?',
-            'When Should Federal Employees Retire?',
-          ].map((title) => (
-            <article key={title} className="border border-border rounded-lg p-5 bg-white">
-              <h3 className="font-serif text-2xl text-navy">{title}</h3>
-              <Byline />
-              <p className="mt-3 text-text-2 leading-7">This article provides a practical breakdown with examples, key assumptions, tradeoffs, and timing risks for federal employees. It links back to the primary retirement calculator guide and cross-references relevant tools on the Calculators page so users can test scenarios before making decisions.</p>
-              <p className="text-text-2 leading-7">Key sections include definitions, formula walkthroughs, common errors, planning checklists, and decision points by career stage. Each article is educational and avoids promises of investment performance or guaranteed outcomes. For final decisions, review official OPM and SSA documentation and consult a licensed professional as needed.</p>
-            </article>
+            { href: '/fers', title: 'FERS Annuity Calculator', desc: 'Apply the High-3 × years × multiplier formula to your service history.' },
+            { href: '/csrs', title: 'CSRS Annuity Calculator', desc: 'Model the tiered CSRS percentage schedule, deposits, and redeposits.' },
+            { href: '/eligibility', title: 'Retirement Eligibility', desc: 'Find the earliest date you can retire with an immediate annuity.' },
+            { href: '/tsp', title: 'TSP Projections', desc: 'Project Thrift Savings Plan growth with agency matching.' },
+            { href: '/military', title: 'Military Deposit', desc: 'Estimate the buy-back cost to credit active-duty time.' },
+            { href: '/gap', title: 'Retirement Savings Gap', desc: 'Compare projected income against expected retirement expenses.' },
+          ].map((g) => (
+            <a key={g.href} href={g.href} className="border border-border rounded-lg p-5 bg-white block no-underline hover:bg-[#FAFBFF] transition-colors">
+              <h3 className="font-serif text-xl text-navy">{g.title}</h3>
+              <p className="mt-2 text-text-2 leading-7 text-[14px]">{g.desc}</p>
+            </a>
           ))}
         </div>
       </section>

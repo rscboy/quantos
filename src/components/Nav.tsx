@@ -6,7 +6,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
   const shareRef = useRef<HTMLDivElement | null>(null);
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.myfedplan.com';
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.myfedplan.us';
   const shareTitle = 'MyFedPlan';
   const shareText = 'Explore federal retirement calculators and planning tools with MyFedPlan.';
 
@@ -137,8 +137,8 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
               </button>
             </li>
             <li>
-              <a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e) => { e.preventDefault(); setView('home'); }}>Home</a>
-            </li><li><a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('fers');}}>Calculators</a></li><li><a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('guides');}}>Guides</a></li><li><a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('methodology');}}>Methodology</a></li><li><a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('about');}}>About</a></li><li><a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('contact');}}>Contact</a></li><li><a href="#" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('disclaimer');}}>Disclaimer</a>
+              <a href="/" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e) => { e.preventDefault(); setView('home'); }}>Home</a>
+            </li><li><a href="/fers" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('fers');}}>Calculators</a></li><li><a href="/guides" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('guides');}}>Guides</a></li><li><a href="/methodology" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('methodology');}}>Methodology</a></li><li><a href="/about" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('about');}}>About</a></li><li><a href="/contact" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('contact');}}>Contact</a></li><li><a href="/disclaimer" className="text-white/65 text-[14px] font-medium no-underline transition-colors duration-150 hover:text-white" onClick={(e)=>{e.preventDefault();setView('disclaimer');}}>Disclaimer</a>
             </li>
           </ul>
         </div>
@@ -148,7 +148,7 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
         <div className="max-w-[1200px] mx-auto flex items-center justify-between flex-wrap gap-4">
           <div className="inline-flex items-center gap-1.5 text-[11px] font-medium text-white/50 tracking-[0.04em]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] shrink-0"></span>
-            OPM Tables current · 2025 · Phased Retirement supported
+            OPM tables current for 2026 · FERS, CSRS & TSP
           </div>
           <div className="relative flex items-center gap-5 text-[11px] text-white/40">
             <span>Based on OPM Chapter 50 rules</span>

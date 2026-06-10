@@ -2,12 +2,24 @@ import React from 'react';
 import { SEO } from './SEO';
 
 export function ContactUs() {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const name = String(data.get('name') ?? '');
+    const email = String(data.get('email') ?? '');
+    const message = String(data.get('message') ?? '');
+    const subject = encodeURIComponent(`MyFedPlan contact from ${name || 'website visitor'}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+    window.location.href = `mailto:support@myfedplan.us?subject=${subject}&body=${body}`;
+  };
+
   return (
     <main className="max-w-[900px] mx-auto px-6 py-16">
       <SEO title="Contact MyFedPlan" description="Contact MyFedPlan for calculator support and editorial questions." canonicalPath="/contact" />
       <h1 className="font-serif text-4xl text-navy mb-6">Contact Us</h1>
-      <p className="text-text-2 leading-7 mb-6">Email us at <a className="text-blue" href="mailto:support@myfedplan.us">support@myfedplan.us</a> or use the form below.</p>
-      <form className="grid gap-4 bg-white border border-border rounded-lg p-6" onSubmit={(e) => e.preventDefault()}>
+      <p className="text-text-2 leading-7 mb-6">Email us directly at <a className="text-blue" href="mailto:support@myfedplan.us">support@myfedplan.us</a>, or use the form below and it will open a pre-filled message in your email app.</p>
+      <form className="grid gap-4 bg-white border border-border rounded-lg p-6" onSubmit={handleSubmit}>
         <label className="grid gap-1"><span>Name</span><input required className="border rounded px-3 py-2" name="name" /></label>
         <label className="grid gap-1"><span>Email</span><input required type="email" className="border rounded px-3 py-2" name="email" /></label>
         <label className="grid gap-1"><span>Message</span><textarea required className="border rounded px-3 py-2 min-h-32" name="message" /></label>
