@@ -118,8 +118,8 @@ export function Nav({ setView }: { setView: (view: string) => void }) {
           </a>
           <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
             <li className="flex items-center gap-3">
-              <span className="text-white/40 text-[11px] italic">Your information is saved for use across calculators</span>
               <button
+                title="Your information is saved locally for use across calculators"
                 className="text-white/65 text-[13px] font-medium no-underline transition-colors duration-150 hover:text-white hover:no-underline active:text-white border border-white/20 rounded-md px-3 py-1.5"
                 onClick={() => {
                   try {
