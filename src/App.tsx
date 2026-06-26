@@ -27,6 +27,8 @@ import { Disclaimer } from './components/Disclaimer';
 import { CookieConsent } from './components/CookieConsent';
 import { CalculatorContentGuide } from './components/CalculatorContentGuide';
 import { Guides } from './components/Guides';
+import { Article } from './components/Article';
+import { ARTICLE_SLUGS } from './content/articleMeta';
 import { CookiePolicy } from './components/CookiePolicy';
 import { Methodology } from './components/Methodology';
 
@@ -43,11 +45,21 @@ const CALCULATOR_VIEWS = new Set([
 
 const STATIC_VIEWS = new Set(['home', 'guides', 'openapi', 'terms', 'privacy', 'cookie-policy', 'about', 'contact', 'disclaimer', 'methodology']);
 
+const ARTICLE_SLUG_SET = new Set(ARTICLE_SLUGS);
+
+// Resolve a URL pathname to an internal view id. Article pages use the form
+// `guides/<slug>`; everything else maps to a calculator or static view.
+function resolveView(pathname: string): string {
+  const path = pathname.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\.html$/, '');
+  if (path.startsWith('guides/')) {
+    const slug = path.slice('guides/'.length);
+    return ARTICLE_SLUG_SET.has(slug) ? `guides/${slug}` : 'guides';
+  }
+  return CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home';
+}
+
 export default function App() {
-  const [view, setView] = useState(() => {
-    const path = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\.html$/, '');
-    return CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home';
-  });
+  const [view, setView] = useState(() => resolveView(window.location.pathname));
   const [showModal, setShowModal] = useState(false);
   const [pendingView, setPendingView] = useState<string | null>(null);
   const [hasCompletedProfile, setHasCompletedProfile] = useState(() => localStorage.getItem('hasCompletedProfile') === 'true');
@@ -59,8 +71,7 @@ export default function App() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\.html$/, '');
-      setView(CALCULATOR_VIEWS.has(path) || STATIC_VIEWS.has(path) ? path : 'home');
+      setView(resolveView(window.location.pathname));
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -130,7 +141,8 @@ export default function App() {
         {view === 'full' && <FullRetirementAnalysis onNavigate={handleNavigate} linkedData={linkedCalculatorData} />}
         {view === 'ss' && <SocialSecurityEstimator onBack={() => handleNavigate('home')} linkedData={linkedCalculatorData} onLinkedDataChange={handleLinkedDataUpdate} />}
         {CALCULATOR_VIEWS.has(view) && <CalculatorContentGuide view={view as 'fers' | 'csrs' | 'eligibility' | 'tsp' | 'gap' | 'military' | 'full' | 'ss'} />}
-        {view === 'guides' && <Guides />}
+        {view === 'guides' && <Guides onNavigate={handleNavigate} />}
+        {view.startsWith('guides/') && <Article slug={view.slice('guides/'.length)} onNavigate={handleNavigate} />}
         {view === 'openapi' && <OpenApiViewer onBack={() => handleNavigate('home')} />}
         {view === 'terms' && <TermsOfService />}
         {view === 'privacy' && <PrivacyPolicy />}

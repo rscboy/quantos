@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig, loadEnv, type Plugin} from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { ARTICLE_META } from './src/content/articleMeta';
 
 const SITE_URL = 'https://www.myfedplan.us';
 const HOME_TITLE = 'MyFedPlan | Federal Retirement Calculators';
@@ -32,6 +33,16 @@ const ROUTES: Record<string, { title: string; description: string }> = {
   'cookie-policy': { title: 'Cookie Policy | MyFedPlan', description: 'How MyFedPlan uses cookies, consent controls, analytics, and AdSense-related technologies.' },
   openapi: { title: 'API Specification | MyFedPlan', description: 'OpenAPI specification for the MyFedPlan federal retirement calculation API.' },
 };
+
+// Per-article guide routes (e.g. guides/fers-high-3-salary-explained) get their
+// own static HTML so each guide URL returns HTTP 200 with the correct title,
+// description, and canonical when crawled or deep-linked.
+for (const article of ARTICLE_META) {
+  ROUTES[`guides/${article.slug}`] = {
+    title: article.title,
+    description: article.description,
+  };
+}
 
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -66,7 +77,10 @@ function staticRoutesPlugin(): Plugin {
           .replace(titleRe, meta.title)
           .replace(descRe, meta.description)
           .replace(canonicalRe, `<link rel="canonical" href="${SITE_URL}/${route}" />`);
-        fs.writeFileSync(path.join(distDir, `${route}.html`), html, 'utf-8');
+        const outPath = path.join(distDir, `${route}.html`);
+        // Nested routes (e.g. guides/<slug>) need their parent directory created.
+        fs.mkdirSync(path.dirname(outPath), { recursive: true });
+        fs.writeFileSync(outPath, html, 'utf-8');
       }
     },
   };
